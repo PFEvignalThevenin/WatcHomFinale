@@ -1,0 +1,39 @@
+﻿La génération a démarré 07/01/2016 09:45:40.
+     1>Projet "C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Tuto_SFML\Tuto_SFML.vcxproj" sur le nœud 2 (Build cible(s)).
+     1>ClCompile:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I"C:\LibC\SFGUI-0.3.0\include" /I"C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Tuto_SFML\include" /I"C:\LibC\SFML-2.3.2\include" /Zi /nologo /W3 /WX- /sdl /O2 /Oi /Oy- /GL /D _MBCS /Gm- /EHsc /MD /GS /Gy /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Release\\" /Fd"Release\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt src\Delay.cpp src\main.cpp
+         Delay.cpp
+         main.cpp
+       Link:
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Release\Tuto_SFML.exe" /NOLOGO /LIBPATH:"C:\LibC\SFML-2.3.2\lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Release\Tuto_SFML.pdb" /OPT:REF /OPT:ICF /LTCG:incremental /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Release\Tuto_SFML.lib" /MACHINE:X86 /SAFESEH Release\Delay.obj
+         Release\main.obj
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: static class sf::RenderStates const sf::RenderStates::Default" (__imp_?Default@RenderStates@sf@@2V12@B)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: virtual __thiscall sf::RenderWindow::~RenderWindow(void)" (__imp_??1RenderWindow@sf@@UAE@XZ)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: __thiscall sf::RenderWindow::RenderWindow(class sf::VideoMode,class sf::String const &,unsigned int,struct sf::ContextSettings const &)" (__imp_??0RenderWindow@sf@@QAE@VVideoMode@1@ABVString@1@IABUContextSettings@1@@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: __thiscall sf::Color::Color(unsigned char,unsigned char,unsigned char,unsigned char)" (__imp_??0Color@sf@@QAE@EEEE@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __thiscall sf::Window::display(void)" (__imp_?display@Window@sf@@QAEXXZ)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __thiscall sf::Window::setVerticalSyncEnabled(bool)" (__imp_?setVerticalSyncEnabled@Window@sf@@QAEX_N@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __thiscall sf::Window::setPosition(class sf::Vector2<int> const &)" (__imp_?setPosition@Window@sf@@QAEXABV?$Vector2@H@2@@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: bool __thiscall sf::Window::pollEvent(class sf::Event &)" (__imp_?pollEvent@Window@sf@@QAE_NAAVEvent@2@@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: bool __thiscall sf::Window::isOpen(void)const " (__imp_?isOpen@Window@sf@@QBE_NXZ)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __thiscall sf::Window::close(void)" (__imp_?close@Window@sf@@QAEXXZ)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __thiscall sf::RenderTarget::draw(class sf::Drawable const &,class sf::RenderStates const &)" (__imp_?draw@RenderTarget@sf@@QAEXABVDrawable@2@ABVRenderStates@2@@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __thiscall sf::RenderTarget::clear(class sf::Color const &)" (__imp_?clear@RenderTarget@sf@@QAEXABVColor@2@@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __thiscall sf::Shape::setOutlineThickness(float)" (__imp_?setOutlineThickness@Shape@sf@@QAEXM@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __thiscall sf::Shape::setOutlineColor(class sf::Color const &)" (__imp_?setOutlineColor@Shape@sf@@QAEXABVColor@2@@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __thiscall sf::Shape::setFillColor(class sf::Color const &)" (__imp_?setFillColor@Shape@sf@@QAEXABVColor@2@@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: __thiscall sf::String::String(char const *,class std::locale const &)" (__imp_??0String@sf@@QAE@PBDABVlocale@std@@@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: __thiscall sf::VideoMode::VideoMode(unsigned int,unsigned int,unsigned int)" (__imp_??0VideoMode@sf@@QAE@III@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __thiscall sf::ConvexShape::setPoint(unsigned int,class sf::Vector2<float> const &)" (__imp_?setPoint@ConvexShape@sf@@QAEXIABV?$Vector2@M@2@@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: void __thiscall sf::ConvexShape::setPointCount(unsigned int)" (__imp_?setPointCount@ConvexShape@sf@@QAEXI@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: __thiscall sf::ConvexShape::ConvexShape(unsigned int)" (__imp_??0ConvexShape@sf@@QAE@I@Z)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: __thiscall sfg::SFGUI::~SFGUI(void)" (__imp_??1SFGUI@sfg@@QAE@XZ)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: __thiscall sfg::SFGUI::SFGUI(void)" (__imp_??0SFGUI@sfg@@QAE@XZ)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: virtual __thiscall sf::ConvexShape::~ConvexShape(void)" (__imp_??1ConvexShape@sf@@UAE@XZ)
+     1>main.obj : error LNK2001: symbole externe non résolu "__declspec(dllimport) public: __thiscall sf::String::~String(void)" (__imp_??1String@sf@@QAE@XZ)
+     1>C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Release\Tuto_SFML.exe : fatal error LNK1120: 24 externes non résolus
+     1>Génération du projet "C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Tuto_SFML\Tuto_SFML.vcxproj" terminée (Build cible(s)) -- ÉCHEC.
+
+ÉCHEC de la build.
+
+Temps écoulé 00:00:01.35

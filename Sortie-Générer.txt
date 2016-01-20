@@ -1,0 +1,4 @@
+﻿1>------ Début de la génération : Projet : Tuto_SFML, Configuration : Debug Win32 ------
+1>  main.cpp
+1>  Tuto_SFML.vcxproj -> C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Debug\Tuto_SFML.exe
+========== Génération : 1 a réussi, 0 a échoué, 0 mis à jour, 0 a été ignoré ==========
