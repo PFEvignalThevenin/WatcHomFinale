@@ -4,17 +4,18 @@
 
 #include <exception>
 #include <string>
+#include "Data\MiscData.hpp"
 
-struct coord {
-	int x, y, z;
-} ;
-
-/** Template de gestion de structures en 3 dimensions */
+/* Template de gestion de structures en 3 dimensions
+ * Beaucoup de fonctions sont surchargées selon les coordonées 3D et la position
+ *	Cette position est comptée en partant de (0,0,0) puis en progressant selon x, y et z
+ *
+ * On peut envisager de rajouter aussi des surcharges avec la structure obj::coord
+ */
 template<typename D>
 class StructureCubique
 {
 public:
-	enum Axe { x = 0, y = 1, z = 2 };
 	StructureCubique();
 	StructureCubique(StructureCubique &copy);
 	StructureCubique(int xSize, int ySize, int zSize);
@@ -52,7 +53,7 @@ public:
 
 	//conversion de position vers coordo et réciproque
 	virtual int coord2pos(int x, int y, int z)const;
-	virtual coord pos2coord(int pos)const;
+	virtual obj::coord pos2coord(int pos)const;
 private:
 
 protected:
@@ -60,7 +61,6 @@ protected:
 	int squareSize;	// taille_x * taille_y
 	char ***data;	//données dans les trois dimensions
 					//tableau de z vers x. lorsque boucle, favoriser les x mouvants
-	
 }; 
 
 #include "../../src/Data/StructureCubique.tpp"

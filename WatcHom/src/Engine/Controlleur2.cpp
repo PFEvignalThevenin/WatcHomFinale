@@ -3,6 +3,7 @@
 
 using namespace std;
 using namespace obj;
+//*********************************************Constructeur***************************************************
 Controlleur2::Controlleur2() {
 	glEnable(GL_DEPTH_TEST);
 	glutInitDisplayMode(GLUT_RGBA);
@@ -27,6 +28,7 @@ Controlleur2::Ptr Controlleur2::get() {
 	inst->modeleur = Modeleur::Ptr(new Modeleur(inst));
 	return inst;
 }
+//************************************************Rafrichissement affichage************************************************
 void Controlleur2::drawGL() {
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -47,6 +49,7 @@ void Controlleur2::drawGL() {
 	}
 	glPopMatrix();
 }
+//**************************************************Dessin**********************************************
 void Controlleur2::drawDefault() {
 	int i = 0;
 	glColor4f(couleurs[i].rouge, couleurs[i].vert, couleurs[i].bleu,50);
@@ -62,6 +65,7 @@ void Controlleur2::drawObj() {
 		}
 	}
 }
+//****************************************Gestion Obj2 ************************************************
 void Controlleur2::initiateObjs() {
 	//vider les anciennes listes.
 	resetLists();
@@ -84,20 +88,7 @@ void Controlleur2::loadObj(std::string path) {
 		std::cout << e.what();
 	}
 }
-void Controlleur2::computeCenter(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax) {
-	center.x = -(xmin + xmax) / 2;
-	center.y = -(ymin + ymax) / 2;
-	center.z = -(zmin + zmax) / 2;
-}
-void Controlleur2::setCouleur(Dim dim, GLfloat rouge, GLfloat vert, GLfloat bleu, GLfloat alpha) {
-	couleurs[dim].rouge = rouge;
-	couleurs[dim].vert = vert;
-	couleurs[dim].bleu = bleu;
-	couleurs[dim].alpha = alpha;
-}
-vector<GLuint>* Controlleur2::getFormes(Dim dim) {
-	return &listObj[dim];
-}
+//****************************************Gestion listes ************************************************
 void Controlleur2::resetLists() {
 	for (int i = 0; i < DIM; i++) {//pour chaque dimension
 		for (size_t j = 0; j < listObj[i].size(); j++) {
@@ -106,7 +97,22 @@ void Controlleur2::resetLists() {
 		listObj[i].resize(0);
 	}
 }
-Controlleur2::Dim Controlleur2::int2Dim(int d) {
+vector<GLuint>* Controlleur2::getFormes(Dim dim) {
+	return &listObj[dim];
+}
+void Controlleur2::computeCenter(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax) {
+	center.x = -(xmin + xmax) / 2;
+	center.y = -(ymin + ymax) / 2;
+	center.z = -(zmin + zmax) / 2;
+}
+//****************************************Gestion diverse ************************************************
+void Controlleur2::setCouleur(Dim dim, GLfloat rouge, GLfloat vert, GLfloat bleu, GLfloat alpha) {
+	couleurs[dim].rouge = rouge;
+	couleurs[dim].vert = vert;
+	couleurs[dim].bleu = bleu;
+	couleurs[dim].alpha = alpha;
+}
+Dim Controlleur2::int2Dim(int d) {
 	switch (d) {
 	case 0:
 		return Dim::d0;

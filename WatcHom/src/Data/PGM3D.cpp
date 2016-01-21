@@ -10,6 +10,7 @@ PGM3D::PGM3D() : StructureCubique<char>(0,0,0)
 PGM3D::~PGM3D()
 {
 }
+//******************************************Sauvegarde******************************************************
 void PGM3D::save(std::string const& path) const {
 	ofstream file;
 	file.open(path);
@@ -36,6 +37,7 @@ void PGM3D::save(std::string const& path) const {
 		}
 	}
 }
+//******************************************Chargement******************************************************
 void PGM3D::load(std::string const& path) {
 	ifstream file;
 	string work;

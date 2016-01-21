@@ -6,29 +6,32 @@ namespace obj {
 		nom = name;
 		dimension = dim;
 	}
-	int Object::addFace(Object::face f) {
+/***********************  Accès FACE  ***********************************/
+	int Object::addFace(obj::face f) {
 		faces.push_back(f);
-		return faces.size() - 1;//car forcement le dernier //index
+		return faces.size() - 1;//retourne l'index de la face ajoutée
 	}
-	Object::face& Object::getFace(int n) {
+	obj::face& Object::getFace(int n) {
 		return faces[n];
 	}
+	std::vector<obj::face>& Object::getFaces() {
+		return faces;
+	}
+	int Object::nbrFaces() {
+		return faces.size();
+	}
+/***********************  Accès NOM  ************************************/
 	void Object::setName(std::string name) {
 		nom = name;
 	}
 	std::string Object::getName() {
 		return nom;
 	}
-	std::vector<Object::face>& Object::getFaces() {
-		return faces;
-	}
+/***********************  Accès Dimension  *******************************/
 	void Object::setDimension(int dim) {
 		dimension = dim;
 	}
 	int Object::getDimension() {
 		return dimension;
-	}
-	int Object::nbrFaces() {
-		return faces.size();
 	}
 }

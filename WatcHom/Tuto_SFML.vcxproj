@@ -74,7 +74,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\LibC\assimp-3.2\include;C:\LibC\freeglut-3.0.0\include;C:\LibC\SFML-2.3.2\include;C:\LibC\SFGUI-0.3.0\include;C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Tuto_SFML\include;C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Tuto_SFML\include;C:\LibC\SFML-2.3.2\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\LibC\assimp-3.2\include;C:\LibC\freeglut-3.0.0\include;C:\LibC\SFML-2.3.2\include;C:\LibC\SFGUI-0.3.0\include;.\include;C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Tuto_SFML\include;C:\LibC\SFML-2.3.2\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -99,7 +99,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>C:\LibC\assimp-3.2\include;C:\LibC\freeglut-3.0.0\include;C:\LibC\SFML-2.3.2\include;C:\LibC\SFGUI-0.3.0\include;C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Tuto_SFML\include;C:\LibC\SFML-2.3.2\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\LibC\assimp-3.2\include;C:\LibC\freeglut-3.0.0\include;C:\LibC\SFML-2.3.2\include;C:\LibC\SFGUI-0.3.0\include;.\include;C:\LibC\SFML-2.3.2\include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -148,6 +148,7 @@
     <ClInclude Include="include\Data\Complexe.hpp" />
     <ClInclude Include="include\Data\ComplexeCubique.hpp" />
     <ClInclude Include="include\Data\FileSavable.hpp" />
+    <ClInclude Include="include\Data\MiscData.hpp" />
     <ClInclude Include="include\Data\Obj.hpp" />
     <ClInclude Include="include\Data\Obj2.hpp" />
     <ClInclude Include="include\Data\Object\Object.hpp" />

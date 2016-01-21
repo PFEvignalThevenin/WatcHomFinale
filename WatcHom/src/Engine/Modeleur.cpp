@@ -7,6 +7,7 @@ Modeleur::Modeleur(std::shared_ptr<Controlleur2> ctrl)
 {
 	this->ctrl = ctrl;
 }
+//****************************************Gestion dessin ************************************************
 void Modeleur::drawCube0(obj::Vertex center) {
 	glBegin(GL_QUAD_STRIP);
 	glVertex3f(center.x + rayon, center.y - rayon, center.z + rayon);//les côtés
@@ -40,7 +41,7 @@ void Modeleur::drawCube1(std::vector<obj::Vertex> line) {
 
 	//sinon : algo
 }
-void Modeleur::drawFace(const Object::face &fa) {
+void Modeleur::drawFace(const obj::face &fa) {
 	Vertex v;
 	glBegin(GL_POLYGON);
 	for (int i : fa) {
@@ -49,6 +50,37 @@ void Modeleur::drawFace(const Object::face &fa) {
 	}
 	glEnd();
 }
+//****************************************Gestion Obj2 ************************************************
+void Modeleur::setObj(obj::Obj2::Ptr obj) {
+	objAffiche = obj;
+}
+void Modeleur::initiateObjs() {
+	ctrl->resetLists();
+	Object obj;
+	std::vector<GLuint> *listObj;
+	cout << "construction" << endl;
+	int cptr = 1;//compte toutes les listes. Il ne doit pas y avoir de doublons
+	for (Dim a : {Dim::d0,Dim::d1,Dim::d2,Dim::d3}) {
+		//pour chaque dimension
+		cout << "DIM : " << to_string(a) << endl;
+		listObj = ctrl->getFormes(a);
+		for (int i = 0; i < objAffiche->nbrObjects(); i++) {//parcourir les objets
+			obj = objAffiche->getObject(i);
+			if (obj.getDimension() == a) {//si objet de la dimension a
+				glNewList(cptr, GL_COMPILE);	//créer nouvelle liste
+				listObj->push_back(cptr);		//conserver identificateur
+				for (obj::face f : obj.getFaces()) {//tracer l'objet
+					drawFace(f);
+				}
+				cout << to_string(cptr) << endl;
+				glEndList();
+				cptr++;
+			}
+		}
+	}
+	computeCenter();
+}
+//****************************************Gestion centre ************************************************
 void Modeleur::computeCenter() {
 	Vertex v = objAffiche->getVertex(1);;
 	float xmin = v.x, xmax = v.x;
@@ -64,33 +96,4 @@ void Modeleur::computeCenter() {
 		zmax = std::max(zmax, v.z);
 	}
 	ctrl->computeCenter(xmin, xmax, ymin, ymax, zmin, zmax);
-}
-void Modeleur::setObj(obj::Obj2::Ptr obj) {
-	objAffiche = obj;
-}
-void Modeleur::initiateObjs() {
-	ctrl->resetLists();
-	Object obj;
-	std::vector<GLuint> *listObj;
-	cout << "construction" << endl;
-	int cptr = 1;//compte toutes les listes. Il ne doit pas y avoir de doublons
-	for (Controlleur2::Dim a : {Controlleur2::Dim::d0, Controlleur2::Dim::d1, Controlleur2::Dim::d2, Controlleur2::Dim::d3}) {
-		//pour chaque dimension
-		cout << "DIM : " << to_string(a) << endl;
-		listObj = ctrl->getFormes(a);
-		for (int i = 0; i < objAffiche->nbrObjects(); i++) {//parcourir les objets
-			obj = objAffiche->getObject(i);
-			if (obj.getDimension() == a) {//si objet de la dimension a
-				glNewList(cptr, GL_COMPILE);	//créer nouvelle liste
-				listObj->push_back(cptr);		//conserver identificateur
-				for (Object::face f : obj.getFaces()) {//tracer l'objet
-					drawFace(f);
-				}
-				cout << to_string(cptr) << endl;
-				glEndList();
-				cptr++;
-			}
-		}
-	}
-	computeCenter();
 }

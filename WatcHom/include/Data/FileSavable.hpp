@@ -4,7 +4,8 @@
 #include <string>
 #include <exception>
 #include <fstream>
-
+/*Interface pour les données pouvant se charger depuis un fichier et inversement
+ */
 class FileSavable
 {
 public:

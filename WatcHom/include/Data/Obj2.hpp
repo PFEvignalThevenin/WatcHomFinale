@@ -8,7 +8,12 @@
 #include <memory>
 
 namespace obj{
-
+/* Classe de correspondance avec un fichier .obj
+ * Contient :
+ * - une liste de tous les vertices du fichier
+ * - Une liste d'objets (voir Data/Object/object) 
+ *		dont les faces contiennent index vers vertices du tableau
+ */
 class Obj2 : public FileSavable
 {
 public:
@@ -18,12 +23,14 @@ public:
 	virtual void save(std::string const& path) const override;
 	virtual void load(std::string const& path) override;
 
+	//accès objets
 	int addObject(Object obj);	//renvoie le numéro de l'objet
 	Object& getObject(int n);
+	int nbrObjects();
+	//accès vertices
 	int addVertex(Vertex vert);	//renvoie le numéro du sommet
 	Vertex& getVertex(int n);
 	int nbrVertices();
-	int nbrObjects();
 private:
 	std::vector<Vertex> vertices;
 	std::vector<Object> objects;

@@ -3,6 +3,12 @@
 
 #include <list>
 
+/*Classe de Complexe au sens Topographique
+ *interface. 
+ *l'implémentation dépend de la spécificité du complexe : Cubique ou simple
+ *pos est l'index de l'entité
+ */
+
 class Complexe
 {
 public:

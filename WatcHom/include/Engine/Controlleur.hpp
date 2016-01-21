@@ -4,7 +4,11 @@
 #include <memory>
 #include "Data\Obj.hpp"
 #include "GL\freeglut.h"
-
+/*Classe de controle du programme. Genre totallement as-been. 
+ * Ne comptez pas dessus, je l'enlève dès que possible.
+ * utilise la classe Obj, qui est as-been.
+ * Voyez plutôt Controlleur2, qui est du grand art.
+ */
 class Controlleur
 {
 public:
@@ -15,7 +19,7 @@ public:
 	//fonction de rafraichissement utilisée par la fenetre d'affichage
 	void drawGL();	//gère les autres fonctions de dessin en fonction du contexte
 
-					//fonctions de chargement
+	//fonctions de chargement
 	void loadObj(std::string path);//charge un obj et le sauvegarde ds objAffiche pour l'afficher
 private:
 	Controlleur() = default;

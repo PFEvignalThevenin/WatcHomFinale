@@ -1,12 +1,13 @@
 
 #include "Data\Obj2.hpp"
+#include "Data\MiscData.hpp"
 #include <fstream>
 #include <sstream> 
 #include <iostream> 
 
 namespace obj{
 using namespace std;
-
+//*******************************Annexes de la fonction de chargement******************************************//
 Vertex parseVertex(string line) {
 	Vertex v;
 	istringstream iss(line);
@@ -20,8 +21,8 @@ Vertex parseVertex(string line) {
 	//non lecture d'un éventuel dernier paramètre
 	return v;
 }
-Object::face parseFace(string line) {
-	Object::face f;
+obj::face parseFace(string line) {
+	obj::face f;
 	istringstream iss(line);
 	string mot;
 	int i = 0;
@@ -32,7 +33,7 @@ Object::face parseFace(string line) {
 	}
 	return f;
 }
-
+//****************************************fonction de sauvegarde************************************//
 void Obj2::save(std::string const& path) const {
 	ofstream file;
 	file.open(path);
@@ -52,8 +53,8 @@ void Obj2::save(std::string const& path) const {
 	}
 	//écrire les objets
 	Object o;
-	vector<Object::face> faces;
-	Object::face f;
+	vector<obj::face> faces;
+	obj::face f;
 	for (unsigned int i = 0; i < objects.size(); i++) {//pour chaque objet
 		o = objects[i];
 		file << "o " << o.getName() << endl;//écrire le nom
@@ -68,7 +69,7 @@ void Obj2::save(std::string const& path) const {
 		}
 	}
 }
-
+//****************************************Fonction de chargement*************************************************//
 void Obj2::load(std::string const& path) {
 	ifstream file;
 	string work;
@@ -98,7 +99,7 @@ void Obj2::load(std::string const& path) {
 		else if (work == "o") {
 			file >> work;
 			if (currentObject != nullptr) {
-				currentObject->setDimension((currentObject->nbrFaces() == 6) ? 0 : 1);
+				currentObject->setDimension((currentObject->nbrFaces() == 6) ? 0 : 1);//si 6 faces, de dimension 0
 				addObject(*currentObject);
 			}currentObject = new Object(work, 1);
 		}//cas commentaire
@@ -110,11 +111,11 @@ void Obj2::load(std::string const& path) {
 				throw FileError(2,"Error in OBJ load : \n\tcant't read the caracter " + work + " at line " + to_string(cptr));
 		}
 	}
-	currentObject->setDimension((currentObject->nbrFaces() == 6) ? 0 : 1);
+	currentObject->setDimension((currentObject->nbrFaces() == 6) ? 0 : 1);//si 6 faces, de dimension 0
 	if (currentObject != nullptr)//add the last object
 		addObject(*currentObject);
 }
-
+//******************************************Gestion object***********************************************//
 int Obj2::addObject(Object obj) {
 	objects.push_back(obj);
 	return objects.size() -1 ;//index
@@ -123,7 +124,10 @@ int Obj2::addObject(Object obj) {
 Object& Obj2::getObject(int n) {
 	return objects[n];
 }
-
+int Obj2::nbrObjects() {
+	return objects.size();
+}
+//******************************************Gestion Vertices***********************************************//
 int Obj2::addVertex(Vertex vert) {
 	vertices.push_back(vert);
 	return vertices.size();//ne pas '-1' car le premier vertex d'un obj est numéroté 1
@@ -134,8 +138,5 @@ Vertex& Obj2::getVertex(int n) {
 }
 int Obj2::nbrVertices() {
 	return vertices.size();
-}
-int Obj2::nbrObjects() {
-	return objects.size();
 }
 }

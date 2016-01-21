@@ -3,7 +3,8 @@
 
 #ifndef DELAY_HPP
 #define DELAY_HPP
-
+/*Classe servant à faire des pauses de fréquence constante
+ */
 class Delay
 {
 public:

@@ -6,7 +6,10 @@
 #include <memory>
 
 namespace obj {
-
+	/* Classe de correspondance avec un fichier .obj
+	 * Utilise assimp et encapsule une aiScene.
+	 * Pas vraiment utilisée car galère. Voir Obj2
+	 */
 	class Obj : public FileSavable
 	{
 	public:

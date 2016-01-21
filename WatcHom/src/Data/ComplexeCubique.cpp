@@ -2,6 +2,7 @@
 #define COMPLEXE_CUBIQUE_TPP
 
 #include "Data\ComplexeCubique.hpp"
+#include "Data\MiscData.hpp"
 #include <iostream>
 using namespace std;
 
@@ -18,7 +19,7 @@ ComplexeCubique::~ComplexeCubique()
 }
 //dimension du cube à la position donnée
 int ComplexeCubique::dim(int pos) {
-	coord c= pos2coord(pos);
+	obj::coord c= pos2coord(pos);
 	return dim(c.x, c.y, c.z);
 }
 int ComplexeCubique::dim(int x, int y, int z) {
@@ -35,11 +36,11 @@ int ComplexeCubique::dim(int x, int y, int z) {
 }
 //adjacences
 std::list<int> ComplexeCubique::boundary(int pos) {
-	coord c = pos2coord(pos);
+	obj::coord c = pos2coord(pos);
 	return boundary(c.x, c.y, c.z);
 }
 std::list<int> ComplexeCubique::coboundary(int pos) {
-	coord c = pos2coord(pos);
+	obj::coord c = pos2coord(pos);
 	return coboundary(c.x, c.y, c.z);
 }
 std::list<int> ComplexeCubique::boundary(int x, int y, int z) {

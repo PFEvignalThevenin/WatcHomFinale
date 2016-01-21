@@ -56,23 +56,23 @@ D StructureCubique<D>::get(int x, int y, int z) const {
 //avec pos
 template<typename D>
 bool StructureCubique<D>::isEmpty(int pos) const {
-	coord c = pos2coord(pos);
+	obj::coord c = pos2coord(pos);
 	return isEmpty(c.x, c.y, c.z);
 }
 template<typename D>
 bool StructureCubique<D>::isOccupied(int pos) const {
-	coord c = pos2coord(pos);
+	obj::coord c = pos2coord(pos);
 	return isOccupied(c.x, c.y, c.z);
 }
 template<typename D>
 void StructureCubique<D>::set(int pos, D val) {
 	if (without(x, y, z)) return;
-	coord c = pos2coord(pos);
+	obj::coord c = pos2coord(pos);
 	set(c.x, c.y, c.z, val);
 }
 template<typename D>
 D StructureCubique<D>::get(int pos) const {
-	coord c = pos2coord(pos);
+	obj::coord c = pos2coord(pos);
 	return get(c.x, c.y, c.z);
 }
 //metadatas
@@ -149,8 +149,8 @@ int StructureCubique<D>::coord2pos(int x, int y, int z)const {
 	return (x + size[Axe::y] * y + squareSize*z) ;
 }
 template<typename D>
-coord StructureCubique<D>::pos2coord(int pos)const {
-	coord c;
+obj::coord StructureCubique<D>::pos2coord(int pos)const {
+	obj::coord c;
 	c.x =  pos					% size[Axe::x];
 	c.y = (pos / size[Axe::x])	% size[Axe::y];
 	c.z = (pos / squareSize)	% size[Axe::z];
