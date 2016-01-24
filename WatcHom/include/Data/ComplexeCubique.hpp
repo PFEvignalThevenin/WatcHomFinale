@@ -9,7 +9,7 @@
  * Complexe dont les constituant sont des cubes, et sont donc organisés selon une structure cubique
  * Beaucoup de fonctions sont surchargées pour un accès selon les coordonées 3D ou l'index d'entité. (voir Classe Complexe)
  */
-class ComplexeCubique : public StructureCubique<char>, public Complexe
+class ComplexeCubique : public StructureCubique<bool>, public Complexe
 {
 public:
 	ComplexeCubique();

@@ -8,12 +8,13 @@ shared_ptr<ComplexeCubique> Conversion::PGM3D2ComplexeCubique(PGM3D &pgm, bool p
 		2 * pgm.getSize(Axe::y) + 1,
 		2 * pgm.getSize(Axe::z) + 1));
 	//gestion primalité : conversion en char et initialisation
+	ret->initVal(!primal);
 	ret->setPrimal(primal);
 	char valPrimale = 0;
 	if (primal) {
 		valPrimale = 1;
 	}else {
-		ret->initVal( 1 );
+		ret->initVal( primal );
 	}
 	//parcours d'initialisation :
 	obj::coord w;
@@ -21,11 +22,11 @@ shared_ptr<ComplexeCubique> Conversion::PGM3D2ComplexeCubique(PGM3D &pgm, bool p
 		for (int pj = 0; pj < pgm.getSize(Axe::y); pj++) {
 			for (int pk = 0; pk < pgm.getSize(Axe::x); pk++) {
 				if (pgm.isOccupied(pk, pj, pi)) {//si il est plein (chaque cube effectif)
+					w = coordPGM2ComplexeCub(pk, pj, pi);
 					for (int i = -1; i <= 1; i++) {//alors pour tous les espaces adjacents
 						for (int j = -1; j <= 1; j++) {
 							for (int k = -1; k <= 1; k++) {
-								w = coordPGM2ComplexeCub(pk, pj, pi);
-								ret->set(w.x + k, w.y + j, w.z + i, valPrimale);//initialisation selon primalité
+								ret->set(w.x + k, w.y + j, w.z + i, primal);//initialisation selon primalité
 							}
 						}
 					}

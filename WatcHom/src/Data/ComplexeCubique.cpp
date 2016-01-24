@@ -10,7 +10,7 @@ ComplexeCubique::ComplexeCubique() : ComplexeCubique(0, 0, 0)
 {
 }
 
-ComplexeCubique::ComplexeCubique(int xSize, int ySize, int zSize) : StructureCubique<char>(xSize,  ySize,  zSize)
+ComplexeCubique::ComplexeCubique(int xSize, int ySize, int zSize) : StructureCubique<bool>(xSize,  ySize,  zSize)
 {
 }
 
@@ -22,17 +22,12 @@ int ComplexeCubique::dim(int pos) {
 	obj::coord c= pos2coord(pos);
 	return dim(c.x, c.y, c.z);
 }
-int ComplexeCubique::dim(int x, int y, int z) {
-	if (z % 2 == 0) {
-		if (x % 2 == 0 && y % 2 == 0) return 0;
-		else if (x % 2 == 1 && y % 2 == 1) return 2;
-		else return 1;
-	}
-	else {
-		if (x % 2 == 0 && y % 2 == 0) return 1;
-		else if (x % 2 == 1 && y % 2 == 1) return 3;
-		else return 2;
-	}
+int ComplexeCubique::dim(int x, int y, int z) {//primal change qqchose?
+	int d=0;
+	d+=z%2;
+	d+=y%2;
+	d+=x%2;
+	return d;
 }
 //adjacences
 std::list<int> ComplexeCubique::boundary(int pos) {

@@ -2,8 +2,28 @@
 #define MISC_DATA_HPP
 
 #include <vector>
+#include <string>
 #include "GL\freeglut.h"
+/*
+*Classe d'exception pour les pb de mémoire
+*
+*/
+class DataError : public std::exception
+{
+public:
+	DataError(std::string const& phrase = "Data Error") throw() :m_phrase(phrase) {}
 
+	virtual const char* what() const throw()
+	{
+		return m_phrase.c_str();
+	}
+
+	virtual ~DataError() throw()
+	{}
+
+private:
+	std::string m_phrase;            //Description de l'erreur
+};
 namespace obj {
 	/****************************Vertex**********************************/
 	struct Vertex {
@@ -25,5 +45,7 @@ enum Dim { d0 = 0, d1 = 1, d2 = 2, d3 = 3 };
 #define DIM 4	//because we work on 4 dimensions (from 0 to 3)
 /*******************************Axe**********************************/
 enum Axe { x = 0, y = 1, z = 2 };
+//fonction de conversion de int vers Axe
+Axe int2Axe(int i);
 /********************************************************************/
 #endif

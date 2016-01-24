@@ -125,14 +125,17 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="include\Data\Object\Object.cpp" />
+    <ClCompile Include="src\Data\MiscData.cpp" />
     <ClCompile Include="src\Data\Obj.cpp" />
     <ClCompile Include="src\Data\Obj2.cpp" />
     <ClCompile Include="include\Data\StructureCubique.hpp" />
     <ClCompile Include="src\Data\Conversion.cpp" />
     <ClCompile Include="src\Data\ComplexeCubique.cpp" />
-    <ClCompile Include="src\Data\StructureCubique.tpp" />
+    <ClCompile Include="src\Data\StructureCubique.cpp" />
+    <ClCompile Include="src\Data\StructureCubique_prevVers.tpp" />
     <ClCompile Include="src\Engine\Controlleur.cpp" />
     <ClCompile Include="src\Engine\Controlleur2.cpp" />
+    <ClCompile Include="src\Engine\DGVF.cpp" />
     <ClCompile Include="src\Engine\Modeleur.cpp" />
     <ClCompile Include="src\Engine\trackball.cpp" />
     <ClCompile Include="src\Interface\WindowOpenGL.cpp" />
@@ -155,6 +158,7 @@
     <ClInclude Include="include\Data\Object\Vertex.hpp" />
     <ClInclude Include="include\Delay.hpp" />
     <ClInclude Include="include\Engine\Controlleur2.hpp" />
+    <ClInclude Include="include\Engine\DGVF.hpp" />
     <ClInclude Include="include\Engine\Modeleur.hpp" />
     <ClInclude Include="include\Engine\trackball.h" />
     <ClInclude Include="include\Interface\Menu.hpp" />

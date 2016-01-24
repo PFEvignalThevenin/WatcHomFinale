@@ -59,31 +59,10 @@ private:
 protected:
 	int size[3];	//dimensions du PGM3D selon les 3 axes
 	int squareSize;	// taille_x * taille_y
-	char ***data;	//données dans les trois dimensions
+	std::vector<D> data;	//données dans les trois dimensions
 					//tableau de z vers x. lorsque boucle, favoriser les x mouvants
 }; 
 
-#include "../../src/Data/StructureCubique.tpp"
-
-/*
- *Classe d'exception pour les pb de mémoire
- *
- */
-class DataError : public std::exception
-{
-public:
-	DataError(std::string const& phrase = "Data Error") throw() :m_phrase(phrase) {}
-
-	virtual const char* what() const throw()
-	{
-		return m_phrase.c_str();
-	}
-
-	virtual ~DataError() throw()
-	{}
-
-private:
-	std::string m_phrase;            //Description de l'erreur
-};
+#include "../../src/Data/StructureCubique.cpp"
 
 #endif
