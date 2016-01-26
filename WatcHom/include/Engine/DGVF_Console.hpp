@@ -9,36 +9,35 @@
 #include <vector>
 #include <memory>
 
-class DGVF
+class DGVF_Console
 {
 public:
-	typedef std::shared_ptr<DGVF> Ptr;
+	typedef std::shared_ptr<DGVF_Console> Ptr;
 	typedef std::pair<int, int> cellBound;
 	typedef std::list<int> cellList;
 	typedef std::set<int> cellSet;
 
-	DGVF(ComplexeCubique::Ptr p_K);
+	DGVF_Console(ComplexeCubique::Ptr p_K);
 
-	//fonction principale. Sur Console
+	//fonction principale
 	void homology(std::string name, double r, double s);
-	//calculer les clusters. Puis updateComplex();
-	void CellClustering();
-	// update d, g and inv_g à partir des clusters calculés
-	void updateComplex();
-	// true if the DGVF is perfect, that is, dM = 0
-	bool perfect();
-	//Vérifie si il existe au moins un couple de cellules clusterisable
-	bool clusterisable();
-	/*calcule la liste des clusters qu'il est possible de collapser.
-	 *couple de cellules (??,Cr du cluster)
-	 */
+	//calculer les clusters
+	void CellClustering();	// The cell clustering
+	void updateComplex();   // update d, g and inv_g
+							/*do a simple collapse.
+							*return true tt que utilisateur ne veut pas quitter.
+							*/
+	bool simpleCollapse();
+	/*si clusterisable, demande à l'utilisateur s'il veux le clusteriser.
+	*si ni l'un ni l'autre : rien.
+	*/
+	bool mergeComplex();    // merge the complex
+	bool perfect();         // true if the DGVF is perfect, that is, dM = 0
+							//écrit un fichier qui associe à chaque cluster, le cluster de ses faces
+							/*calcule la liste des clusters qu'il est possible de collapser.
+							*couple de cellules (??,Cr du cluster)
+							*/
 	std::shared_ptr<std::vector<cellBound>> computeCollapses();
-	//affiche la liste calculée par 'computeCollapses'
-	void  DGVF::afficherChoixCollapse(std::shared_ptr<std::vector<DGVF::cellBound>> choix);
-
-	/*paramètre le nombre de threads à utiliser. Déterminé par utilisateur. >0.*/
-	void setNbrThread(unsigned int nbr);
-protected:
 	//calcule les bords et renvoie l'ensemble des Cr parmis les bords
 	std::shared_ptr<cellList> boundary_cr(int c);
 	std::shared_ptr<cellList> coboundary_cr(int c);
@@ -52,21 +51,38 @@ protected:
 	int getV(int c);
 	//utilisée uniquement par add2V, car incertain de la structure à utiliser
 	void setV(int c, int vc);
+	void printList(std::list<int> l);
 
 	/*********************   Pleins de fonctions redécoupées, car trop intriquées, et multi-thread   **********************/
+	/*paramètre le nombre de threads à utiliser. Déterminé par utilisateur. >0.*/
+	void setNbrThread(unsigned int nbr);
 	/*trier les cellules par dimension dans les tableaux des cellules critiques*/
 	void trierCellulesCritiques();
+	//Vérifie si il existe au moins un couple de cellules clusterisable
+	bool clusterisable();
 	//permet de calculer toutes les combinaisons de V selon n (n index de la combinaison)
 	std::set<int> subset(std::set<int> v, int n);
-	//choix utilisateur entre 0 et max
-	int choix(std::string message, int max);
+
+	/**************************************************Fonctions de sauvegarde**********************************************/
+	//Sauvegarde tout dans des fichiers .obj et 'morse'
+	void save(std::string name, int iteration, double r, double s);
+	// Writes the Morse boundary in a file
+	void writeD(std::string fileName);
+	/*Fonctions pour création obj*/
+	//interprétation du cubique pour l'enregistrer sous format obj
+	void writeObj(std::string fileName, double r, double s);
+	void addFace(std::vector<int> p, int dir, int i_axis,
+		double r, double s, std::map<std::vector<int>, int> * M,
+		std::vector< std::vector<double> > * vertices, std::map<std::vector<int>, int> * index,
+		std::vector< std::vector<int> > * faces, std::map<int, std::list<int> > * facesG);
 private:
 	//indicateur du nombre de threads à utiliser
-	unsigned int nbrThread=1;
+	unsigned int nbrThread = 1;
+
 
 	std::map<int, int> V;            // the matching. Key : toutes les valeurs de cellules-> val : la cellule bindée (primaire vers secondaire)
-								// => si rien : critique ou secondaire
-								//errata : le binding est bidirectionnel
+									 // => si rien : critique ou secondaire
+									 //errata : le binding est bidirectionnel
 	ComplexeCubique::Ptr K;             // the cubical complex
 	bool cubical;               // true: the original complex; false: Morse complex
 	std::set<int> Cr[DIM];      // critical cells par dimension

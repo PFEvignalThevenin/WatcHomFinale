@@ -133,6 +133,7 @@ int main()
 			//calcul homologie
 			begin = clock(); 
 			dg.homology("testDGVF",0.1, 0.05);
+			dg.CellClustering();
 			cout << "Calcul Homologie en " << double(clock() - begin) / CLOCKS_PER_SEC << endl;
 			//lecture obj
 			begin = clock();

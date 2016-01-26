@@ -137,6 +137,7 @@
     <ClCompile Include="src\Engine\Controlleur.cpp" />
     <ClCompile Include="src\Engine\Controlleur2.cpp" />
     <ClCompile Include="src\Engine\DGVF.cpp" />
+    <ClCompile Include="src\Engine\DGVF_Console.cpp" />
     <ClCompile Include="src\Engine\Modeleur.cpp" />
     <ClCompile Include="src\Engine\trackball.cpp" />
     <ClCompile Include="src\Interface\ClusterList.cpp" />
@@ -170,6 +171,7 @@
     <ClInclude Include="include\Interface\OptionAffichage.hpp" />
     <ClInclude Include="include\Data\PGM3D.hpp" />
     <ClInclude Include="include\Engine\Controlleur.hpp" />
+    <ClInclude Include="include\Engine\DGVF_Console.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
