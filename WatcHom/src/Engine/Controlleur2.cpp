@@ -1,13 +1,23 @@
 #include "Engine\Controlleur2.hpp"
+#include "Data\PGM3D.hpp"
+#include "Data\Conversion.hpp"
 #include <iostream>
 
 using namespace std;
 using namespace obj;
 //*********************************************Constructeur***************************************************
 Controlleur2::Controlleur2() {
+	if (modeleur.get() == nullptr) {
+		modeleur = Modeleur::Ptr(new Modeleur(shared_ptr<Controlleur2>(this)));
+	}
 	glEnable(GL_DEPTH_TEST);
-	glutInitDisplayMode(GLUT_RGBA);
-	glClearColor(0.0, 0.0, 0.0, 0.0);
+	//light
+	//glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHT0);
+	//glEnable(GL_DIFFUSE);
+	//glEnable(GL_COLOR_MATERIAL);
+	//glEnable(GL_SPECULAR);
+	//glutInitDisplayMode(GLUT_RGBA);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	static const auto pi = 3.1415926535897932384626433832795f;
@@ -25,12 +35,15 @@ Controlleur2::Controlleur2() {
 }
 Controlleur2::Ptr Controlleur2::get() {
 	static  Controlleur2::Ptr inst = Controlleur2::Ptr(new Controlleur2);
-	inst->modeleur = Modeleur::Ptr(new Modeleur(inst));
 	return inst;
 }
 //************************************************Rafrichissement affichage************************************************
 void Controlleur2::drawGL() {
+	glClearColor(0.5f, 0.7f, 1.0f, 1.0f);//couleur de fond
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
+	static int LightPos[4] = { 0,0,1,1 };
+	glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
 	glLoadIdentity();
 	static float angle = 0;
 	angle += 2;
@@ -73,13 +86,32 @@ void Controlleur2::initiateObjs() {
 	modeleur->initiateObjs();
 	afficher = true;
 }
-//charge un obj et le stocke ds le modelleur pour l'affichage
+//charge un obj et le stocke ds le modeleur pour l'affichage
 void Controlleur2::loadObj(std::string path) {
 	try {
 		Obj2::Ptr objAffiche = Obj2::Ptr(new Obj2());
 		objAffiche->load(path);
 		modeleur->setObj(objAffiche);
 		initiateObjs();
+	}
+	catch (FileError fe) {
+		std::cout << fe.what();
+	}
+	catch (exception e) {
+		std::cout << e.what();
+	}
+}
+/*charge un pgm et commence le traitement dans DGVF, puis affiche une vue rapide.
+ *init aussi le panneau des clusters
+ */
+void Controlleur2::loadPgm(std::string path) {
+	try {
+		PGM3D::Ptr pgm = PGM3D::Ptr(new PGM3D());
+		pgm->load(path);
+		dgvf = DGVF::Ptr(new DGVF(Conversion::PGM3D2ComplexeCubique(*pgm)));
+		modeleur->setPgm(pgm);
+		modeleur->initiatePgm();
+		afficher = true;
 	}
 	catch (FileError fe) {
 		std::cout << fe.what();
@@ -111,6 +143,9 @@ void Controlleur2::setCouleur(Dim dim, GLfloat rouge, GLfloat vert, GLfloat bleu
 	couleurs[dim].vert = vert;
 	couleurs[dim].bleu = bleu;
 	couleurs[dim].alpha = alpha;
+}
+void Controlleur2::setDistances(float rayon, float longueur, float separation) {
+	modeleur->setDistances(rayon, longueur, separation);
 }
 Dim Controlleur2::int2Dim(int d) {
 	switch (d) {

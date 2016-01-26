@@ -15,12 +15,6 @@ ParamAffichageDim::ParamAffichageDim(int dim) : Frame()
 		hBox->Pack(it->second);
 	}
 	scalers.at("Alpha")->SetValue(255);
-	OnMouseLeftRelease;
-
-	GetSignal(sfg::Button::OnMouseLeftRelease).Connect(
-		std::bind([=]() {
-		Controlleur2::get()->setCouleur(Controlleur2::int2Dim(dimension), getRed(), getGreen(), getBlue(), getAlpha());
-	}));
 }
 
 ParamAffichageDim::~ParamAffichageDim()
@@ -56,7 +50,10 @@ void ParamAffichageDim::initScales() {
 	for (string lab : labels) {
 		scalers.insert(pair<string, Scale::Ptr>(lab, Scale::Create(0, 255, 1)));
 		scalers.at(lab)->SetValue(100);
-		
+		scalers.at(lab)->GetSignal(sfg::Widget::OnMouseMove).Connect(//mise à jour sur utilisation du scale
+			std::bind([=]() {
+			Controlleur2::get()->setCouleur(Controlleur2::int2Dim(dimension), getRed(), getGreen(), getBlue(), getAlpha());
+		}));
 	}
 }
 

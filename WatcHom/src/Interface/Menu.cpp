@@ -16,8 +16,8 @@ Menu::Menu() : Bin()
 	auto menuListFichier = Box::Create(Box::Orientation::VERTICAL);
 	auto menuListParametres = Box::Create(Box::Orientation::VERTICAL);
 	//boutons du menu fichier
-	addButton2MenuList(menuListFichier, Button::Create("Ouvrir"));
-	addButton2MenuList(menuListFichier, Button::Create("Enregistrer"));
+	//addButton2MenuList(menuListFichier, Button::Create("Ouvrir"));
+	//addButton2MenuList(menuListFichier, Button::Create("Enregistrer"));
 	addButton2MenuList(menuListFichier, Button::Create("Ouvrir Obj"));
 	addButton2MenuList(menuListFichier, Button::Create("Importer Pgm"));
 	addButton2MenuList(menuListFichier, Button::Create("Quitter"));
@@ -35,10 +35,6 @@ Menu::Menu() : Bin()
 	menuListParametres->Show(false);
 	bound(menuFichier, menuListFichier);
 	bound(menuParametres, menuListParametres);
-}
-
-Menu::~Menu()
-{
 }
 /*relie les 2 entités afin que la 2e apparaisse lorsque la 1ere est survolée par la souris
 */
@@ -66,6 +62,16 @@ std::shared_ptr<Menu> Menu::Create() {
 }
 sf::Vector2f Menu::CalculateRequisition() {
 	return GetChild()->GetRequisition();
+}
+void Menu::HandleSizeChange() {
+	auto child = GetChild();
+	if (!child) {
+		return;
+	}
+	sf::FloatRect allocation(GetAllocation());
+	//allocation.left = 0;
+	//allocation.top = 0;
+	child->SetAllocation(allocation);
 }
 
 /* Fonctions de construction de menu */

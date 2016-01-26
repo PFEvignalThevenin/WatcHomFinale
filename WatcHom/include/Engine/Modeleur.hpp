@@ -3,6 +3,7 @@
 
 #include "Engine\Controlleur2.hpp"
 #include "Data\Obj2.hpp"
+#include "Data\PGM3D.hpp"
 #include "GL\freeglut.h"
 
 class Controlleur2;//inclusion croisée
@@ -20,17 +21,28 @@ public:
 	void drawCube0(obj::Vertex center);
 	void drawCube1(std::vector<obj::Vertex> line);
 	void drawFace(const obj::face &fa);
+	void drawPgm(PGM3D &pgm);
 	//return within 'center' the coordinates of the center of the object
 	void computeCenter();
+	void setDistances(float rayon, float longueur, float separation);
 	//set l'objet a afficher, mais ne change pas l'affichage effectif
 	void setObj(obj::Obj2::Ptr obj);
+	void Modeleur::setPgm(PGM3D::Ptr pgm);
 	//initialise les listes de Controlleur2 selon l'objet à afficher
 	void initiateObjs();
+	void initiatePgm();
 private:
-	//les valeurs de parametrage de l'affichage 
-	float rayon = 1, espace, separation;
+	/*les valeurs de parametrage de l'affichage 
+	 * dist(voisins dim0) = 2*rayon + 2*separation + longueur = dist
+	 * rayon : celui des cubes de dim 0
+	 * longuer : celle des cubes de dim 1
+	 * separation : espace entre les cubes
+	 */
+	float rayon, longueur, separation;
+	float dist;
 	//l'objet à afficher
 	obj::Obj2::Ptr objAffiche;
+	PGM3D::Ptr pgmTraite;
 	//un pointeur vers son inséparable controleur2
 	std::shared_ptr<Controlleur2> ctrl;
 	

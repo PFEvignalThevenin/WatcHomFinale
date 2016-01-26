@@ -4,6 +4,7 @@
 
 #include "Data\StructureCubique.hpp"
 #include "Data\Complexe.hpp"
+#include <memory>
 
 /* ComplexeCubique.
  * Complexe dont les constituant sont des cubes, et sont donc organisés selon une structure cubique
@@ -12,6 +13,7 @@
 class ComplexeCubique : public StructureCubique<bool>, public Complexe
 {
 public:
+	typedef std::shared_ptr<ComplexeCubique> Ptr;
 	ComplexeCubique();
 	ComplexeCubique(int xSize, int ySize, int zSize);
 	virtual ~ComplexeCubique();

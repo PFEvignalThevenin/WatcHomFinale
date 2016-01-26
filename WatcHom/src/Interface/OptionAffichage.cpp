@@ -3,7 +3,7 @@
 
 #include "SFGUI\Label.hpp"
 #include "SFGUI\SpinButton.hpp"
-#include <iostream>
+#include "Engine\Controlleur2.hpp"
 #include "SFML\Window.hpp"
 
 using namespace sfg;
@@ -20,6 +20,7 @@ OptionAffichage::OptionAffichage() : sfg::Bin()
 	espaces.at("Rayon")->SetValue(2);
 	espaces.at("Longueur")->SetValue(8);
 	espaces.at("Espace")->SetValue(2);
+	//setDistances
 }
 
 
@@ -60,8 +61,23 @@ sfg::Box::Ptr OptionAffichage::BoxTailles() {
 	for (std::string lab : labels) {
 		auto entry = SpinButton::Create(0, 10, 1);
 		espaces.insert(std::pair<std::string, SpinButton::Ptr>(lab, entry));
+		//délégation
+		entry->GetSignal(sfg::Widget::OnStateChange).Connect(//mise à jour sur utilisation du scale
+			std::bind([=]() {
+			Controlleur2::get()->setDistances(getRayon(), getLongueur(), getSeparation());
+		}));
+		//ajout au groupe
 		ret->Pack(Label::Create(lab));
 		ret->Pack(entry);
 	}
 	return ret;
+}
+float OptionAffichage::getRayon() {
+	return espaces.at("Rayon")->GetValue();
+}
+float OptionAffichage::getLongueur() {
+	return espaces.at("Longueur")->GetValue();
+}
+float OptionAffichage::getSeparation() {
+	return espaces.at("Espace")->GetValue();
 }

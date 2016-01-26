@@ -4,6 +4,7 @@
 
 #include "Data\FileSavable.hpp"
 #include "Data\StructureCubique.hpp"
+#include <memory>
 
 /* Classe de correspondance avec un fichier .pgm
  *		comprenez bien qu'il s'agit d'un fichier pgm batard pour les données 3D.
@@ -16,6 +17,7 @@
 class PGM3D : public FileSavable, public StructureCubique<char>
 {
 public:
+	typedef std::shared_ptr<PGM3D> Ptr;
 	PGM3D();
 	~PGM3D();
 	//fonctions d'accès fichiers

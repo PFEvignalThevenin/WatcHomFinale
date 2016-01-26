@@ -12,7 +12,6 @@ StructureCubique<D>::StructureCubique() : StructureCubique(0, 0, 0) {}
 template<typename D>
 StructureCubique<D>::StructureCubique(int xSize, int ySize, int zSize)
 {
-	cout<<"construction StrcCub"<<endl;
 	int s[3] = { xSize, ySize, zSize };
 	setDataSize(s);
 }
@@ -20,14 +19,12 @@ StructureCubique<D>::StructureCubique(int xSize, int ySize, int zSize)
 template<typename D>
 StructureCubique<D>::StructureCubique(StructureCubique &copy) : StructureCubique(copy.size[Axe::x], copy.size[Axe::y], copy.size[Axe::z])
 {
-	cout<<"copie StrcCub"<<endl;
 	this->copy(copy);
 }
 //destructeur
 template<typename D>
 StructureCubique<D>::~StructureCubique()
 {
-	cout<<"destruction StrcCub"<<endl;
 	//delete* data;
 }
 //************************************

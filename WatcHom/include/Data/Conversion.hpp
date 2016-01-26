@@ -12,7 +12,7 @@ class Conversion
 {
 public:
 	//Interpretation d'un PGM3D vers un Complexe Cubique intègre. taille 2x+1 supérieure.
-	static std::shared_ptr<ComplexeCubique> PGM3D2ComplexeCubique(PGM3D &pgm, bool primal=true);
+	static std::shared_ptr<ComplexeCubique> PGM3D2ComplexeCubique(PGM3D &pgm, bool primal=true);//warning : ne fait pas des primal=false
 	//Représentation maillée d'un PGM3D
 	static std::shared_ptr<obj::Obj> PGM3D2Obj(PGM3D &pgm);
 	//Remrésentation maillée d'un ComplexeCubique

@@ -2,62 +2,49 @@
 
 #include <iostream>
 #include <fstream>	// ifstream, ofstream
-#include <sstream>  // stringstream
-#include <set>
-#include <vector>
-#include <queue>
 #include <list>
 #include <math.h>   // pow()
 #include <ctime>
+#include <thread>
 
 using namespace std;
 
-DGVF::DGVF(ComplexeCubique * p_K)
+DGVF::DGVF(ComplexeCubique::Ptr p_K)
 {
 	K = p_K;
 	cubical = true;
-	Cr.resize(4);
-	cout << "building DGVF" << endl;
-	for (int c = 0; c < K->nbrCubes(); c++)//trier toutes les cellules par dimension
-	{
-		if (K->get(c))//there is a cube at position c
-			Cr.at(K->dim(c)).insert(c);
-	}
-	cout << "DGVF built." << endl;
+	setNbrThread(1);//ici pour les tests. Enlever après.
+	trierCellulesCritiques();
 }
 
 
 void DGVF::homology(string name, double r, double s)
 {
 	int i = 1;
-	stringstream ss;
 	bool b1, b2;
 	cout << "Merging complexe" << endl;
 	mergeComplex();
 	cout << "Complexe merged" << endl;
-	ss.str(""); ss << "log/" << name << "_" << i << "_d"; writeD(ss.str());
-	ss.str(""); ss << "log/" << name << "_" << i << "_V.obj"; writeObj(ss.str(), r, s); i++;
+	save( name , i , r, s);
+	i++;
 	do
 	{
 		b1 = simpleCollapse();
 		if (b1)
 		{
-			ss.str(""); ss << "log/" << name << "_" << i << "_d"; writeD(ss.str());
-			ss.str(""); ss << "log/" << name << "_" << i << "_V.obj"; writeObj(ss.str(), r, s); i++;
+			save(name, i, r, s);
+			i++;
 		}
 		b2 = mergeComplex();
 		if (b2)
 		{
-			ss.str(""); ss << "log/" << name << "_" << i << "_d"; writeD(ss.str());
-			ss.str(""); ss << "log/" << name << "_" << i << "_V.obj"; writeObj(ss.str(), r, s); i++;
+			save(name, i, r, s);
+			i++;
 		}
 	} while (!perfect() && (b1 || b2));
-	if (perfect())
-	{
+	if (perfect()){
 		cout << "The homology was succesfully computed" << endl;
-	}
-	else
-	{
+	}else{
 		cout << "You stopped the computation" << endl;
 	}
 }
@@ -72,11 +59,11 @@ void DGVF::CellClustering()
 	{
 		/* block critical q-1 cells with !=2 critical cofaces */
 		set<int> blocked;
-		for (set<int>::iterator it = Cr.at(q - 1).begin(); it != Cr.at(q - 1).end(); ++it)
+		for (int it : Cr[q - 1])
 		{
-			if (coboundary_cr(*it).size() != 2)
+			if (coboundary_cr(it)->size() != 2)
 			{
-				blocked.insert(*it);
+				blocked.insert(it);
 				//cout << "blocked <- "<<*it <<"["<<K->dim(*it)<<"]"<<endl;
 			}
 		}
@@ -84,7 +71,7 @@ void DGVF::CellClustering()
 		do {
 			/* We look for a not final critical q-cube */
 			int gamma = -1; //cube final choisi
-			for (set<int>::iterator it = Cr.at(q).begin(); it != Cr.at(q).end() && gamma<0; ++it)
+			for (set<int>::iterator it = Cr[q].begin(); it != Cr[q].end() && gamma<0; ++it)
 			{
 				if (final.count(*it) == 0)
 				{
@@ -117,7 +104,7 @@ void DGVF::updateComplex()
 	dM.clear();
 	codM.clear();
 	cout << "update dim0..." << endl;
-	for (set<int>::iterator it = Cr.at(0).begin(); it != Cr.at(0).end(); ++it)//pour toutes les cells critiques de dim 0
+	for (set<int>::iterator it = Cr[0].begin(); it != Cr[0].end(); ++it)//pour toutes les cells critiques de dim 0
 	{
 		list<int> l; l.push_back(*it);//trivial
 		g[*it] = l;
@@ -125,7 +112,7 @@ void DGVF::updateComplex()
 	cout << "update autres dims..." << endl;
 	for (int q = 0; q <= 3; q++)   // for chaque dim (sauf 0?)
 	{
-		for (set<int>::iterator it = Cr.at(q).begin(); it != Cr.at(q).end(); ++it) //pour toutes les cells critiques de dim q
+		for (set<int>::iterator it = Cr[q].begin(); it != Cr[q].end(); ++it) //pour toutes les cells critiques de dim q
 		{
 			int c = *it;//cellule
 			set<int> dM_c;//bords de la cellule
@@ -177,32 +164,38 @@ bool DGVF::simpleCollapse()
 {
 	//menu de sélection des cofaces pour collapser
 	cout << "\nChoose free coface (0 to quit):" << endl;
-	int i = 1, c;
-	vector<pair<int, int> > free;
-	//afficher menu (calculs au milieu?)
-	for (int q = 0; q < 3; q++)
-	{
-		for (set<int>::iterator it = Cr.at(q).begin(); it != Cr.at(q).end(); ++it)
-		{
-			list<int> l = coboundary_cr(*it);
-			if (l.size() == 1)
-			{
-				cout << i << ") " << q << "_" << *it << " -> " << q + 1 << "_" << l.front() << endl;//afficher un couple ce cellules critiques à collapser
-				free.push_back(pair<int, int>(*it, l.front()));//structure pour ne pas le recalculer
-				i++;
-			}
-		}
+	int i = 1, c,q;
+	auto free = computeCollapses();
+	//afficher menu
+	for (cellBound cb : *free) {//afficher les couples de cellules critiques à collapser
+		q = K->dim(cb.first);
+		cout << i << ") " << q << "_" << cb.first << " -> " << q + 1 << "_" << cb.second << endl;
+		i++;
 	}
-	do
-	{//choisir
-		cin >> c;
-	} while (c >= i);
+	do{
+		cin >> c;//choisir
+	} while (c >= i || c < 0);
 	if (c == 0)//quitter si on boude
 		return false;
-	add2V(free.at(c - 1).first, free.at(c - 1).second);//calculer selon choix
+	add2V(free->at(c - 1).first, free->at(c - 1).second);//calculer selon choix
 	return true;
 }
 
+std::shared_ptr<std::vector<DGVF::cellBound>> DGVF::computeCollapses() {
+	shared_ptr<vector<cellBound>> free(new vector<cellBound>());
+	for (int q = 0; q < 3; q++)//toutes dimensions sauf 3
+	{
+		for (int it : Cr[q])//parcourir cellules critiques
+		{
+			auto l = coboundary_cr(it);
+			if (l->size() == 1)//si une unique coface : ??
+			{
+				free->push_back(cellBound(it, l->front()));//ajouter à la liste
+			}
+		}
+	}
+	return free;
+}
 
 bool DGVF::mergeComplex()
 {
@@ -215,10 +208,10 @@ bool DGVF::mergeComplex()
 	bool b = false;//vérifie si clusterisable
 	for (int q = 0; q < 3 && !b; q++)
 	{
-		for (set<int>::iterator it = Cr.at(q).begin(); it != Cr.at(q).end() && !b; ++it)
+		for (set<int>::iterator it = Cr[q].begin(); it != Cr[q].end() && !b; ++it)
 		{
-			list<int> l = coboundary_cr(*it);
-			if (l.size() == 2)
+			auto l = coboundary_cr(*it);
+			if (l->size() == 2)
 			{
 				b = true;
 			}
@@ -240,9 +233,9 @@ bool DGVF::mergeComplex()
 
 bool DGVF::perfect()
 {
-	for (int q = 0; q <= 3; q++)
+	for (int q = 0; q < DIM; q++)
 	{
-		for (set<int>::iterator it = Cr.at(q).begin(); it != Cr.at(q).end(); ++it)
+		for (set<int>::iterator it = Cr[q].begin(); it != Cr[q].end(); ++it)
 		{
 			set<int> s = dM[*it];
 			if (!s.empty())
@@ -263,14 +256,14 @@ void DGVF::writeD(string fileName)
 		return;
 	}
 
-	for (int q = 0; q <= 3; q++)
+	for (int q = 0; q < DIM; q++)
 	{
-		for (set<int>::iterator it = Cr.at(q).begin(); it != Cr.at(q).end(); ++it)
+		for (set<int>::iterator it = Cr[q].begin(); it != Cr[q].end(); ++it)
 		{
 			//cout << "d_" << q << "(" << *it << ") = ";
 			file << "\"" << q << "_" << *it << "\": ";
-			list<int> l = boundary_cr(*it);
-			for (list<int>::iterator it_l = l.begin(); it_l != l.end(); ++it_l)
+			auto l = boundary_cr(*it);
+			for (list<int>::iterator it_l = l->begin(); it_l != l->end(); ++it_l)
 			{
 				//cout << *it_l << " ";
 				file << "\"" << q - 1 << "_" << *it_l << "\" ";
@@ -283,16 +276,16 @@ void DGVF::writeD(string fileName)
 }
 
 
-list<int> DGVF::boundary_cr(int c)
+shared_ptr<DGVF::cellList> DGVF::boundary_cr(int c)
 {
-	list<int> b;
+	std::shared_ptr<cellList> b(new DGVF::cellList());
 	if (cubical)
 	{
 		list<int> l = K->boundary(c);
 		for (list<int>::iterator it = l.begin(); it != l.end(); ++it)
 		{
 			if (getV(*it) < 0)
-				b.push_back(*it);
+				b->push_back(*it);
 		}
 	}
 	else    // the Morse complex
@@ -304,7 +297,7 @@ list<int> DGVF::boundary_cr(int c)
 			for (set<int>::iterator it_s = s.begin(); it_s != s.end(); ++it_s)
 			{
 				if (getV(*it_s) < 0)
-					b.push_back(*it_s);
+					b->push_back(*it_s);
 			}
 		}
 	}
@@ -312,16 +305,16 @@ list<int> DGVF::boundary_cr(int c)
 }
 
 
-list<int> DGVF::coboundary_cr(int c)
+shared_ptr<DGVF::cellList> DGVF::coboundary_cr(int c)
 {
-	list<int> cob;
+	shared_ptr<cellList> cob(new DGVF::cellList());
 	if (cubical)
 	{
 		list<int> l = K->coboundary(c);
 		for (list<int>::iterator it = l.begin(); it != l.end(); ++it)
 		{
 			if (getV(*it) < 0)
-				cob.push_back(*it);
+				cob->push_back(*it);
 		}
 	}
 	else    // the Morse complex
@@ -333,7 +326,7 @@ list<int> DGVF::coboundary_cr(int c)
 			for (set<int>::iterator it_s = s.begin(); it_s != s.end(); ++it_s)
 			{
 				if (getV(*it_s) < 0)
-					cob.push_back(*it_s);
+					cob->push_back(*it_s);
 			}
 		}
 	}
@@ -346,8 +339,8 @@ void DGVF::add2V(int sigma, int tau)
 	int q = K->dim(sigma);
 	setV(sigma, tau);
 	setV(tau, sigma);
-	Cr.at(q).erase(sigma);
-	Cr.at(q + 1).erase(tau);
+	Cr[q].erase(sigma);
+	Cr[q + 1].erase(tau);
 	/* We update dM and codM */
 	//if(!cubical) {cout << "V <- " << sigma << ", " << tau << endl;}
 	//cout << "V <- " << sigma<<"["<<K->dim(sigma)<<"] - "<< tau<<"["<<K->dim(tau)<<"]"<<endl;
@@ -358,9 +351,9 @@ int DGVF::coface_spread(int c, set<int> * fi)
 {
 	int n = 0, cr;
 
-	list<int> l = coboundary_cr(c);
+	auto l = coboundary_cr(c);
 	//		cout << "coface_spread("<<c<<") - ";
-	for (list<int>::iterator it = l.begin(); it != l.end(); ++it)
+	for (list<int>::iterator it = l->begin(); it != l->end(); ++it)
 	{
 		//		cout << *it << " ";
 		if (fi->count(*it) == 0)
@@ -378,7 +371,6 @@ int DGVF::coface_spread(int c, set<int> * fi)
 void DGVF::spread(int gamma, set<int> * bl, set<int> * fi)
 {
 	queue<int> Q;
-	list<int> l;
 	//    if(!cubical) cout << "gamma = " << gamma <<"["<<K->dim(gamma)<<"]"<<endl;
 
 	list<int> g_gamma;
@@ -391,8 +383,8 @@ void DGVF::spread(int gamma, set<int> * bl, set<int> * fi)
 		g_gamma = g[gamma];
 	}
 
-	l = boundary_cr(gamma);
-	for (list<int>::iterator it = l.begin(); it != l.end(); ++it)
+	auto l = boundary_cr(gamma);
+	for (list<int>::iterator it = l->begin(); it != l->end(); ++it)
 		Q.push(*it);
 
 	while (!Q.empty())
@@ -426,13 +418,13 @@ void DGVF::spread(int gamma, set<int> * bl, set<int> * fi)
 				}
 				/* Push new cubes into the queue */
 				l = boundary_cr(sigma);
-				for (list<int>::iterator it = l.begin(); it != l.end(); ++it)
+				for (list<int>::iterator it = l->begin(); it != l->end(); ++it)
 				{
 					Q.push(*it);
 				}
 				l = boundary_cr(tau);
 				//                cout << "boundary " << tau << " "; printList(l); cout<<endl;
-				for (list<int>::iterator it = l.begin(); it != l.end(); ++it) // NOTHING IS GOING INTO Q
+				for (list<int>::iterator it = l->begin(); it != l->end(); ++it) // NOTHING IS GOING INTO Q
 				{
 					Q.push(*it);
 				}
@@ -508,7 +500,7 @@ void DGVF::writeObj(string fileName, double r, double s)
 	map<int, int> g_inv;//cellules secondaire vers cellule critique, donc définit le cluster
 	for (int q = 0; q <= 3; q++)   // for each dimension
 	{
-		for (set<int>::iterator it = Cr.at(q).begin(); it != Cr.at(q).end(); ++it)//pour chaque cell critique de dim q
+		for (set<int>::iterator it = Cr[q].begin(); it != Cr[q].end(); ++it)//pour chaque cell critique de dim q
 		{
 			map<int, list<int> >::iterator it_m = g.find(*it);//itérateur vers g
 			if (it_m != g.end())//si non vide
@@ -703,4 +695,47 @@ set<int> DGVF::subset(set<int> v, int n)
 		n /= 2;
 	}
 	return sub;
+}
+
+void DGVF::save(std::string name, int iteration, double r, double s) {
+	//todo : vérifier et créer dossier log
+	writeD("log/" + name + "_" + to_string(iteration) + "_d");
+	writeObj("log/" + name + "_" + to_string(iteration) + "_V.obj", r, s);
+}
+
+/******************   Pleins de fonctions redécoupées, car envisager multi-thread   **********************/
+/*paramètre le nombre de threads à utiliser. Déterminé par utilisateur. >0.*/
+void DGVF::setNbrThread(unsigned int nbr) {
+	nbrThread = nbr;
+}
+/*trier les cellules par dimension dans les tableaux des cellules critiques*/
+void DGVF::trierCellulesCritiques() {
+	if (nbrThread == true /*1*/) {//ne pas toucher tant que pas d'exlusion mutuelle des Cr[]
+		for (int c = 0; c < K->nbrCubes(); c++)//trier toutes les cellules par dimension
+		{
+			if (K->get(c))//there is a cube at position c
+				Cr[K->dim(c)].insert(c);
+		}
+	}
+	else {
+		//vector<int> vals(nbrThread);//bornes de travail des threads
+		vector<thread> threads;
+		int sup, inf = 0;
+		for (unsigned int i = 1; i <= nbrThread; i++) { //vals.size = nbrThread
+			//vals[i] = (i*K->nbrCubes()) / nbrThread;
+			sup= (i*K->nbrCubes()) / nbrThread;//calcul des bornes [min,max[
+			threads.push_back(thread([this](int min, int max) {
+				for (int c = min; c < max; c++)//trier toutes les cellules par dimension
+				{
+					if (K->get(c)) {//there is a cube at position c
+						Cr[K->dim(c)].insert(c);
+					}
+				}
+			}, inf, sup));
+			inf = sup;//on passe à la suite
+		}
+		for (unsigned int i = 0; i < threads.size(); i++) {
+			threads[i].join();
+		}
+	}
 }

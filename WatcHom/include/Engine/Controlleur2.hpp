@@ -4,6 +4,7 @@
 #include <memory>
 #include "GL\freeglut.h"
 #include "Engine\Modeleur.hpp"
+#include "Engine\DGVF.hpp"
 #include "Data\Object\Vertex.hpp"
 #include "Data\MiscData.hpp"
 
@@ -28,12 +29,18 @@ public:
 
 	//setCouleurs f(dimension)
 	void setCouleur(Dim dim, GLfloat rouge, GLfloat vert, GLfloat bleu, GLfloat alpha=255);
+	//set tailles et espaces des cubes
+	void setDistances(float rayon, float longueur, float separation);
 	//accès aux id des lists de calcul des polygones
 	std::vector<GLuint>* getFormes(Dim dim);
 
 	//***************************fonctions de chargement***************************
 	//charge un obj et le sauvegarde ds objAffiche pour l'afficher
 	void loadObj(std::string path);
+	/*charge un pgm et commence le traitement dans DGVF, puis affiche une vue rapide.
+	 *init aussi le panneau des clusters
+	 */
+	void Controlleur2::loadPgm(std::string path);
 
 	//calcule les valeurs du centre selon la taille du cube délimité par les paramètres
 	void Controlleur2::computeCenter(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
@@ -48,7 +55,8 @@ public:
 	static Dim int2Dim(int d);
 private:
 	Controlleur2();
-	std::shared_ptr<Modeleur> modeleur;
+	std::shared_ptr<Modeleur> modeleur;//ne pas remplacer par Modeleur::Ptr car inclusion croisée, tout ça...
+	DGVF::Ptr dgvf;
 
 	bool afficher = false;
 	obj::Vertex center;			//le centre du repère d'affichage

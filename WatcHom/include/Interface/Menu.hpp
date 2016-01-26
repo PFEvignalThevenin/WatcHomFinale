@@ -9,8 +9,7 @@ class Menu : public sfg::Bin
 public:
 	typedef std::shared_ptr<Menu> Ptr;
 
-	Menu();
-	~Menu();
+	~Menu() = default;
 	void bound(std::shared_ptr<Widget> w1, std::shared_ptr<Widget> w2);
 	const std::string& GetName() const override;
 	/** Create box.
@@ -23,8 +22,10 @@ public:
 	*/
 	sfg::Button::Ptr getButton(std::string const &label);
 private:
+	Menu();
 	std::shared_ptr<sfg::Table> table;
 	sf::Vector2f CalculateRequisition() override;
+	void HandleSizeChange()override;
 	std::map<std::string, sfg::Button::Ptr> boutons;
 
 	void addButton2MenuList(sfg::Box::Ptr, sfg::Button::Ptr);

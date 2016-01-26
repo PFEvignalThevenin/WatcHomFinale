@@ -14,6 +14,7 @@ WindowOpenGL::WindowOpenGL()
 	win_menu = initMenuWindow();
 	win_optAff = initOptionAffichageWindow();
 	win_optAff->Show(false);
+	win_clusterList = initClusterListWindow();
 	//link du bouton "Parametres>Affichages" avec l'apparition de cette fenêtre
 	gbl_menu->getButton("Affichage")->GetSignal(sfg::Button::OnMouseLeftPress).Connect(
 		std::bind([=]() {
@@ -35,6 +36,7 @@ void WindowOpenGL::run() {
 	sfg::Desktop desktop;
 	desktop.Add(win_menu);
 	desktop.Add(win_optAff);
+	desktop.Add(win_clusterList);
 	//SFML
 	RenderWindow app(*video, "WatcHom");
 	app.setVerticalSyncEnabled(true);	//se synchroniser sur le rafraichissement de la carte
@@ -74,16 +76,22 @@ sfg::Window::Ptr WindowOpenGL::initMenuWindow() {
 	auto window = sfg::Window::Create(0);
 	gbl_menu = Menu::Create();
 	window->Add(gbl_menu);
-	window->SetAllocation(FloatRect(0, 0, 50, 20));
-	//linker boutton quitter
+	//window->SetAllocation(FloatRect(0, 0, 50, 20));
+	//linker bouton quitter
 	gbl_menu->getButton("Quitter")->GetSignal(sfg::Window::OnMouseLeftPress).Connect(
 		std::bind([=]() {
 			quitter = true;
 	}));
-	//linker boutton charger
+	//linker bouton charger
 	gbl_menu->getButton("Ouvrir Obj")->GetSignal(sfg::Window::OnMouseLeftPress).Connect(
 		std::bind([=]() {
 		Controlleur2::get()->loadObj("fertility100_11_V.obj");
+	}));
+	//linker bouton pgm
+	gbl_menu->getButton("Importer Pgm")->GetSignal(sfg::Window::OnMouseLeftPress).Connect(
+		std::bind([=]() {
+		cout << "machin" << endl;
+		Controlleur2::get()->loadPgm("fertility3.pgm");
 	}));
 	return window;
 }
@@ -99,6 +107,13 @@ sfg::Window::Ptr WindowOpenGL::initOptionAffichageWindow() {
 		}
 	));
 	return windowOA;
+}
+sfg::Window::Ptr WindowOpenGL::initClusterListWindow() {
+	auto window = sfg::Window::Create(0);
+	gbl_clusterList = ClusterList::Create();
+	window->Add(gbl_clusterList);
+	window->SetAllocation(FloatRect(200, 100, 50, 20));
+	return window;
 }
 //******************************
 //fonctions de gestion diverses

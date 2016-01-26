@@ -124,6 +124,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Buttons.cpp" />
     <ClCompile Include="include\Data\Object\Object.cpp" />
     <ClCompile Include="src\Data\MiscData.cpp" />
     <ClCompile Include="src\Data\Obj.cpp" />
@@ -138,6 +139,7 @@
     <ClCompile Include="src\Engine\DGVF.cpp" />
     <ClCompile Include="src\Engine\Modeleur.cpp" />
     <ClCompile Include="src\Engine\trackball.cpp" />
+    <ClCompile Include="src\Interface\ClusterList.cpp" />
     <ClCompile Include="src\Interface\WindowOpenGL.cpp" />
     <ClCompile Include="src\Delay.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -161,6 +163,7 @@
     <ClInclude Include="include\Engine\DGVF.hpp" />
     <ClInclude Include="include\Engine\Modeleur.hpp" />
     <ClInclude Include="include\Engine\trackball.h" />
+    <ClInclude Include="include\Interface\ClusterList.hpp" />
     <ClInclude Include="include\Interface\Menu.hpp" />
     <ClInclude Include="include\Interface\ParamAffichageDim.hpp" />
     <ClInclude Include="include\Interface\WindowOpenGL.hpp" />

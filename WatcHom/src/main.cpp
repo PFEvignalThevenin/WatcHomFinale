@@ -105,6 +105,7 @@ void writeComplex(ComplexeCubique &cbc, string fileName, double r, double s)
 
 	cout << "The obj file has been created in " << double(clock() - begin) / CLOCKS_PER_SEC << " secs." << endl;
 }
+
 int main()
 {
 	int choix = 0;
@@ -119,16 +120,15 @@ int main()
 			cout << "lecture pgm en " << double(clock() - begin) / CLOCKS_PER_SEC << endl;
 			//conversion pgm vers complexe
 			begin = clock();
-			shared_ptr<ComplexeCubique> cc = Conversion::PGM3D2ComplexeCubique(pgm);
-			cout << "conversion pgm>C en " << double(clock() - begin) / CLOCKS_PER_SEC << endl; 
+			ComplexeCubique::Ptr cc = Conversion::PGM3D2ComplexeCubique(pgm);
+			cout << "conversion pgm>C en " << double(clock() - begin) / CLOCKS_PER_SEC << endl;
 			//printCC(pgm);
 			//printDimCC(*cc.get());
 			//writeComplex(*cc,"log/machin_K.obj", 0.1, 0.05);
 			//cin >> x;
 			//calcul DGVF
 			begin = clock();
-			DGVF dg(cc.get());
-
+			DGVF dg(cc);
 			cout << "Construction DGVF en " << double(clock() - begin) / CLOCKS_PER_SEC << endl;
 			//calcul homologie
 			begin = clock(); 

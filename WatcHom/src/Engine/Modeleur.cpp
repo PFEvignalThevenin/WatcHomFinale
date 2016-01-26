@@ -1,13 +1,28 @@
 #include "Engine\Modeleur.hpp"
 #include <algorithm>
-using namespace std;
 #include <iostream>
+using namespace std;
 using namespace obj;
+
 Modeleur::Modeleur(std::shared_ptr<Controlleur2> ctrl)
 {
 	this->ctrl = ctrl;
+	setDistances(1, 2, 1);
 }
 //****************************************Gestion dessin ************************************************
+void Modeleur::drawPgm(PGM3D &pgm) {
+	coord co;
+	Vertex ve;
+	for (int i = 0; i < pgm.nbrCubes(); i++) {
+		if (pgm.isOccupied(i)) {
+			co = pgm.pos2coord(i);
+			ve.x = co.x*dist;
+			ve.y = co.y*dist;
+			ve.z = co.z*dist;
+			drawCube0(ve);
+		}
+	}
+}
 void Modeleur::drawCube0(obj::Vertex center) {
 	glBegin(GL_QUAD_STRIP);
 	glVertex3f(center.x + rayon, center.y - rayon, center.z + rayon);//les côtés
@@ -26,10 +41,10 @@ void Modeleur::drawCube0(obj::Vertex center) {
 	glVertex3f(center.x + rayon, center.y + rayon, center.z + rayon);
 	glVertex3f(center.x - rayon, center.y + rayon, center.z + rayon);
 	glVertex3f(center.x - rayon, center.y - rayon, center.z + rayon);
-	glVertex3f(center.x + rayon, center.y - rayon, center.z - rayon);//le dessous
-	glVertex3f(center.x + rayon, center.y + rayon, center.z - rayon);
+	glVertex3f(center.x - rayon, center.y - rayon, center.z - rayon);//le dessous
 	glVertex3f(center.x - rayon, center.y + rayon, center.z - rayon);
-	glVertex3f(center.x - rayon, center.y - rayon, center.z - rayon);
+	glVertex3f(center.x + rayon, center.y + rayon, center.z - rayon);
+	glVertex3f(center.x + rayon, center.y - rayon, center.z - rayon);
 	glEnd();
 }
 void Modeleur::drawCube1(std::vector<obj::Vertex> line) {
@@ -53,6 +68,9 @@ void Modeleur::drawFace(const obj::face &fa) {
 //****************************************Gestion Obj2 ************************************************
 void Modeleur::setObj(obj::Obj2::Ptr obj) {
 	objAffiche = obj;
+}
+void Modeleur::setPgm(PGM3D::Ptr pgm) {
+	pgmTraite = pgm;
 }
 void Modeleur::initiateObjs() {
 	ctrl->resetLists();
@@ -80,6 +98,20 @@ void Modeleur::initiateObjs() {
 	}
 	computeCenter();
 }
+void Modeleur::initiatePgm() {
+	ctrl->resetLists();
+	std::vector<GLuint> *listObj = ctrl->getFormes(Dim::d0);
+	cout << "construction PGM..." << endl;
+	glNewList(1, GL_COMPILE);	//créer nouvelle liste
+	listObj->push_back(1);		//conserver identificateur
+	drawPgm(*pgmTraite);
+	glEndList();
+	cout << "construction PGM Done" << endl;
+	ctrl->computeCenter(
+		0, pgmTraite->getSize(Axe::x)*dist,
+		0, pgmTraite->getSize(Axe::y)*dist,
+		0, pgmTraite->getSize(Axe::z)*dist);
+}
 //****************************************Gestion centre ************************************************
 void Modeleur::computeCenter() {
 	Vertex v = objAffiche->getVertex(1);;
@@ -96,4 +128,11 @@ void Modeleur::computeCenter() {
 		zmax = std::max(zmax, v.z);
 	}
 	ctrl->computeCenter(xmin, xmax, ymin, ymax, zmin, zmax);
+}
+
+void Modeleur::setDistances(float rayon, float longueur, float separation) {
+	this->rayon = rayon;
+	this->longueur = longueur;
+	this->separation = separation;
+	dist = 2 * rayon + 2 * separation + longueur;
 }

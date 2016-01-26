@@ -14,6 +14,9 @@ public:
 	~OptionAffichage();
 	static std::shared_ptr<OptionAffichage> Create();
 	const std::string& GetName() const;
+	float getRayon();
+	float getLongueur();
+	float getSeparation();
 private:
 	void HandleSizeChange() override;
 	std::map<std::string, sfg::SpinButton::Ptr> espaces;

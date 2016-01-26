@@ -1,13 +1,11 @@
-﻿La génération a démarré 24/01/2016 23:40:50.
+﻿La génération a démarré 26/01/2016 20:21:10.
      1>Projet "C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\WatcHomFinale\WatcHom\Tuto_SFML.vcxproj" sur le nœud 2 (Build cible(s)).
      1>ClCompile:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I"C:\LibC\assimp-3.2\include" /I"C:\LibC\freeglut-3.0.0\include" /I"C:\LibC\SFML-2.3.2\include" /I"C:\LibC\SFGUI-0.3.0\include" /I.\include /I"C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Tuto_SFML\include" /I"C:\LibC\SFML-2.3.2\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt src\Data\StructureCubique.cpp src\Engine\DGVF.cpp src\main.cpp
-         main.cpp
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\CL.exe /c /I"C:\LibC\assimp-3.2\include" /I"C:\LibC\freeglut-3.0.0\include" /I"C:\LibC\SFML-2.3.2\include" /I"C:\LibC\SFGUI-0.3.0\include" /I.\include /I"C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\Tuto_SFML\Tuto_SFML\include" /I"C:\LibC\SFML-2.3.2\include" /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Zc:inline /Fo"Debug\\" /Fd"Debug\vc140.pdb" /Gd /TP /analyze- /errorReport:prompt src\Engine\DGVF.cpp
          DGVF.cpp
-         StructureCubique.cpp
-         Génération de code en cours...
        Link:
-         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\WatcHomFinale\Debug\Tuto_SFML.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\LibC\assimp-3.2\Build\code" /LIBPATH:"C:\LibC\freeglut-3.0.0\Build\lib" /LIBPATH:"C:\LibC\SFGUI-0.3.0\Build\lib" /LIBPATH:"C:\LibC\SFML-2.3.2\lib" "sfml-graphics-d.lib" "sfml-window-d.lib" "sfml-system-d.lib" "Debug\sfgui-d.lib" Debug\freeglutd.lib "Debug\assimp-vc130-mtd.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\WatcHomFinale\Debug\Tuto_SFML.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\WatcHomFinale\Debug\Tuto_SFML.lib" /MACHINE:X86 Debug\Object.obj
+         C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\WatcHomFinale\Debug\Tuto_SFML.exe" /INCREMENTAL /NOLOGO /LIBPATH:"C:\LibC\assimp-3.2\Build\code" /LIBPATH:"C:\LibC\freeglut-3.0.0\Build\lib" /LIBPATH:"C:\LibC\SFGUI-0.3.0\Build\lib" /LIBPATH:"C:\LibC\SFML-2.3.2\lib" "sfml-graphics-d.lib" "sfml-window-d.lib" "sfml-system-d.lib" "Debug\sfgui-d.lib" Debug\freeglutd.lib "Debug\assimp-vc130-mtd.lib" kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /Debug /PDB:"C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\WatcHomFinale\Debug\Tuto_SFML.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\WatcHomFinale\Debug\Tuto_SFML.lib" /MACHINE:X86 Debug\Buttons.obj
+         Debug\Object.obj
          Debug\MiscData.obj
          Debug\Obj.obj
          Debug\Obj2.obj
@@ -21,6 +19,7 @@
          Debug\DGVF.obj
          Debug\Modeleur.obj
          Debug\trackball.obj
+         Debug\ClusterList.obj
          Debug\WindowOpenGL.obj
          Debug\Delay.obj
          Debug\main.obj
@@ -28,10 +27,9 @@
          Debug\ParamAffichageDim.obj
          Debug\OptionAffichage.obj
          Debug\PGM3D.obj
-     1>Debug\StructureCubique.obj : warning LNK4042: objet spÚcifiÚ plus d'une foisá; dÚfinitions supplÚmentaires ignorÚes
          Tuto_SFML.vcxproj -> C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\WatcHomFinale\Debug\Tuto_SFML.exe
      1>Génération du projet "C:\Users\Ehlion\Documents\Visual Studio 2015\Projects\WatcHomFinale\WatcHom\Tuto_SFML.vcxproj" terminée (Build cible(s)).
 
 La génération a réussi.
 
-Temps écoulé 00:00:05.86
+Temps écoulé 00:00:02.13
