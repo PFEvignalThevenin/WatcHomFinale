@@ -92,6 +92,7 @@ sfg::Window::Ptr WindowOpenGL::initMenuWindow() {
 		std::bind([=]() {
 		cout << "machin" << endl;
 		Controlleur2::get()->loadPgm("fertility3.pgm");
+		gbl_clusterList->refresh();
 	}));
 	return window;
 }
@@ -109,7 +110,7 @@ sfg::Window::Ptr WindowOpenGL::initOptionAffichageWindow() {
 	return windowOA;
 }
 sfg::Window::Ptr WindowOpenGL::initClusterListWindow() {
-	auto window = sfg::Window::Create(0);
+	auto window = sfg::Window::Create();
 	gbl_clusterList = ClusterList::Create();
 	window->Add(gbl_clusterList);
 	window->SetAllocation(FloatRect(200, 100, 50, 20));

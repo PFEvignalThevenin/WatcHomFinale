@@ -48,6 +48,7 @@ public:
 	bool isClusterisable();
 	std::shared_ptr<std::vector<DGVF::cellBound>> getCollapses();
 	void collapse(int c1, int c2);
+	int getDim(int pos);
 
 
 	//calcule les valeurs du centre selon la taille du cube délimité par les paramètres

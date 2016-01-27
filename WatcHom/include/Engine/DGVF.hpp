@@ -38,7 +38,9 @@ public:
 	//ajouter une flèche ds V, met à jour dM, codmM,...
 	void add2V(int sigma, int tau);
 	//une map qui a chaque cellule, associe la cellule critique qui définit le cluster, triés dans un tableau par dimension
-	std::map<int, int>* DGVF::getGinv();
+	std::shared_ptr<std::vector<std::map<int, int>>> getGinv();
+
+	int getDim(int pos);
 
 	/*paramètre le nombre de threads à utiliser. Déterminé par utilisateur. >0.*/
 	void setNbrThread(unsigned int nbr);

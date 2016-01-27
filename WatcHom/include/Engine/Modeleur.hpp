@@ -4,7 +4,9 @@
 #include "Engine\Controlleur2.hpp"
 #include "Data\Obj2.hpp"
 #include "Data\PGM3D.hpp"
+#include "Data\ComplexeCubique.hpp"
 #include "GL\freeglut.h"
+#include <map>
 
 class Controlleur2;//inclusion croisée
 /*Classe de dessin openGL
@@ -32,7 +34,9 @@ public:
 	//initialise les listes de Controlleur2 selon l'objet à afficher
 	void initiateObjs();
 	void initiatePgm();
-	void initiateComplexeCubique(std::map<int, int> g_inv[DIM]);
+	void initiateComplexeCubique(std::shared_ptr<std::vector<std::map<int, int>>> g_inv);
+
+	obj::Vertex coord2Vert(obj::coord co);
 private:
 	/*les valeurs de parametrage de l'affichage 
 	 * dist(voisins dim0) = 2*rayon + 2*separation + longueur = dist

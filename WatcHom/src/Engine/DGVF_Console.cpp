@@ -663,12 +663,12 @@ void DGVF_Console::addFace(vector<int> p, int dir, int axis,
 	vector< vector<int> > * faces, map<int, list<int> > * facesG)
 {
 	vector<int> next = p; next[axis] += dir;
-
+	//on ne doit pas avoir un voisin
 	if (next[axis] < 0 || next[axis] >= 2 * K->getSize(int2Axe(axis)) - 1 || M->count(next) == 0)
 	{
 		vector< vector<int> > a(4);
 		vector<int> v = p;
-		if (dir>0)
+		if (dir>0)// Calcul de 4 sommets de la face. pour changer selon dim?
 		{
 			v[axis]++;			a[0] = v;
 			v[(axis + 1) % 3]++;	a[1] = v;
@@ -686,11 +686,11 @@ void DGVF_Console::addFace(vector<int> p, int dir, int axis,
 		vector<int> face(4);
 		for (int i = 0; i < 4; i++)
 		{
-			map<vector<int>, int>::iterator it = index->find(a[i]);
+			map<vector<int>, int>::iterator it = index->find(a[i]);//chercher sommet
 			if (it == index->end())	// if the vertex is found for the first time
 			{
 				vector<double> a2(3);
-				for (int j = 0; j < 3; j++)
+				for (int j = 0; j < 3; j++)//le creer
 				{
 					if (a[i][j] % 4 == 0)
 						a2[j] = a[i][j] / 4 - r + s;
@@ -701,29 +701,27 @@ void DGVF_Console::addFace(vector<int> p, int dir, int axis,
 					else if (a[i][j] % 4 == 3)
 						a2[j] = a[i][j] / 4 + 1 - r - s;
 				}
-				vertices->push_back(a2);
-				//				cout << "vertices <- ["<<a2[0]<<","<<a2[1]<<","<<a2[2]<<"]"<<endl;
-				index->insert(pair<vector<int>, int>(a[i], vertices->size()));
-				face[i] = vertices->size();
+				vertices->push_back(a2);//l'ajouter
+				index->insert(pair<vector<int>, int>(a[i], vertices->size()));//avec map pour rapidité
+				face[i] = vertices->size();//index du sommet
 			}
-			else
+			else//sinon utiliser celui trouvé
 			{
 				face[i] = it->second;
 			}
 		}
 		/* We add the new face */
 		faces->push_back(face);
-		map<int, list<int> >::iterator it = facesG->find(M->at(p));
-		if (it == facesG->end())
+		map<int, list<int> >::iterator it = facesG->find(M->at(p));//chercher cluster
+		if (it == facesG->end())//si pas encore définit
 		{
 			list<int> l;
 			l.push_back(faces->size() - 1);
-			facesG->insert(pair<int, list<int> >(M->at(p), l));
+			facesG->insert(pair<int, list<int> >(M->at(p), l));//ajouter
 		}
 		else
 		{
 			it->second.push_back(faces->size() - 1);
 		}
 	}
-	//cout << "nextVoxel(voxel=" << voxel << ", dir=" << dir << ", axis=" << axis << ") computed" << endl;
 }

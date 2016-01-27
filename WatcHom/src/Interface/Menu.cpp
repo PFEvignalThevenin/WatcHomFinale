@@ -57,7 +57,7 @@ const std::string& Menu::GetName() const {
 }
 std::shared_ptr<Menu> Menu::Create() {
 	Ptr ret(new  Menu);
-	ret->HandleAdd(ret->table);
+	ret->Add(ret->table);
 	return ret;
 }
 sf::Vector2f Menu::CalculateRequisition() {
@@ -69,8 +69,8 @@ void Menu::HandleSizeChange() {
 		return;
 	}
 	sf::FloatRect allocation(GetAllocation());
-	//allocation.left = 0;
-	//allocation.top = 0;
+	allocation.left = 0;
+	allocation.top = 0;
 	child->SetAllocation(allocation);
 }
 

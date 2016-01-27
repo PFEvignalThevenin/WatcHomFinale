@@ -115,11 +115,33 @@ void Modeleur::initiatePgm() {
 		0, pgmTraite->getSize(Axe::y)*dist,
 		0, pgmTraite->getSize(Axe::z)*dist);
 }
-void Modeleur::initiateComplexeCubique(map<int,int> g_inv[DIM]) {
+void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, int>>> g_inv) {
 	ctrl->resetLists();
-	//TODO
 	//traiter les clusters par dimension
-	cout << "TODO : faire l'affichage des clusters dans Modeleur::initiateComplexeCubique" << endl;
+	cout << "TODO : \tfaire l'affichage des clusters dans Modeleur::initiateComplexeCubique" << endl;
+	cout << "\tfait :  Dim0" << endl;
+	cout << "\ta faire :  Dim 1,2,3" << endl;
+	int cptr = 1;//compte toutes les listes. Il ne doit pas y avoir de doublons
+	std::vector<GLuint> *listObj;//variable des indices de liste d'une dimension
+	//dim0
+	listObj = ctrl->getFormes(Dim::d0);//liste de dim0
+	for (DGVF::cellBound bind : g_inv->at(0)) {
+		glNewList(cptr, GL_COMPILE);	//créer nouvelle liste
+		listObj->push_back(cptr);		//conserver identificateur
+		drawCube0(coord2Vert(ccTraite->pos2coord(bind.first)));//dessin
+		glEndList();//fin definition liste
+		cptr++;
+	}
+	//dim1
+
+	//dim2
+
+	//dim3
+
+	ctrl->computeCenter(
+		0, ccTraite->getSize(Axe::x)*dist,
+		0, ccTraite->getSize(Axe::y)*dist,
+		0, ccTraite->getSize(Axe::z)*dist);
 }
 //****************************************Gestion centre ************************************************
 void Modeleur::computeCenter() {
@@ -144,4 +166,11 @@ void Modeleur::setDistances(float rayon, float longueur, float separation) {
 	this->longueur = longueur;
 	this->separation = separation;
 	dist = 2 * rayon + 2 * separation + longueur;
+}
+Vertex Modeleur::coord2Vert(coord co) {
+	Vertex v;
+	v.x = co.x*dist;
+	v.y = co.y*dist;
+	v.z = co.z * dist;
+	return v;
 }

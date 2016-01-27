@@ -108,7 +108,6 @@ void Controlleur2::loadPgm(std::string path) {
 		pgm->load(path);
 		ComplexeCubique::Ptr cc = Conversion::PGM3D2ComplexeCubique(*pgm);
 		dgvf = DGVF::Ptr(new DGVF(cc));
-		dgvf->CellClustering();//initialisation du cluster
 		modeleur->setPgm(pgm);
 		modeleur->initiatePgm();
 		modeleur->setComplexeCubique(cc);
@@ -136,8 +135,12 @@ std::shared_ptr<std::vector<DGVF::cellBound>> Controlleur2::getCollapses() {
 	return dgvf->computeCollapses();
 }
 void Controlleur2::collapse(int c1, int c2) {
+	cout << "cell collapse" << c1<<" "<<c2<<endl;
 	dgvf->add2V(c1, c2);
 	modeleur->initiateComplexeCubique(dgvf->getGinv());
+}
+int Controlleur2::getDim(int pos) {
+	return dgvf->getDim(pos);
 }
 
 //**********************************************Gestion listes ************************************************

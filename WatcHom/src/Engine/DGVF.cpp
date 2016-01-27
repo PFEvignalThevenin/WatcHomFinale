@@ -55,6 +55,7 @@ void DGVF::homology(string name, double r, double s)
 
 void DGVF::CellClustering()
 {
+	cout << "cell clustering" << endl;
 	set<int> final;
 	bool idem;
 	for (int q = 3; q >= 1; q--)// from dimension 3 to 1
@@ -101,14 +102,13 @@ void DGVF::updateComplex()
 	cubical = false; // the complex is not cubical anymore
 	dM.clear();
 	codM.clear();
-	cout << "update dim0..." << endl;
+	cout << "update Complexe..." << endl;
 	for (set<int>::iterator it = Cr[0].begin(); it != Cr[0].end(); ++it)//pour toutes les cells critiques de dim 0
 	{
 		list<int> l;
 		l.push_back(*it);//elle est sa seule paire
 		g[*it] = l;
 	}
-	cout << "update autres dims..." << endl;
 	for (int q = 0; q <= 3; q++)   // for chaque dim (sauf 0?)
 	{
 		for (set<int>::iterator it = Cr[q].begin(); it != Cr[q].end(); ++it) //pour toutes les cells critiques de dim q
@@ -455,12 +455,13 @@ int DGVF::choix(std::string message, int max) {
 	return ans;
 }
 
-map<int, int>* DGVF::getGinv() {
+std::shared_ptr<std::vector<map<int, int>>> DGVF::getGinv() {
 	/* Compute g_inv */
 	/*On parcours tous les clusters et on cherche auquel appartient la cellule */
 	//g : cluster
 	//g_inv : map qui associe à une cellule un numéro de cluster (numéro de la cellule critique qui le définit après calcul)
-	map<int, int> g_inv[DIM];//cellules secondaire vers cellule critique, donc définit le cluster
+	//	le numéro du cluster est celui d'ne cellule de même dimension. Dim0 : 1!cellule
+	vector<map<int, int>> g_inv(DIM);//cellules secondaire vers cellule critique, donc définit le cluster
 	for (int q = 0; q < DIM; q++)   // for each dimension
 	{
 		for (int it : Cr[q])//pour chaque cellule critique de dim q
@@ -478,7 +479,11 @@ map<int, int>* DGVF::getGinv() {
 			}
 		}
 	}
-	return g_inv;
+	return make_shared<vector<map<int, int>>>(g_inv);
+}
+
+int DGVF::getDim(int pos) {
+	return K->dim(pos);
 }
 
 ComplexeCubique::Ptr DGVF::getComplexe() {

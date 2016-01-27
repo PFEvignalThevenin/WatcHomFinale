@@ -14,11 +14,17 @@ public:
 	~ClusterList() = default;
 	const std::string& GetName() const override;
 
-	void setClusters(std::shared_ptr<std::vector<DGVF::cellBound>> clust);
-	void ButtonSelect();//when selecting a radioButton
+	void refresh();
+	void ButtonCollapse();//with selecting a radioButton
+	void ButtonMerge();//enabled only if collabsable is true
 private:
 	ClusterList();
 	std::shared_ptr<std::vector<DGVF::cellBound>> clusters;
+	std::vector<sfg::RadioButton::Ptr> radios;
+	sfg::Button::Ptr b_merge, b_collapse;
+	sfg::Label::Ptr lab_tete;
+	sfg::Box::Ptr hb_collapseList;
+
 };
 
 #endif
