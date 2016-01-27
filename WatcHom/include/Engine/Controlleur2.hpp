@@ -42,6 +42,14 @@ public:
 	 */
 	void Controlleur2::loadPgm(std::string path);
 
+	//***************************fonctions DGVF***************************
+	void cellClustering();
+	bool isPerfect();
+	bool isClusterisable();
+	std::shared_ptr<std::vector<DGVF::cellBound>> getCollapses();
+	void collapse(int c1, int c2);
+
+
 	//calcule les valeurs du centre selon la taille du cube délimité par les paramètres
 	void Controlleur2::computeCenter(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
 	

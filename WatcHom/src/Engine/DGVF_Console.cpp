@@ -539,23 +539,23 @@ void DGVF_Console::writeObj(string fileName, double r, double s)
 		throw DataError("Error in fileName: wrong parameters. Choose 0 < s < r < 1 s= " + to_string(s) + " ed r = " + to_string(r));
 	}
 	/* Compute g_inv */
-	/*On parcours tous les clusters et on vérifie auquel la cellule appartient*/
+	/*On parcours tous les clusters et on cherche auquel appartient la cellule */
 	//g : cluster
 	//g_inv : map qui associe à une cellule un numéro de cluster (numéro de la cellule critique qui le définit après calcul)
 	map<int, int> g_inv;//cellules secondaire vers cellule critique, donc définit le cluster
-	for (int q = 0; q <= 3; q++)   // for each dimension
+	for (int q = 0; q < DIM; q++)   // for each dimension
 	{
-		for (set<int>::iterator it = Cr[q].begin(); it != Cr[q].end(); ++it)//pour chaque cell critique de dim q
+		for (int it : Cr[q])//pour chaque cellule critique de dim q
 		{
-			map<int, list<int> >::iterator it_m = g.find(*it);//itérateur vers g
-			if (it_m != g.end())//si non vide
+			map<int, list<int> >::iterator it_m = g.find(it);//itérateur vers g
+			if (it_m != g.end())//si non vide : cad si la Cr est ds g : cad définit un cluster->liste
 			{
-				for (list<int>::iterator it_l = it_m->second.begin(); it_l != it_m->second.end(); ++it_l)//mettre à jour g_inv
+				for (int it_l : it_m->second)//mettre à jour g_inv : associer le num du cluster pour à cellule de ce cluster
 				{
-					if (g_inv.count(*it_l) > 0) {//débogage
-						throw DataError("Error: " + to_string(*it_l) + " has two inverses by g");
+					if (g_inv.count(it_l) > 0) {//débogage
+						throw DataError("Error: " + to_string(it_l) + " has two inverses by g");
 					}
-					g_inv[*it_l] = *it;
+					g_inv[it_l] = it;
 				}
 			}
 		}

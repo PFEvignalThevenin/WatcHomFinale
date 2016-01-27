@@ -72,6 +72,9 @@ void Modeleur::setObj(obj::Obj2::Ptr obj) {
 void Modeleur::setPgm(PGM3D::Ptr pgm) {
 	pgmTraite = pgm;
 }
+void Modeleur::setComplexeCubique(ComplexeCubique::Ptr cc) {
+	ccTraite = cc;
+}
 void Modeleur::initiateObjs() {
 	ctrl->resetLists();
 	Object obj;
@@ -111,6 +114,12 @@ void Modeleur::initiatePgm() {
 		0, pgmTraite->getSize(Axe::x)*dist,
 		0, pgmTraite->getSize(Axe::y)*dist,
 		0, pgmTraite->getSize(Axe::z)*dist);
+}
+void Modeleur::initiateComplexeCubique(map<int,int> g_inv[DIM]) {
+	ctrl->resetLists();
+	//TODO
+	//traiter les clusters par dimension
+	cout << "TODO : faire l'affichage des clusters dans Modeleur::initiateComplexeCubique" << endl;
 }
 //****************************************Gestion centre ************************************************
 void Modeleur::computeCenter() {

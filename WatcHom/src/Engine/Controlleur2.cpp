@@ -101,16 +101,17 @@ void Controlleur2::loadObj(std::string path) {
 		std::cout << e.what();
 	}
 }
-/*charge un pgm et commence le traitement dans DGVF, puis affiche une vue rapide.
- *init aussi le panneau des clusters
- */
+//**********************************************Chargement PGM************************************************
 void Controlleur2::loadPgm(std::string path) {
 	try {
 		PGM3D::Ptr pgm = PGM3D::Ptr(new PGM3D());
 		pgm->load(path);
-		dgvf = DGVF::Ptr(new DGVF(Conversion::PGM3D2ComplexeCubique(*pgm)));
+		ComplexeCubique::Ptr cc = Conversion::PGM3D2ComplexeCubique(*pgm);
+		dgvf = DGVF::Ptr(new DGVF(cc));
+		dgvf->CellClustering();//initialisation du cluster
 		modeleur->setPgm(pgm);
 		modeleur->initiatePgm();
+		modeleur->setComplexeCubique(cc);
 		afficher = true;
 	}
 	catch (FileError fe) {
@@ -120,7 +121,26 @@ void Controlleur2::loadPgm(std::string path) {
 		std::cout << e.what();
 	}
 }
-//****************************************Gestion listes ************************************************
+//***********************************************fonctions DGVF***********************************************
+void Controlleur2::cellClustering() {
+	dgvf->CellClustering();
+	modeleur->initiateComplexeCubique(dgvf->getGinv());
+}
+bool Controlleur2::isPerfect() {
+	return dgvf->perfect();
+}
+bool Controlleur2::isClusterisable() {
+	return dgvf->clusterisable();
+}
+std::shared_ptr<std::vector<DGVF::cellBound>> Controlleur2::getCollapses() {
+	return dgvf->computeCollapses();
+}
+void Controlleur2::collapse(int c1, int c2) {
+	dgvf->add2V(c1, c2);
+	modeleur->initiateComplexeCubique(dgvf->getGinv());
+}
+
+//**********************************************Gestion listes ************************************************
 void Controlleur2::resetLists() {
 	for (int i = 0; i < DIM; i++) {//pour chaque dimension
 		for (size_t j = 0; j < listObj[i].size(); j++) {

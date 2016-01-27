@@ -380,15 +380,6 @@ void DGVF::setV(int c, int vc)
 	V[c] = vc;
 }
 
-
-void DGVF::printList(list<int> l)
-{
-	for (int it : l)
-	{
-		cout << it << " ";
-	}cout << endl;
-}
-
 /******************   Pleins de fonctions redécoupées, car envisager multi-thread   **********************/
 /*paramètre le nombre de threads à utiliser. Déterminé par utilisateur. >0.*/
 void DGVF::setNbrThread(unsigned int nbr) {
@@ -462,4 +453,34 @@ int DGVF::choix(std::string message, int max) {
 		cin >> ans;
 	} while (ans<0 || ans>max);
 	return ans;
+}
+
+map<int, int>* DGVF::getGinv() {
+	/* Compute g_inv */
+	/*On parcours tous les clusters et on cherche auquel appartient la cellule */
+	//g : cluster
+	//g_inv : map qui associe à une cellule un numéro de cluster (numéro de la cellule critique qui le définit après calcul)
+	map<int, int> g_inv[DIM];//cellules secondaire vers cellule critique, donc définit le cluster
+	for (int q = 0; q < DIM; q++)   // for each dimension
+	{
+		for (int it : Cr[q])//pour chaque cellule critique de dim q
+		{
+			map<int, list<int> >::iterator it_m = g.find(it);//itérateur vers g
+			if (it_m != g.end())//si non vide : cad si la Cr est ds g : cad définit un cluster->liste
+			{
+				for (int it_l : it_m->second)//mettre à jour g_inv : associer le num du cluster pour à cellule de ce cluster
+				{
+					if (g_inv[q].count(it_l) > 0) {//débogage
+						throw DataError("Error: " + to_string(it_l) + " has two inverses by g");
+					}
+					g_inv[q][it_l] = it;
+				}
+			}
+		}
+	}
+	return g_inv;
+}
+
+ComplexeCubique::Ptr DGVF::getComplexe() {
+	return K;
 }
