@@ -1,31 +1,17 @@
 #include "Interface\OptionAffichage.hpp"
-#include "Interface\ParamAffichageDim.hpp"
 
 #include "SFGUI\Label.hpp"
-#include "SFGUI\SpinButton.hpp"
-#include "Engine\Controlleur2.hpp"
 #include "SFML\Window.hpp"
 
 using namespace sfg;
 
 OptionAffichage::OptionAffichage() : sfg::Bin()
 {
-	vBox = Box::Create(Box::Orientation::VERTICAL);
-	//ajout des parametrages de couleur pour chaque dimension
+	//creation des parametrages de couleur pour chaque dimension
 	for (int i = 0; i <= 3; i++) {
-		vBox->Pack(ParamAffichageDim::Create(i));
+		//vBox->Pack();
+		paramsRGBA.push_back(ParamAffichageDim::Create(i));
 	}
-	//ajout des choix de tailles
-	vBox->Pack(BoxTailles());
-	espaces.at("Rayon")->SetValue(2);
-	espaces.at("Longueur")->SetValue(8);
-	espaces.at("Espace")->SetValue(2);
-	//setDistances
-}
-
-
-OptionAffichage::~OptionAffichage()
-{
 }
 
 /*****************
@@ -36,9 +22,18 @@ const std::string& OptionAffichage::GetName() const {
 	static const std::string name("OptionAffichage");
 	return name;
 }
-OptionAffichage::Ptr OptionAffichage::Create() {
+OptionAffichage::Ptr OptionAffichage::Create(int rayon, int Longeur, int separation) {
 	Ptr ret(new  OptionAffichage());
-	ret->Add(ret->vBox);
+	//ajout des parametrages de couleur pour chaque dimension
+	Box::Ptr vBox = Box::Create(Box::Orientation::VERTICAL);
+	for (int i = 0; i <= 3; i++) {
+		vBox->Pack(ret->paramsRGBA.at(i));
+	}
+	//ajout des choix de tailles
+	vBox->Pack(ret->BoxTailles());
+	//setDistances
+	ret->setEspaces(rayon, Longeur, separation);
+	ret->Add(vBox);
 	return ret;
 }
 sf::Vector2f OptionAffichage::CalculateRequisition() {
@@ -61,23 +56,36 @@ sfg::Box::Ptr OptionAffichage::BoxTailles() {
 	for (std::string lab : labels) {
 		auto entry = SpinButton::Create(0, 10, 1);
 		espaces.insert(std::pair<std::string, SpinButton::Ptr>(lab, entry));
-		//délégation
-		entry->GetSignal(sfg::Widget::OnStateChange).Connect(//mise à jour sur utilisation du scale
-			std::bind([=]() {
-			Controlleur2::get()->setDistances(getRayon(), getLongueur(), getSeparation());
-		}));
+		//délégation de la mise à jour
+		entry->GetSignal(sfg::Widget::OnStateChange).Connect(std::bind(&OptionAffichage::affectEspaceChanges, this));//mise à jour sur utilisation du scale
 		//ajout au groupe
 		ret->Pack(Label::Create(lab));
 		ret->Pack(entry);
 	}
 	return ret;
 }
+void OptionAffichage::affectEspaceChanges() {
+	Controlleur2::get()->setDistances(getRayon(), getLongueur(), getSeparation());
+}
+void OptionAffichage::setEspaces(int rayon, int Longeur, int separation) {
+	espaces.at("Rayon")->SetValue((float)rayon);
+	espaces.at("Longueur")->SetValue((float)Longeur);
+	espaces.at("Espace")->SetValue((float)separation);
+	affectEspaceChanges();
+}
 float OptionAffichage::getRayon() {
-	return espaces.at("Rayon")->GetValue();
+	return espaces.at("Rayon")->GetValue() / 10;
 }
 float OptionAffichage::getLongueur() {
-	return espaces.at("Longueur")->GetValue();
+	return espaces.at("Longueur")->GetValue() / 10;
 }
 float OptionAffichage::getSeparation() {
-	return espaces.at("Espace")->GetValue();
+	return espaces.at("Espace")->GetValue() / 10;
+}
+void OptionAffichage::affectColorChanges(int dim) {
+	paramsRGBA[dim]->affectColorChange();
+}
+void OptionAffichage::setColors(int dim, int r, int g, int b, int a) {
+	paramsRGBA[dim]->setColors( r,  g,  b,  a);
+	paramsRGBA[dim]->affectColorChange();
 }

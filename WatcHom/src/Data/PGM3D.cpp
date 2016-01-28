@@ -17,7 +17,7 @@ void PGM3D::save(std::string const& path) const {
 
 	//check ouverture
 	if (!file.good()) {
-		throw FileError(0,"Error in PGM3D save : \n\timpossible to open " + path + ".");
+		throw FileError(0,"Error in PGM3D save : \n\timpossible to open " + path + ".\n");
 	}
 	//nbr magique et dimensions
 	file << "P2" << endl;
@@ -45,13 +45,13 @@ void PGM3D::load(std::string const& path) {
 
 	//check ouverture
 	if (!file.good()){
-		throw FileError(0,"Error in PGM3D load : \n\timpossible to create " + path + ".");
+		throw FileError(0,"Error in PGM3D load : \n\timpossible to create " + path + ".\n");
 	}
 
 	//check start with P2
 	file >> work;
 	if (work != "P2") {
-		throw FileError(1,"Error in  PGM3D load : \n\tCan only load P2 format. was " + work);
+		throw FileError(1,"Error in  PGM3D load : \n\tCan only load P2 format. was " + work +"\n");
 	}
 	//Récupérer les dimensions
 	int p_size[3];//ordre du fichier : x,y,z
@@ -60,7 +60,7 @@ void PGM3D::load(std::string const& path) {
 		if (!file.eof()) {
 			file >> p_size[i];
 		} else { 
-			throw FileError(2,"Error in  PGM3D load : \n\tcouldn't read the size."); 
+			throw FileError(2,"Error in  PGM3D load : \n\tcouldn't read the size.\n"); 
 		}
 	}
 	setDataSize(p_size);//initialiser le tableau des données
@@ -79,7 +79,7 @@ void PGM3D::load(std::string const& path) {
 					file >> p_v;
 				}
 				else {
-					throw FileError(3,"Error in  PGM3D load : \n\tcouldn't read the " + to_string(cptr) + "-th voxel."+to_string(p_v));
+					throw FileError(3,"Error in  PGM3D load : \n\tcouldn't read the " + to_string(cptr) + "-th voxel."+to_string(p_v) +"\n");
 				}
 				set(k,j,i, p_v);
 			}

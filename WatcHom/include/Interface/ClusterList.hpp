@@ -11,7 +11,9 @@ class ClusterList : public sfg::Frame
 public:
 	typedef std::shared_ptr<ClusterList> Ptr;
 	static Ptr Create();
-	~ClusterList() = default;
+	~ClusterList() {
+		std::cout << "ClusterList Destruct\n";
+	}
 	const std::string& GetName() const override;
 
 	void refresh();

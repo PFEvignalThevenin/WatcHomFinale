@@ -50,10 +50,8 @@ void ParamAffichageDim::initScales() {
 	for (string lab : labels) {
 		scalers.insert(pair<string, Scale::Ptr>(lab, Scale::Create(0, 255, 1)));
 		scalers.at(lab)->SetValue(100);
-		scalers.at(lab)->GetSignal(sfg::Widget::OnMouseMove).Connect(//mise à jour sur utilisation du scale
-			std::bind([=]() {
-			Controlleur2::get()->setCouleur(Controlleur2::int2Dim(dimension), getRed(), getGreen(), getBlue(), getAlpha());
-		}));
+		//mise à jour sur utilisation du scale
+		scalers.at(lab)->GetSignal(sfg::Widget::OnMouseMove).Connect(bind(&ParamAffichageDim::affectColorChange, this));
 	}
 }
 
@@ -70,4 +68,13 @@ std::shared_ptr<ParamAffichageDim> ParamAffichageDim::Create(int dim) {
 	ret->SetLabel("Dimension " + to_string(dim));
 	ret->Add(ret->hBox);
 	return ret;
+}
+void ParamAffichageDim::affectColorChange() {
+	Controlleur2::get()->setCouleur(Controlleur2::int2Dim(dimension), getRed(), getGreen(), getBlue(), getAlpha());
+}
+void ParamAffichageDim::setColors(int r, int g, int b, int a) {
+	scalers.at("Rouge")->SetValue((float)r);
+	scalers.at("Vert")->SetValue((float)g);
+	scalers.at("Bleu")->SetValue((float)b);
+	scalers.at("Alpha")->SetValue((float)a);
 }

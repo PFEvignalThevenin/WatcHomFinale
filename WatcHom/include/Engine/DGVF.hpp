@@ -8,6 +8,7 @@
 #include <fstream>
 #include <vector>
 #include <memory>
+#include <iostream>
 
 class DGVF
 {
@@ -18,6 +19,7 @@ public:
 	typedef std::set<int> cellSet;
 
 	DGVF(ComplexeCubique::Ptr p_K);
+	~DGVF() = default;
 
 	//fonction principale. Sur Console
 	void homology(std::string name, double r, double s);

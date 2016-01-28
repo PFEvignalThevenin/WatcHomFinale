@@ -23,8 +23,7 @@ Menu::Menu() : Bin()
 	addButton2MenuList(menuListFichier, Button::Create("Quitter"));
 	//boutons du menu parametres
 	addButton2MenuList(menuListParametres, Button::Create("Affichage"));
-	addButton2MenuList(menuListParametres, Button::Create("Raccourcis"));
-	addButton2MenuList(menuListParametres, Button::Create("Navigation"));
+	addButton2MenuList(menuListParametres, Button::Create("Chemins"));
 	//ajouter menus déroulants à la barre de menus
 	table->Attach(menuFichier, sf::Rect<sf::Uint32>(0, 0, 10, 10));
 	table->Attach(menuParametres, sf::Rect<sf::Uint32>(10, 0, 10, 10));

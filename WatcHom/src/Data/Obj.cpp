@@ -14,7 +14,7 @@ namespace obj {
 		Assimp::Exporter exporter;
 		bool sucess = exporter.Export(scene, ".obj", path);
 		if (!sucess) {
-			throw FileError(0, "Error in OBJ save : \n\timpossible to create " + path + ".");
+			throw FileError(0, "Error in OBJ save : \n\timpossible to create " + path + ".\n");
 		}
 	}
 
@@ -29,7 +29,7 @@ namespace obj {
 		// If the import failed, report it
 		if (!scene)
 		{
-			throw FileError(0, "Error in OBJ load : \n\timpossible to read " + path + ".");
+			throw FileError(0, "Error in OBJ load : \n\timpossible to read " + path + ".\n");
 		}
 	}
 	const aiScene*  Obj::getScene() {

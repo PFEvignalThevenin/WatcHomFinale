@@ -3,28 +3,20 @@
 #include "SFML\Window.hpp"
 
 #include "Engine\Controlleur2.hpp"
+#include "Interface\DialogueBox.hpp"
 
 using namespace std;
 using namespace sfg;
 using namespace sf;
 
-WindowOpenGL::WindowOpenGL()
+WindowOpenGL::WindowOpenGL() : app(sf::VideoMode(800, 600, 32), "WatcHom")
 {
-	video = new VideoMode(800,600,32);
 	win_menu = initMenuWindow();
 	win_optAff = initOptionAffichageWindow();
 	win_optAff->Show(false);
 	win_clusterList = initClusterListWindow();
-	//link du bouton "Parametres>Affichages" avec l'apparition de cette fenêtre
-	gbl_menu->getButton("Affichage")->GetSignal(sfg::Button::OnMouseLeftPress).Connect(
-		std::bind([=]() {
-			afficherOptionAffichage();
-		}
-	));
-}
-
-WindowOpenGL::~WindowOpenGL()
-{
+	win_paths = initPathWindow();
+	win_paths->Show(false);
 }
 
 //******************************
@@ -37,8 +29,13 @@ void WindowOpenGL::run() {
 	desktop.Add(win_menu);
 	desktop.Add(win_optAff);
 	desktop.Add(win_clusterList);
+	desktop.Add(win_paths);
+	//test Navigateur
+	auto win_nav = sfg::Window::Create();
+	win_nav->Add(Navigateur::Create());
+	desktop.Add(win_nav);
 	//SFML
-	RenderWindow app(*video, "WatcHom");
+	positionnerClusterList();
 	app.setVerticalSyncEnabled(true);	//se synchroniser sur le rafraichissement de la carte
 	app.resetGLStates();
 	//boucle de rafraichissement
@@ -49,6 +46,15 @@ void WindowOpenGL::run() {
 			switch (event.type) {
 			case Event::Closed :
 				quitter = true;
+				break;
+			case Event::Resized :
+				Controlleur2::get()->setDimFenetre(event.size.width, event.size.height);
+				positionnerClusterList();
+				break;
+			case Event::MouseWheelMoved:
+				Controlleur2::get()->zoom(event.mouseWheel.delta * win_paths->getZoomMultiply());
+				break;
+			default :
 				break;
 			}
 		}
@@ -85,15 +91,20 @@ sfg::Window::Ptr WindowOpenGL::initMenuWindow() {
 	//linker bouton charger
 	gbl_menu->getButton("Ouvrir Obj")->GetSignal(sfg::Window::OnMouseLeftPress).Connect(
 		std::bind([=]() {
-		Controlleur2::get()->loadObj("fertility100_11_V.obj");
+		//Controlleur2::get()->loadObj("fertility100_11_V.obj");
+		//Controlleur2::get()->loadObj(getUserString("Ouverture .obj", "Chemin vers un fichier :"));
+		Controlleur2::get()->loadObj(win_paths->getObjLoad());
 	}));
 	//linker bouton pgm
 	gbl_menu->getButton("Importer Pgm")->GetSignal(sfg::Window::OnMouseLeftPress).Connect(
 		std::bind([=]() {
-		cout << "machin" << endl;
-		Controlleur2::get()->loadPgm("fertility3.pgm");
-		gbl_clusterList->refresh();
+		//if(Controlleur2::get()->loadPgm("fertility3.pgm"))
+		//if (Controlleur2::get()->loadPgm(getUserString("Ouverture .pgm", "Chemin vers un fichier :")))
+		if (Controlleur2::get()->loadPgm(win_paths->getPgmLoad()))
+			gbl_clusterList->refresh();
 	}));
+	gbl_menu->getButton("Affichage")->GetSignal(sfg::Button::OnMouseLeftPress).Connect(std::bind(&WindowOpenGL::afficherOptionAffichage, this));
+	gbl_menu->getButton("Chemins")->GetSignal(sfg::Button::OnMouseLeftPress).Connect(std::bind(&WindowOpenGL::afficherOptionChemins, this));
 	return window;
 }
 sfg::Window::Ptr WindowOpenGL::initOptionAffichageWindow() {
@@ -107,6 +118,10 @@ sfg::Window::Ptr WindowOpenGL::initOptionAffichageWindow() {
 		win_optAff->Show(false);
 		}
 	));
+	gbl_OptAffichage->setColors(0, 255, 0, 0, 255);
+	gbl_OptAffichage->setColors(1, 0, 255, 0, 255);
+	gbl_OptAffichage->setColors(2, 0, 0, 255, 255);
+	gbl_OptAffichage->setColors(3, 100, 0, 100, 255);
 	return windowOA;
 }
 sfg::Window::Ptr WindowOpenGL::initClusterListWindow() {
@@ -116,6 +131,13 @@ sfg::Window::Ptr WindowOpenGL::initClusterListWindow() {
 	window->SetAllocation(FloatRect(200, 100, 50, 20));
 	return window;
 }
+WinPaths::Ptr WindowOpenGL::initPathWindow() {
+	auto ret = WinPaths::Create();
+	//position
+	float w = 400, h = 300;
+	ret->SetAllocation(FloatRect((app.getSize().x - w) / 2, (app.getSize().y - h) / 2, w, h));
+	return ret;
+}
 //******************************
 //fonctions de gestion diverses
 //******************************
@@ -123,6 +145,22 @@ sfg::Window::Ptr WindowOpenGL::initClusterListWindow() {
 //affiche la fenetre 'OptionsAffichage'
 void WindowOpenGL::afficherOptionAffichage() {
 	float w = 400, h = 300;
+	win_optAff->SetAllocation(FloatRect((app.getSize().x - w) / 2, (app.getSize().y - h) / 2, w, h));
 	win_optAff->Show(true);
-	win_optAff->SetAllocation(FloatRect((800 - w) / 2, (600 - h) / 2, w, h));
+}
+void WindowOpenGL::afficherOptionChemins() {
+	float w = 400, h = 300;
+	win_paths->SetAllocation(FloatRect((app.getSize().x - w) / 2, (app.getSize().y - h) / 2, w, h));
+	win_paths->Show(true);
+}
+void WindowOpenGL::positionnerClusterList() {
+	sf::Vector2u appSize = app.getSize();
+	sf::Vector2f size(200, (float)appSize.y);
+	win_clusterList->SetRequisition(size);
+	win_clusterList->SetAllocation(sf::FloatRect(appSize.x-size.x, 0, size.x, size.y));
+}
+//demander un message à l'utilisateur
+std::string WindowOpenGL::getUserString(std::string nameMessage, std::string description) {
+	//attention : ne fonctionne pas : freeze l'écran si en-dehors des case de la gestion d'évènements
+	return DialogueBox::GetString(app, sfgui, nameMessage, description);
 }

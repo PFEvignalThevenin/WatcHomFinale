@@ -40,7 +40,7 @@ void Obj2::save(std::string const& path) const {
 
 	//check ouverture
 	if (!file.good()) {
-		throw FileError(0,"Error in OBJ save : \n\timpossible to create " + path + ".");
+		throw FileError(0,"Error in OBJ save : \n\timpossible to create " + path + ".\n");
 	}
 	file << "# OBJ File" << endl;
 	file << "# " << vertices.size() << " vertices" << endl;
@@ -76,7 +76,7 @@ void Obj2::load(std::string const& path) {
 	file.open(path.c_str(), ios::in);
 	//check ouverture
 	if (!file.good()) {
-		throw FileError(0,"Error in OBJ load : \n\timpossible to open " + path + ".");
+		throw FileError(0,"Error in OBJ load : \n\timpossible to open " + path + ".\n");
 	}
 	objects.clear();
 	vertices.clear();
@@ -88,7 +88,7 @@ void Obj2::load(std::string const& path) {
 		file >> work;//premier mot de la ligne
 		//cas face
 		if (work == "f") {//on ne désespère pas. un jour on pourra switcher sur des strings. ptt.
-			if (currentObject == nullptr) throw FileError(1,"Error in OBJ load : \n\tface before first object at line " + to_string(cptr));
+			if (currentObject == nullptr) throw FileError(1,"Error in OBJ load : \n\tface before first object at line " + to_string(cptr) + "\n");
 			getline(file, work); 
 			currentObject->addFace(parseFace(work));
 		}//cas vertice
@@ -108,7 +108,7 @@ void Obj2::load(std::string const& path) {
 		}
 		else {
 			if(!file.eof())
-				throw FileError(2,"Error in OBJ load : \n\tcant't read the caracter " + work + " at line " + to_string(cptr));
+				throw FileError(2,"Error in OBJ load : \n\tcant't read the caracter " + work + " at line " + to_string(cptr) + "\n");
 		}
 	}
 	currentObject->setDimension((currentObject->nbrFaces() == 6) ? 0 : 1);//si 6 faces, de dimension 0

@@ -7,6 +7,7 @@
 #include "Data\ComplexeCubique.hpp"
 #include "GL\freeglut.h"
 #include <map>
+#include <iostream>
 
 class Controlleur2;//inclusion croisée
 /*Classe de dessin openGL

@@ -4,7 +4,7 @@
 using namespace std;
 using namespace sfg;
 
-ClusterList::ClusterList()
+ClusterList::ClusterList() : Frame()
 {
 	hb_collapseList = Box::Create(Box::Orientation::VERTICAL);
 	lab_tete = Label::Create("Waiting for a Complexe");

@@ -7,9 +7,6 @@ using namespace std;
 using namespace obj;
 //*********************************************Constructeur***************************************************
 Controlleur2::Controlleur2() {
-	if (modeleur.get() == nullptr) {
-		modeleur = Modeleur::Ptr(new Modeleur(shared_ptr<Controlleur2>(this)));
-	}
 	glEnable(GL_DEPTH_TEST);
 	//light
 	//glEnable(GL_LIGHTING);
@@ -17,28 +14,28 @@ Controlleur2::Controlleur2() {
 	//glEnable(GL_DIFFUSE);
 	//glEnable(GL_COLOR_MATERIAL);
 	//glEnable(GL_SPECULAR);
-	//glutInitDisplayMode(GLUT_RGBA);
+	glutInitDisplayMode(GLUT_RGBA);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
-	static const auto pi = 3.1415926535897932384626433832795f;
-	static const auto fov = 90.f;
-	static const auto near_distance = .1f;
-	static const auto far_distance = 100.f;
-	static const auto aspect = 800.f / 600.f;
-	auto frustum_height = std::tan(fov / 360 * pi) * near_distance;
-	auto frustum_width = frustum_height * aspect;
-	glFrustum(-frustum_width, frustum_width, -frustum_height, frustum_height, near_distance, far_distance);
-	setCouleur(Dim::d0, 255, 0, 0);
-	setCouleur(Dim::d1, 0, 255, 0);
-	setCouleur(Dim::d2, 0, 0, 255);
-	setCouleur(Dim::d3, 100, 0, 100);
+	setViewPort();
+	setCouleur(Dim::d0, 255, 0, 0,255);
+	setCouleur(Dim::d1, 0, 255, 0, 255);
+	setCouleur(Dim::d2, 0, 0, 255, 255);
+	setCouleur(Dim::d3, 100, 0, 100, 255);
 }
 Controlleur2::Ptr Controlleur2::get() {
 	static  Controlleur2::Ptr inst = Controlleur2::Ptr(new Controlleur2);
+	if (inst->modeleur == nullptr) {
+		Modeleur::Ptr mod(new Modeleur(inst));
+		inst->modeleur = mod;
+	}
 	return inst;
 }
 //************************************************Rafrichissement affichage************************************************
 void Controlleur2::drawGL() {
+	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
+	setViewPort();
 	glClearColor(0.5f, 0.7f, 1.0f, 1.0f);//couleur de fond
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glMatrixMode(GL_MODELVIEW);
@@ -47,7 +44,7 @@ void Controlleur2::drawGL() {
 	glLoadIdentity();
 	static float angle = 0;
 	angle += 2;
-	glTranslatef(0, 0, -50.0f);
+	glTranslatef(0, 0, -50.0f + m_zoom);
 	glRotatef(angle, 0, 0, 1);
 	glRotatef(angle*0.3f, 0, 1, 0);
 	glRotatef(angle*1.4f, 1, 0, 0);
@@ -65,7 +62,7 @@ void Controlleur2::drawGL() {
 //**************************************************Dessin**********************************************
 void Controlleur2::drawDefault() {
 	int i = 0;
-	glColor4f(couleurs[i].rouge, couleurs[i].vert, couleurs[i].bleu,50);
+	glColor4f(couleurs[i].rouge, couleurs[i].vert, couleurs[i].bleu, couleurs[i].alpha);
 	modeleur->drawCube0(obj::Vertex());
 }
 
@@ -87,12 +84,13 @@ void Controlleur2::initiateObjs() {
 	afficher = true;
 }
 //charge un obj et le stocke ds le modeleur pour l'affichage
-void Controlleur2::loadObj(std::string path) {
+bool Controlleur2::loadObj(std::string path) {
 	try {
 		Obj2::Ptr objAffiche = Obj2::Ptr(new Obj2());
 		objAffiche->load(path);
 		modeleur->setObj(objAffiche);
 		initiateObjs();
+		return true;
 	}
 	catch (FileError fe) {
 		std::cout << fe.what();
@@ -100,9 +98,10 @@ void Controlleur2::loadObj(std::string path) {
 	catch (exception e) {
 		std::cout << e.what();
 	}
+	return false;
 }
 //**********************************************Chargement PGM************************************************
-void Controlleur2::loadPgm(std::string path) {
+bool Controlleur2::loadPgm(std::string path) {
 	try {
 		PGM3D::Ptr pgm = PGM3D::Ptr(new PGM3D());
 		pgm->load(path);
@@ -112,6 +111,7 @@ void Controlleur2::loadPgm(std::string path) {
 		modeleur->initiatePgm();
 		modeleur->setComplexeCubique(cc);
 		afficher = true;
+		return true;
 	}
 	catch (FileError fe) {
 		std::cout << fe.what();
@@ -119,6 +119,7 @@ void Controlleur2::loadPgm(std::string path) {
 	catch (exception e) {
 		std::cout << e.what();
 	}
+	return false;
 }
 //***********************************************fonctions DGVF***********************************************
 void Controlleur2::cellClustering() {
@@ -162,13 +163,17 @@ void Controlleur2::computeCenter(float xmin, float xmax, float ymin, float ymax,
 }
 //****************************************Gestion diverse ************************************************
 void Controlleur2::setCouleur(Dim dim, GLfloat rouge, GLfloat vert, GLfloat bleu, GLfloat alpha) {
-	couleurs[dim].rouge = rouge;
-	couleurs[dim].vert = vert;
-	couleurs[dim].bleu = bleu;
-	couleurs[dim].alpha = alpha;
+	couleurs[dim].rouge = rouge/255;
+	couleurs[dim].vert = vert / 255;
+	couleurs[dim].bleu = bleu / 255;
+	couleurs[dim].alpha = alpha / 255;
 }
 void Controlleur2::setDistances(float rayon, float longueur, float separation) {
 	modeleur->setDistances(rayon, longueur, separation);
+}
+void Controlleur2::setDimFenetre(double width, double height) {
+	viewX = width;
+	viewH = height;
 }
 Dim Controlleur2::int2Dim(int d) {
 	switch (d) {
@@ -183,4 +188,18 @@ Dim Controlleur2::int2Dim(int d) {
 	default:
 		throw CtrlError(to_string(d) + "ne correspond à aucune dimension. Limité entre 0 et 3");
 	}
+}
+void Controlleur2::zoom(int mod) {
+	m_zoom += mod;
+}
+//***************************fonctions privées diverses***************************
+void Controlleur2::setViewPort() {
+	static const auto pi = 3.1415926535897932384626433832795f;
+	static const auto fov = 90.f;
+	static const auto near_distance = .1f;
+	static const auto far_distance = 100.f;
+	auto aspect = viewX / viewH;
+	auto frustum_height = std::tan(fov / 360 * pi) * near_distance;
+	auto frustum_width = frustum_height * aspect;
+	glFrustum(-frustum_width, frustum_width, -frustum_height, frustum_height, near_distance, far_distance);
 }

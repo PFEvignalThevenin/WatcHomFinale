@@ -7,6 +7,7 @@
 #include "Engine\DGVF.hpp"
 #include "Data\Object\Vertex.hpp"
 #include "Data\MiscData.hpp"
+#include <iostream>
 
 class Modeleur;//inclusion croisée
 /* Classe de contrôle du programme.
@@ -27,20 +28,29 @@ public:
 	//fonction de rafraichissement utilisée par la fenêtre d'affichage
 	void drawGL();	//gère les autres fonctions de dessin en fonction du contexte
 
-	//setCouleurs f(dimension)
+	//***************************Affichage et navigation***************************
+	/*setCouleurs f(dimension)
+	 *valeurs en entrée entre 0 et 255 svp.
+	 */
 	void setCouleur(Dim dim, GLfloat rouge, GLfloat vert, GLfloat bleu, GLfloat alpha=255);
 	//set tailles et espaces des cubes
 	void setDistances(float rayon, float longueur, float separation);
+	//set taille de la fenêtre
+	void setDimFenetre(double width, double height);
+	//change la valeur de zoom. (addition avec l'ancienne valeur)
+	void zoom(int mod);
 	//accès aux id des lists de calcul des polygones
 	std::vector<GLuint>* getFormes(Dim dim);
 
 	//***************************fonctions de chargement***************************
 	//charge un obj et le sauvegarde ds objAffiche pour l'afficher
-	void loadObj(std::string path);
+	//return false si pb de chargement
+	bool loadObj(std::string path);
 	/*charge un pgm et commence le traitement dans DGVF, puis affiche une vue rapide.
 	 *init aussi le panneau des clusters
+	 *return false si pb de chargement
 	 */
-	void Controlleur2::loadPgm(std::string path);
+	bool Controlleur2::loadPgm(std::string path);
 
 	//***************************fonctions DGVF***************************
 	void cellClustering();
@@ -69,15 +79,20 @@ private:
 
 	bool afficher = false;
 	obj::Vertex center;			//le centre du repère d'affichage
-	std::vector<GLuint> listObj[DIM];	//une list par dimension
-	couleur couleurs[DIM];		//une couleur par dimension
+	std::vector<GLuint> listObj[DIM];	//une liste par dimension
+	couleur couleurs[DIM];		//une couleur par dimension, (entre 0 et 1)
+	GLdouble viewX=800.f, viewH=600.f;		//taille de la fenêtre
+	int m_zoom;
 
 	//***************************fonctions de dessin***************************
 	//dessine un petit cube tout mignion
 	void drawDefault();
 	//dessine l'obj tel que listé par le Modeleur
 	void drawObj();
+	//***************************fonctions privées diverses***************************
+	void setViewPort();
 };
+
 /*
 *Classe d'exception pour les pb de controlleur
 *

@@ -22,6 +22,8 @@ public:
 	float getGreen();
 	float getAlpha();
 	int getDimension();
+	void affectColorChange();
+	void setColors(int r, int g, int b, int a);
 private:
 	int dimension;
 	std::map<std::string, sfg::Scale::Ptr> scalers;//curseurs mapés par leur nom
