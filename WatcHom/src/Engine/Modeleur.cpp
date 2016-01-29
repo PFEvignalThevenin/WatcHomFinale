@@ -25,7 +25,7 @@ void Modeleur::drawPgm(PGM3D &pgm) {
 }
 void Modeleur::drawCube0(obj::Vertex center) {
 	glBegin(GL_QUAD_STRIP);
-	glVertex3f(center.x + rayon, center.y - rayon, center.z + rayon);//les c�t�s
+	glVertex3f(center.x + rayon, center.y - rayon, center.z + rayon);//les côtés
 	glVertex3f(center.x + rayon, center.y - rayon, center.z - rayon);
 	glVertex3f(center.x + rayon, center.y + rayon, center.z + rayon);
 	glVertex3f(center.x + rayon, center.y + rayon, center.z - rayon);
@@ -47,14 +47,184 @@ void Modeleur::drawCube0(obj::Vertex center) {
 	glVertex3f(center.x + rayon, center.y - rayon, center.z - rayon);
 	glEnd();
 }
-void Modeleur::drawCube1(std::vector<obj::Vertex> line) {
-	//enlever les points si alignements (et les doublons)
+void Modeleur::drawContour(vector<coord> positions_2, vector<coord> positions_tmp) {
+	glBegin(GL_QUAD_STRIP);
+	glVertex3f(positions_2.at(2).x, positions_2.at(2).y, positions_2.at(2).z);
+	glVertex3f(positions_tmp.at(2).x, positions_tmp.at(2).y, positions_tmp.at(2).z);
+	glVertex3f(positions_2.at(1).x, positions_2.at(1).y, positions_2.at(1).z);
+	glVertex3f(positions_tmp.at(1).x, positions_tmp.at(1).y, positions_tmp.at(1).z);
+	glVertex3f(positions_2.at(4).x, positions_2.at(4).y, positions_2.at(4).z);
+	glVertex3f(positions_tmp.at(4).x, positions_tmp.at(4).y, positions_tmp.at(4).z);
+	glVertex3f(positions_2.at(3).x, positions_2.at(3).y, positions_2.at(3).z);
+	glVertex3f(positions_tmp.at(3).x, positions_tmp.at(3).y, positions_tmp.at(3).z);
+	glVertex3f(positions_2.at(2).x, positions_2.at(2).y, positions_2.at(2).z);
+	glVertex3f(positions_tmp.at(2).x, positions_tmp.at(2).y, positions_tmp.at(2).z);
+	glEnd();
+}
+vector<coord> Modeleur::computePositions(vector<coord> positions, std::vector<coord> Axes) {
 
-	//si reste 1 point : cube
+	//positions des 4 points de départ
+	vector<coord> positions_2 = positions;
+	//positions des 4 points après translation
+	vector<coord> positions_tmp;
+	positions_tmp.resize(4);
+	//initialisation
+	for (unsigned int i = 0; i < positions_tmp.size(); i++)
+		positions_tmp.at(i) = positions_2.at(i) + dist*Axes.at(0);
+	
+	//permet de compenser la distance en cas de coude 
+	vector<int> compense;
+	compense.resize(4);
+	for (unsigned int i = 0; i < 4; i++)
+		compense.at(i) = 0;
 
-	//si reste 2 points : rectangle
+	// desinner tous les contours autour du chemin sauf le dernier
+	for (int i = 0; i < Axes.size()-1; i++) {
+		bool isLine = false;
+		//ne pas déssiner de vertices tant qu'on a la même direction mais faire la translation suivant l'axe 
+		while (Axes.at(i) == Axes.at(i + 1) && i < Axes.size()-1) {
+			for (unsigned int j = 0; j < positions_tmp.size(); j++) {
+				positions_tmp.at(j) = positions_tmp.at(j) + dist*Axes.at(i);
+			}
+			i++;
+			isLine = true;
+		}
+		// si on a eu une line droite juste avant la déssiner
+		if (isLine) {
+			//déssiner le contour
+			drawContour(positions_2, positions_tmp);
+			//mettre à jour les sommets de départ
+			positions_2 = positions_tmp;
+		}
 
-	//sinon : algo
+		if (i < Axes.size()-1){
+			//redéfinir la position de certain des nouveaux sommets en fonction de l'axe
+			unsigned int sens;
+			if (Axes.at(i).x != 0) {
+				sens = (1 + Axes.at(i).x) / 2; // 1 si x sens positif, 0 sinon
+				if (Axes.at(i + 1).y = 1) {
+					positions_tmp.at(0) = positions_tmp.at(0) + sens*rayon*Axes.at(i);
+					positions_tmp.at(1) = positions_tmp.at(1) + sens*rayon*Axes.at(i);
+					positions_tmp.at(2) = positions_tmp.at(2) + (1 - sens)*rayon*Axes.at(i);
+					positions_tmp.at(3) = positions_tmp.at(3) + (1 - sens)*rayon*Axes.at(i);
+					compense.at(0) = compense.at(1) = sens;
+					compense.at(2) = compense.at(3) = (1 -sens);
+				}
+				else if (Axes.at(i + 1).y = -1) {
+					positions_tmp.at(0) = positions_tmp.at(0) + (1 - sens)*rayon*Axes.at(i);
+					positions_tmp.at(1) = positions_tmp.at(1) + (1 - sens)*rayon*Axes.at(i);
+					positions_tmp.at(2) = positions_tmp.at(2) + sens*rayon*Axes.at(i);
+					positions_tmp.at(3) = positions_tmp.at(3) + sens*rayon*Axes.at(i);
+					compense.at(2) = compense.at(3) = sens;
+					compense.at(0) = compense.at(1) = (1 - sens);
+				}
+				else if (Axes.at(i + 1).z = 1) {
+					positions_tmp.at(1) = positions_tmp.at(1) + rayon*Axes.at(i);
+					positions_tmp.at(2) = positions_tmp.at(2) + rayon*Axes.at(i);
+					compense.at(1) = compense.at(2) = 1;
+					compense.at(0) = compense.at(3) = 0;
+				}
+				else if (Axes.at(i + 1).z = -1) {
+					positions_tmp.at(0) = positions_tmp.at(0) + rayon*Axes.at(i);
+					positions_tmp.at(3) = positions_tmp.at(3) + rayon*Axes.at(i);
+					compense.at(0) = compense.at(3) = 1;
+					compense.at(1) = compense.at(2) = 0;
+				}
+			}
+			else if (Axes.at(i).y != 0) {
+				sens = (1 + Axes.at(i).y) / 2; // 1 si y sens positif, 0 sinon
+				if (Axes.at(i + 1).x = 1) {
+					positions_tmp.at(0) = positions_tmp.at(0) + (1 - sens)*rayon*Axes.at(i);
+					positions_tmp.at(1) = positions_tmp.at(1) + (1 - sens)*rayon*Axes.at(i);
+					positions_tmp.at(2) = positions_tmp.at(2) + sens*rayon*Axes.at(i);
+					positions_tmp.at(3) = positions_tmp.at(3) + sens*rayon*Axes.at(i);
+					compense.at(2) = compense.at(3) = sens;
+					compense.at(0) = compense.at(1) = (1 - sens);
+				}
+				else if (Axes.at(i + 1).x = -1) {
+					positions_tmp.at(0) = positions_tmp.at(0) + sens*rayon*Axes.at(i);
+					positions_tmp.at(1) = positions_tmp.at(1) + sens*rayon*Axes.at(i);
+					positions_tmp.at(2) = positions_tmp.at(2) + (1 - sens)*rayon*Axes.at(i);
+					positions_tmp.at(3) = positions_tmp.at(3) + (1 - sens)*rayon*Axes.at(i);
+					compense.at(0) = compense.at(1) = sens;
+					compense.at(2) = compense.at(3) = (1 - sens);
+				}
+				else if (Axes.at(i + 1).z = 1) {
+					positions_tmp.at(1) = positions_tmp.at(1) + rayon*Axes.at(i);
+					positions_tmp.at(2) = positions_tmp.at(2) + rayon*Axes.at(i);
+					compense.at(1) = compense.at(2) = 1;
+					compense.at(0) = compense.at(3) = 0;
+				}
+				else if (Axes.at(i + 1).z = -1) {
+					positions_tmp.at(0) = positions_tmp.at(0) + rayon*Axes.at(i);
+					positions_tmp.at(3) = positions_tmp.at(3) + rayon*Axes.at(i);
+					compense.at(0) = compense.at(3) = 1;
+					compense.at(1) = compense.at(2) = 0;
+				}
+			}
+			else if (Axes.at(i).z != 0) {
+				if (Axes.at(i + 1).x = 1) {
+					positions_tmp.at(0) = positions_tmp.at(0) + rayon*Axes.at(i);
+					positions_tmp.at(3) = positions_tmp.at(3) + rayon*Axes.at(i);
+					compense.at(0) = compense.at(3) = 1;
+					compense.at(1) = compense.at(2) = 0;
+				}
+				else if (Axes.at(i + 1).x = -1) {
+					positions_tmp.at(1) = positions_tmp.at(1) + rayon*Axes.at(i);
+					positions_tmp.at(2) = positions_tmp.at(2) + rayon*Axes.at(i);
+					compense.at(1) = compense.at(2) = 1;
+					compense.at(0) = compense.at(3) = 0;
+				}
+				else if (Axes.at(i + 1).y = 1) {
+					positions_tmp.at(0) = positions_tmp.at(0) + rayon*Axes.at(i);
+					positions_tmp.at(1) = positions_tmp.at(1) + rayon*Axes.at(i);
+					compense.at(0) = compense.at(1) = 1;
+					compense.at(2) = compense.at(3) = 0;
+				}
+				else if (Axes.at(i + 1).y = -1) {
+					positions_tmp.at(2) = positions_tmp.at(2) + rayon*Axes.at(i);
+					positions_tmp.at(3) = positions_tmp.at(3) + rayon*Axes.at(i);
+					compense.at(2) = compense.at(3) = 1;
+					compense.at(0) = compense.at(1) = 0;
+				}
+			}
+
+			//déssiner le contour
+			drawContour(positions_2, positions_tmp);
+			//mettre à jour les sommets de départ
+			positions_2 = positions_tmp;
+			//Faire la compensation
+			for (unsigned int j = 0; j < 4; i++) {
+				positions_tmp.at(j).x += compense.at(j) * Axes.at(i+1).x*rayon;
+				positions_tmp.at(j).y += compense.at(j) * Axes.at(i+1).y*rayon;
+				positions_tmp.at(j).z += compense.at(j) * Axes.at(i+1).z*rayon;
+				compense.at(i) = 0;
+			}
+		}
+	}
+	//Désiner le dernier contour
+	for (unsigned int i = 0; i < positions_tmp.size(); i++)
+		positions_tmp.at(i) = positions_2.at(i) + dist*Axes.at(Axes.size()-1);
+	
+	drawContour(positions_2, positions_tmp);
+	//mettre à jour les positions des derniers sommet
+	positions_2 = positions_tmp;
+	
+	return positions_2;
+}
+void Modeleur::drawCube1(vector<coord> positions, std::vector<coord> Axes) {
+
+	drawFace(positions);
+	vector<coord> lastPos = computePositions(positions, Axes);
+	drawFace(lastPos);
+
+}
+void Modeleur::drawFace(vector<coord> positions) {
+	glBegin(GL_QUADS);
+	for (coord pos : positions) {
+		glVertex3f(pos.x, pos.y, pos.z);
+	}
+	glEnd();
 }
 void Modeleur::drawFace(const obj::face &fa) {
 	Vertex v;
@@ -88,7 +258,7 @@ void Modeleur::initiateObjs() {
 		for (int i = 0; i < objAffiche->nbrObjects(); i++) {//parcourir les objets
 			obj = objAffiche->getObject(i);
 			if (obj.getDimension() == a) {//si objet de la dimension a
-				glNewList(cptr, GL_COMPILE);	//cr�er nouvelle liste
+				glNewList(cptr, GL_COMPILE);	//créer nouvelle liste
 				listObj->push_back(cptr);		//conserver identificateur
 				for (obj::face f : obj.getFaces()) {//tracer l'objet
 					drawFace(f);
@@ -105,7 +275,7 @@ void Modeleur::initiatePgm() {
 	ctrl->resetLists();
 	std::vector<GLuint> *listObj = ctrl->getFormes(Dim::d0);
 	cout << "construction PGM..." << endl;
-	glNewList(1, GL_COMPILE);	//cr�er nouvelle liste
+	glNewList(1, GL_COMPILE);	//créer nouvelle liste
 	listObj->push_back(1);		//conserver identificateur
 	drawPgm(*pgmTraite);
 	glEndList();
@@ -126,7 +296,7 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, int>>> g_inv) 
 	//dim0
 	listObj = ctrl->getFormes(Dim::d0);//liste de dim0
 	for (DGVF::cellBound bind : g_inv->at(0)) {
-		glNewList(cptr, GL_COMPILE);	//cr�er nouvelle liste
+		glNewList(cptr, GL_COMPILE);	//créer nouvelle liste
 		listObj->push_back(cptr);		//conserver identificateur
 		drawCube0(coord2Vert(ccTraite->pos2coord(bind.first)));//dessin
 		glEndList();//fin definition liste
@@ -165,7 +335,7 @@ void Modeleur::setDistances(float rayon, float longueur, float separation) {
 	this->rayon = rayon;
 	this->longueur = longueur;
 	this->separation = separation;
-	dist = 2 * rayon + 2 * separation + longueur;
+	dist = rayon + 2 * separation + longueur;
 }
 Vertex Modeleur::coord2Vert(coord co) {
 	Vertex v;
