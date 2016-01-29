@@ -43,7 +43,9 @@ public:
 	//translation
 	void translation(GLfloat axeX, GLfloat axeY);
 	//rotation
-	void rotation(GLfloat dx, GLfloat dy);//dx et dy des distances
+	void startRotation(int x, int y);
+	void rotation(int x, int y);//x et y des positions
+	void stopRotation();
 	//remet à 0 les distances de translation
 	void recentrer();
 	//active ou désactive l'autoroll

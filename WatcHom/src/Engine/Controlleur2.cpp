@@ -46,16 +46,15 @@ void Controlleur2::drawGL() {
 	//position du repère de l'objet
 	static float angle = 0;
 	glTranslatef(translations[0], translations[1], -20.0f + translations[2]);//décalages
-	if (autoroll) {//incrément autoroll
+	glPushMatrix();//rotations
+	tb.tbMatrix();//utilisateur
+	if (autoroll) {// autoroll : incrément
 		angle += 2;
 	}
-	//TODO : ici trackball
-	tb.tbMatrix();
-	glRotatef(angle, 0, 0, 1);//rotation autoroll
+	glRotatef(angle, 0, 0, 1);	//autoroll : rotation
 	glRotatef(angle*0.3f, 0, 1, 0);
 	glRotatef(angle*1.4f, 1, 0, 0);
 	//affichage spécifique de 'objet
-	glPushMatrix();
 	glTranslatef(center.x, center.y, center.z);//centrer
 	if (!afficher) {//si aucun objet n'a été chargé
 		drawDefault();
@@ -218,7 +217,7 @@ void Controlleur2::recentrer() {
 		translations[i] = 0;
 	}
 }
-void Controlleur2::rotation(GLfloat x, GLfloat y) {
+void Controlleur2::rotation(int x, int y) {
 	tb.tbMotion(x, y);
 }/*
 void Controlleur2::startRotation(int x, int y){
@@ -227,6 +226,12 @@ void Controlleur2::startRotation(int x, int y){
 void Controlleur2::stopRotation(int x, int y) {
 	tb.tbMouse(1, GLUT_UP, x, y);
 }*/
+void Controlleur2::startRotation(int x, int y) {
+	tb.tbStart(x, y);
+}
+void Controlleur2::stopRotation() {
+	tb.tbStop();
+}
 void Controlleur2::setAutoroll(bool set) {
 	autoroll = set;
 }

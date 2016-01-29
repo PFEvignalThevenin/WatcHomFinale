@@ -89,8 +89,9 @@ public:
 	void tbReshape(int width, int height);
 	void tbMotion(int x, int y);
 	void tbStart(int x, int y);
+	void tbStop();
 private:
-
+	bool active = false;
 	GLfloat   tb_angle = 0.0;
 	GLfloat   tb_axis[3];
 	GLfloat   tb_transform[4][4];
@@ -98,7 +99,6 @@ private:
 	GLuint    tb_width;
 	GLuint    tb_height;
 	GLfloat	tb_lastposition[3];
-	int depx, depy;
 
 protected:
 	static void _tbPointToVector(int x, int y, int width, int height, float v[3]);

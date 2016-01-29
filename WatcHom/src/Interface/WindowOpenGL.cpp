@@ -39,11 +39,10 @@ void WindowOpenGL::run() {
 		while (!quitter) {
 			Event event;
 			static bool rightPressed = false;//gestion clics gauches prolongés
-			static int prx;
-			static int pry;
 			static bool midPressed = false;//gestion clics 3 prolongés
 			static int pmx;
 			static int pmy;
+			static int mulRot = 1;
 			while (app.pollEvent(event)) {
 				desktop.HandleEvent(event);
 				switch (event.type) {
@@ -60,8 +59,7 @@ void WindowOpenGL::run() {
 				case Event::MouseButtonPressed:
 					if (event.mouseButton.button == sf::Mouse::Right) {
 						rightPressed = true;
-						prx = event.mouseButton.x;
-						pry = event.mouseButton.y;
+						Controlleur2::get()->startRotation(mulRot*event.mouseButton.x, mulRot*event.mouseButton.y);
 					}
 					else if (event.mouseButton.button == sf::Mouse::Middle) {
 						midPressed = true;
@@ -72,6 +70,7 @@ void WindowOpenGL::run() {
 				case Event::MouseButtonReleased:
 					if (event.mouseButton.button == sf::Mouse::Right) {
 						rightPressed = false;
+						Controlleur2::get()->stopRotation();
 					}
 					else if (event.mouseButton.button == sf::Mouse::Middle) {
 						midPressed = false;
@@ -79,9 +78,7 @@ void WindowOpenGL::run() {
 					break;
 				case Event::MouseMoved:
 					if (rightPressed) {
-						Controlleur2::get()->rotation((float)5*(event.mouseMove.x - prx), (float)5*(pry - event.mouseMove.y));//inverser axe y
-						prx = event.mouseMove.x;
-						pry = event.mouseMove.y;
+						Controlleur2::get()->rotation(mulRot*event.mouseMove.x, mulRot*event.mouseMove.y);
 					}
 					else if (midPressed) {
 						Controlleur2::get()->translation((float)(event.mouseMove.x - pmx) / 10, (float)(pmy - event.mouseMove.y) / 10);//inverser axe y

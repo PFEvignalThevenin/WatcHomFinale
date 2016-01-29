@@ -21,7 +21,7 @@ void Trackball::_tbPointToVector(int x, int y, int width, int height, float v[3]
 	/* project x, y onto a hemi-sphere centered within width, height. */
 	v[0] = (2.0 * x - width) / width;
 	v[1] = (height - 2.0 * y) / height;
-	d = (float)sqrt(v[0] * v[0] + v[1] * v[1]);
+	d = (float)sqrt(v[0] * v[0] + v[1] * v[1]);//norme
 	v[2] = (float)cos((3.14159265 / 2.0) * ((d < 1.0) ? d : 1.0));
 	a = 1.0 / (float)sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);
 	v[0] *= a;
@@ -41,16 +41,32 @@ void Trackball::tbInit()
 	glPopMatrix();
 }
 
+void Trackball::tbStart(int x, int y) {
+	active = true;
+	_tbPointToVector(x, y, tb_width, tb_height, tb_lastposition);
+	tbMotion(x, y);
+}
+void Trackball::tbStop() {
+	active = false;
+	glPushMatrix();
+		glLoadIdentity();
+		glMultMatrixf((GLfloat *)tb_transform);
+		glRotatef(tb_angle, tb_axis[0], tb_axis[1], tb_axis[2]);
+		glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat *)tb_transform);
+	glPopMatrix();
+}
 void Trackball::tbMatrix()
 {
-	glPushMatrix();
-	glLoadIdentity();
-	glRotatef(tb_angle, tb_axis[0], tb_axis[1], tb_axis[2]);
 	glMultMatrixf((GLfloat *)tb_transform);
-	glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat *)tb_transform);
-	glPopMatrix();
+	if (active) {
+		//glPushMatrix();
+		//glLoadIdentity();
+		glRotatef(tb_angle, tb_axis[0], tb_axis[1], tb_axis[2]);
+		//glMultMatrixf((GLfloat *)tb_transform);
+		//glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat *)tb_transform);
+		//glPopMatrix();
+	}
 
-	glMultMatrixf((GLfloat *)tb_transform);
 }
 
 void Trackball::tbReshape(int width, int height)
@@ -58,17 +74,12 @@ void Trackball::tbReshape(int width, int height)
 	tb_width = width;
 	tb_height = height;
 }
-void Trackball::tbStart(int x, int y) {
-	depx = x;
-	depy = y;
-	_tbPointToVector(depx, depy, tb_width, tb_height, tb_lastposition);
-}
 void Trackball::tbMotion(int x, int y)
 {
-	cout << x<<" " << y << endl;
 	GLfloat current_position[3], dx, dy, dz;
 
 	_tbPointToVector(x, y, tb_width, tb_height, current_position);
+
 	/* calculate the angle to rotate by (directly proportional to the
 	length of the mouse movement) */
 	dx = current_position[0] - tb_lastposition[0];
