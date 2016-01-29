@@ -14,7 +14,7 @@ WindowOpenGL::WindowOpenGL() : app(sf::VideoMode(800, 600, 32), "WatcHom")
 	win_menu = initMenuWindow();
 	win_optAff = initOptionAffichageWindow();
 	win_optAff->Show(false);
-	win_clusterList = initClusterListWindow();
+	win_NavPanel = initNavPanel();
 	win_paths = initPathWindow();
 	win_paths->Show(false);
 }
@@ -27,20 +27,22 @@ void WindowOpenGL::run() {
 	//Desktop
 	sfg::Desktop desktop;
 	desktop.Add(win_menu);
+	desktop.Add(win_NavPanel);
 	desktop.Add(win_optAff);
-	desktop.Add(win_clusterList);
 	desktop.Add(win_paths);
-	//test Navigateur
-	auto win_nav = sfg::Window::Create();
-	win_nav->Add(Navigateur::Create());
-	desktop.Add(win_nav);
 	//SFML
-	positionnerClusterList();
+	positionnerNavPanel();
 	app.setVerticalSyncEnabled(true);	//se synchroniser sur le rafraichissement de la carte
 	app.resetGLStates();
 	//boucle de rafraichissement
 	while (!quitter) {
 		Event event;
+		static bool rightPressed = false;//gestion clics gauches prolongés
+		static int prx;
+		static int pry;
+		static bool midPressed = false;//gestion clics 3 prolongés
+		static int pmx;
+		static int pmy;
 		while (app.pollEvent(event)) {
 			desktop.HandleEvent(event);
 			switch (event.type) {
@@ -49,10 +51,41 @@ void WindowOpenGL::run() {
 				break;
 			case Event::Resized :
 				Controlleur2::get()->setDimFenetre(event.size.width, event.size.height);
-				positionnerClusterList();
+				positionnerNavPanel();
 				break;
 			case Event::MouseWheelMoved:
-				Controlleur2::get()->zoom(event.mouseWheel.delta * win_paths->getZoomMultiply());
+				Controlleur2::get()->zoom((float)-event.mouseWheel.delta * win_paths->getZoomMultiply());
+				break;
+			case Event::MouseButtonPressed:
+				if (event.mouseButton.button == sf::Mouse::Right){
+					rightPressed = true;
+					prx = event.mouseButton.x;
+					pry = event.mouseButton.y;
+				}else if (event.mouseButton.button == sf::Mouse::Middle) {
+					midPressed = true;
+					pmx = event.mouseButton.x;
+					pmy = event.mouseButton.y;
+				}
+				break;
+			case Event::MouseButtonReleased:
+				if (event.mouseButton.button == sf::Mouse::Right) {
+					rightPressed = false;
+				}
+				else if (event.mouseButton.button == sf::Mouse::Middle) {
+					midPressed = false;
+				}
+				break;
+			case Event::MouseMoved:
+				if (rightPressed) {
+					Controlleur2::get()->rotation((float)(event.mouseMove.x - prx), (float)(pry - event.mouseMove.y) );//inverser axe y
+					prx = event.mouseMove.x;
+					pry = event.mouseMove.y;
+				}
+				else if (midPressed) {
+					Controlleur2::get()->translation((float)(event.mouseMove.x - pmx)/10, (float)(pmy - event.mouseMove.y)/10 );//inverser axe y
+					pmx = event.mouseMove.x;
+					pmy = event.mouseMove.y;
+				}
 				break;
 			default :
 				break;
@@ -124,10 +157,14 @@ sfg::Window::Ptr WindowOpenGL::initOptionAffichageWindow() {
 	gbl_OptAffichage->setColors(3, 100, 0, 100, 255);
 	return windowOA;
 }
-sfg::Window::Ptr WindowOpenGL::initClusterListWindow() {
-	auto window = sfg::Window::Create();
+sfg::Window::Ptr WindowOpenGL::initNavPanel() {
+	auto window = sfg::Window::Create(sfg::Window::Style::BACKGROUND);
+	auto note = Notebook::Create();
 	gbl_clusterList = ClusterList::Create();
-	window->Add(gbl_clusterList);
+	gbl_navigateur = Navigateur::Create();
+	note->AppendPage(gbl_clusterList, Label::Create("Algo"));
+	note->AppendPage(gbl_navigateur, Label::Create("Nav"));
+	window->Add(note);
 	window->SetAllocation(FloatRect(200, 100, 50, 20));
 	return window;
 }
@@ -153,11 +190,11 @@ void WindowOpenGL::afficherOptionChemins() {
 	win_paths->SetAllocation(FloatRect((app.getSize().x - w) / 2, (app.getSize().y - h) / 2, w, h));
 	win_paths->Show(true);
 }
-void WindowOpenGL::positionnerClusterList() {
+void WindowOpenGL::positionnerNavPanel() {
 	sf::Vector2u appSize = app.getSize();
 	sf::Vector2f size(200, (float)appSize.y);
-	win_clusterList->SetRequisition(size);
-	win_clusterList->SetAllocation(sf::FloatRect(appSize.x-size.x, 0, size.x, size.y));
+	win_NavPanel->SetRequisition(size);
+	win_NavPanel->SetAllocation(sf::FloatRect(appSize.x-size.x, 0, size.x, size.y));
 }
 //demander un message à l'utilisateur
 std::string WindowOpenGL::getUserString(std::string nameMessage, std::string description) {

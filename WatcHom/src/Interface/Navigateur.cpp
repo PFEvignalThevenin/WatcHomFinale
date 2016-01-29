@@ -8,11 +8,19 @@ Navigateur::Navigateur() : sfg::Bin()
 {
 	saveObj = CheckButton::Create("Save obj");
 	saveMorse = CheckButton::Create("Save Morse");
+	saveObj->GetSignal(CheckButton::OnToggle).Connect(bind(&Navigateur::affectSaves, this));
+	saveMorse->GetSignal(CheckButton::OnToggle).Connect(bind(&Navigateur::affectSaves, this));
 	for (int i = 0; i < 4; i++) {
 		checkBoxs.push_back(CheckButton::Create("Dim "+to_string(i)));
+		checkBoxs[i]->SetActive(true);
+		checkBoxs[i]->GetSignal(CheckButton::OnToggle).Connect(bind(&Navigateur::affectAffDim, this));
 	}
+	affectAffDim();
 	but_centrer = Button::Create("Centrer");
+	but_centrer->GetSignal(Button::OnLeftClick).Connect(bind(&Navigateur::recentrer, this));
 	autoroll = CheckButton::Create("Autoroll");
+	autoroll->GetSignal(CheckButton::OnToggle).Connect(bind(&Navigateur::affectAutoroll, this));
+	setAutoroll(true);
 }
 Navigateur::Ptr Navigateur::Create() {
 	Navigateur::Ptr ret = Navigateur::Ptr(new Navigateur());
@@ -62,20 +70,32 @@ sf::Vector2f Navigateur::CalculateRequisition() {
 	child->SetAllocation(allocation);
 }*/
 void Navigateur::setSaves(bool obj , bool morse ) {
-	cout << "TODO : Navigateur::setSaves";
+	saveObj->SetActive(obj);
+	saveMorse->SetActive(morse);
+	affectSaves();
 }
 void Navigateur::affichageDims(bool dims[4]) {
-	cout << "TODO : Navigateur::affichageDims";
+	for (int i = 0; i < 4; i++) {
+		checkBoxs[i]->SetActive(dims[i]);
+	}
+	affectAffDim();
 }
-void Navigateur::setAutoroll(bool set ) {
-	cout << "TODO : Navigateur::setAutoroll";
+void Navigateur::setAutoroll(bool set) {
+	autoroll->SetActive(set);
+	affectAutoroll();
+}
+void Navigateur::affectAutoroll() {
+	Controlleur2::get()->setAutoroll(autoroll->IsActive());
 }
 void Navigateur::recentrer() {
-	cout << "TODO : Navigateur::recentrer";
+	Controlleur2::get()->recentrer();
 }
 void Navigateur::affectSaves() {
-	cout << "TODO : Navigateur::affectSaves";
+	Controlleur2::get()->setSave(saveObj->IsActive(),saveMorse->IsActive());
 }
 void Navigateur::affectAffDim() {
-	cout << "TODO : Navigateur::affectAffDim";
+	Controlleur2::Ptr c = Controlleur2::get();
+	for (Dim d : {Dim::d0, Dim::d1, Dim::d2, Dim::d3}) {
+		c->setAffichageDim(d, checkBoxs[d]->IsActive());
+	}
 }

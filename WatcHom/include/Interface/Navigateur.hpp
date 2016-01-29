@@ -14,7 +14,8 @@ public:
 
 	void setSaves(bool obj = true, bool morse = true);
 	void affichageDims(bool dims[4]);
-	void setAutoroll(bool set = true);
+	void setAutoroll(bool set  = true);
+	void affectAutoroll();
 	void recentrer();
 	void affectSaves();
 	void affectAffDim();

@@ -31,7 +31,7 @@ Controlleur2::Ptr Controlleur2::get() {
 	}
 	return inst;
 }
-//************************************************Rafrichissement affichage************************************************
+//************************************************Rafraichissement affichage************************************************
 void Controlleur2::drawGL() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
@@ -42,16 +42,20 @@ void Controlleur2::drawGL() {
 	static int LightPos[4] = { 0,0,1,1 };
 	glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
 	glLoadIdentity();
+	//position du repère de l'objet
 	static float angle = 0;
-	angle += 2;
-	glTranslatef(0, 0, -50.0f + m_zoom);
-	glRotatef(angle, 0, 0, 1);
+	glTranslatef(translations[0], translations[1], -20.0f + translations[2]);//décalages
+	if (autoroll) {//incrément autoroll
+		angle += 2;
+	}
+	glRotatef(angle, 0, 0, 1);//rotation autoroll
 	glRotatef(angle*0.3f, 0, 1, 0);
 	glRotatef(angle*1.4f, 1, 0, 0);
-	//affichage spécifique
+	//TODO : ici trackball
+	//affichage spécifique de 'objet
 	glPushMatrix();
-	glTranslatef(center.x, center.y, center.z);
-	if (!afficher) {
+	glTranslatef(center.x, center.y, center.z);//centrer
+	if (!afficher) {//si aucun objet n'a été chargé
 		drawDefault();
 	}
 	else {
@@ -69,6 +73,7 @@ void Controlleur2::drawDefault() {
 void Controlleur2::drawObj() {
 	//affichage par dimension
 	for (int i = 0; i < DIM; i++) {//pour chaque dimension
+		if (!affDim[i]) continue;//court-circuiter l'affichage de cette dimension
 		glColor4f(couleurs[i].rouge, couleurs[i].vert, couleurs[i].bleu, couleurs[i].alpha);//couleur appropriée
 		for (int j : listObj[i]) {//afficher chaque objet
 			glCallList(j);
@@ -125,6 +130,11 @@ bool Controlleur2::loadPgm(std::string path) {
 void Controlleur2::cellClustering() {
 	dgvf->CellClustering();
 	modeleur->initiateComplexeCubique(dgvf->getGinv());
+	if (saveObj) {
+		cout << "TODO : saveOBJ after cell clustering" << endl;
+	}if (saveMorse) {
+		cout << "TODO : saveMorse after cell clustering" << endl;
+	}
 }
 bool Controlleur2::isPerfect() {
 	return dgvf->perfect();
@@ -139,6 +149,11 @@ void Controlleur2::collapse(int c1, int c2) {
 	cout << "cell collapse" << c1<<" "<<c2<<endl;
 	dgvf->add2V(c1, c2);
 	modeleur->initiateComplexeCubique(dgvf->getGinv());
+	if (saveObj) {
+		cout << "TODO : saveOBJ after collapse" << endl;
+	}if (saveMorse) {
+		cout << "TODO : saveMorse after collapse" << endl;
+	}
 }
 int Controlleur2::getDim(int pos) {
 	return dgvf->getDim(pos);
@@ -189,8 +204,30 @@ Dim Controlleur2::int2Dim(int d) {
 		throw CtrlError(to_string(d) + "ne correspond à aucune dimension. Limité entre 0 et 3");
 	}
 }
-void Controlleur2::zoom(int mod) {
-	m_zoom += mod;
+void Controlleur2::zoom(GLfloat mod) {
+	translations[2] += mod;
+}
+void Controlleur2::translation(GLfloat axeX, GLfloat axeY) {
+	translations[0] += axeX;
+	translations[1] += axeY;
+}
+void Controlleur2::recentrer() {
+	for (int i = 0; i < 3; i++) {
+		translations[i] = 0;
+	}
+}
+void Controlleur2::rotation(GLfloat dx, GLfloat dy) {
+	cout << "rotation dx: " << dx << " et dy: " << dy << endl;
+}
+void Controlleur2::setAutoroll(bool set) {
+	autoroll = set;
+}
+void Controlleur2::setAffichageDim(Dim d, bool set ) {
+	affDim[d] = set;
+}
+void Controlleur2::setSave(bool obj , bool morse ) {
+	saveObj = obj;
+	saveMorse = morse;
 }
 //***************************fonctions privées diverses***************************
 void Controlleur2::setViewPort() {

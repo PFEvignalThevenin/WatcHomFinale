@@ -38,7 +38,19 @@ public:
 	//set taille de la fenêtre
 	void setDimFenetre(double width, double height);
 	//change la valeur de zoom. (addition avec l'ancienne valeur)
-	void zoom(int mod);
+	void zoom(GLfloat mod);
+	//translation
+	void translation(GLfloat axeX, GLfloat axeY);
+	//rotation
+	void rotation(GLfloat dx, GLfloat dy);
+	//remet à 0 les distances de translation
+	void recentrer();
+	//active ou désactive l'autoroll
+	void setAutoroll(bool set);
+	//activation du court-circuitage d'affichages des objets de certaines dimensions
+	void setAffichageDim(Dim d, bool set = true);
+	//paramétrage pour enregistrer le résultat aux formats obj ou morse après une étape de l'algo
+	void setSave(bool obj = true, bool morse = false);
 	//accès aux id des lists de calcul des polygones
 	std::vector<GLuint>* getFormes(Dim dim);
 
@@ -82,7 +94,10 @@ private:
 	std::vector<GLuint> listObj[DIM];	//une liste par dimension
 	couleur couleurs[DIM];		//une couleur par dimension, (entre 0 et 1)
 	GLdouble viewX=800.f, viewH=600.f;		//taille de la fenêtre
-	int m_zoom;
+	GLfloat translations[3];
+	bool autoroll;
+	bool affDim[DIM];
+	bool saveObj, saveMorse;
 
 	//***************************fonctions de dessin***************************
 	//dessine un petit cube tout mignion

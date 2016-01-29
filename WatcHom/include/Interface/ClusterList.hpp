@@ -6,7 +6,7 @@
 #include "Engine\DGVF.hpp"
 #include <memory>
 
-class ClusterList : public sfg::Frame
+class ClusterList : public sfg::Bin
 {
 public:
 	typedef std::shared_ptr<ClusterList> Ptr;
@@ -26,6 +26,8 @@ private:
 	sfg::Button::Ptr b_merge, b_collapse;
 	sfg::Label::Ptr lab_tete;
 	sfg::Box::Ptr hb_collapseList;
+
+	sf::Vector2f CalculateRequisition() override;
 
 };
 

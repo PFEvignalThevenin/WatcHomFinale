@@ -4,7 +4,7 @@
 using namespace std;
 using namespace sfg;
 
-ClusterList::ClusterList() : Frame()
+ClusterList::ClusterList() : Bin()
 {
 	hb_collapseList = Box::Create(Box::Orientation::VERTICAL);
 	lab_tete = Label::Create("Waiting for a Complexe");
@@ -75,4 +75,7 @@ void ClusterList::ButtonMerge() {//enabled only if collabsable is true
 	Controlleur2::get()->cellClustering();
 	b_merge->Show(false);
 	refresh();
+}
+sf::Vector2f ClusterList::CalculateRequisition() {
+	return GetChild()->GetRequisition();
 }
