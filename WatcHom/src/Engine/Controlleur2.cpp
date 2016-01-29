@@ -22,6 +22,7 @@ Controlleur2::Controlleur2() {
 	setCouleur(Dim::d1, 0, 255, 0, 255);
 	setCouleur(Dim::d2, 0, 0, 255, 255);
 	setCouleur(Dim::d3, 100, 0, 100, 255);
+	tb.tbReshape(800, 600);
 }
 Controlleur2::Ptr Controlleur2::get() {
 	static  Controlleur2::Ptr inst = Controlleur2::Ptr(new Controlleur2);
@@ -48,10 +49,11 @@ void Controlleur2::drawGL() {
 	if (autoroll) {//incrément autoroll
 		angle += 2;
 	}
+	//TODO : ici trackball
+	tb.tbMatrix();
 	glRotatef(angle, 0, 0, 1);//rotation autoroll
 	glRotatef(angle*0.3f, 0, 1, 0);
 	glRotatef(angle*1.4f, 1, 0, 0);
-	//TODO : ici trackball
 	//affichage spécifique de 'objet
 	glPushMatrix();
 	glTranslatef(center.x, center.y, center.z);//centrer
@@ -129,7 +131,7 @@ bool Controlleur2::loadPgm(std::string path) {
 //***********************************************fonctions DGVF***********************************************
 void Controlleur2::cellClustering() {
 	dgvf->CellClustering();
-	modeleur->initiateComplexeCubique(dgvf->getGinv());
+	modeleur->initiateComplexeCubique(dgvf->getG());
 	if (saveObj) {
 		cout << "TODO : saveOBJ after cell clustering" << endl;
 	}if (saveMorse) {
@@ -146,9 +148,8 @@ std::shared_ptr<std::vector<DGVF::cellBound>> Controlleur2::getCollapses() {
 	return dgvf->computeCollapses();
 }
 void Controlleur2::collapse(int c1, int c2) {
-	cout << "cell collapse" << c1<<" "<<c2<<endl;
 	dgvf->add2V(c1, c2);
-	modeleur->initiateComplexeCubique(dgvf->getGinv());
+	modeleur->initiateComplexeCubique(dgvf->getG());
 	if (saveObj) {
 		cout << "TODO : saveOBJ after collapse" << endl;
 	}if (saveMorse) {
@@ -189,6 +190,7 @@ void Controlleur2::setDistances(float rayon, float longueur, float separation) {
 void Controlleur2::setDimFenetre(double width, double height) {
 	viewX = width;
 	viewH = height;
+	tb.tbReshape(width, height);
 }
 Dim Controlleur2::int2Dim(int d) {
 	switch (d) {
@@ -216,9 +218,15 @@ void Controlleur2::recentrer() {
 		translations[i] = 0;
 	}
 }
-void Controlleur2::rotation(GLfloat dx, GLfloat dy) {
-	cout << "rotation dx: " << dx << " et dy: " << dy << endl;
+void Controlleur2::rotation(GLfloat x, GLfloat y) {
+	tb.tbMotion(x, y);
+}/*
+void Controlleur2::startRotation(int x, int y){
+	tb.tbMouse(1, GLUT_DOWN, x, y);
 }
+void Controlleur2::stopRotation(int x, int y) {
+	tb.tbMouse(1, GLUT_UP, x, y);
+}*/
 void Controlleur2::setAutoroll(bool set) {
 	autoroll = set;
 }

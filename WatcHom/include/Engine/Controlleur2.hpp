@@ -5,6 +5,7 @@
 #include "GL\freeglut.h"
 #include "Engine\Modeleur.hpp"
 #include "Engine\DGVF.hpp"
+#include "Engine\Trackball.hpp"
 #include "Data\Object\Vertex.hpp"
 #include "Data\MiscData.hpp"
 #include <iostream>
@@ -42,7 +43,7 @@ public:
 	//translation
 	void translation(GLfloat axeX, GLfloat axeY);
 	//rotation
-	void rotation(GLfloat dx, GLfloat dy);
+	void rotation(GLfloat dx, GLfloat dy);//dx et dy des distances
 	//remet à 0 les distances de translation
 	void recentrer();
 	//active ou désactive l'autoroll
@@ -95,6 +96,7 @@ private:
 	couleur couleurs[DIM];		//une couleur par dimension, (entre 0 et 1)
 	GLdouble viewX=800.f, viewH=600.f;		//taille de la fenêtre
 	GLfloat translations[3];
+	Trackball tb;
 	bool autoroll;
 	bool affDim[DIM];
 	bool saveObj, saveMorse;

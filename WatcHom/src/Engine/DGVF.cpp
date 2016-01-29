@@ -481,6 +481,14 @@ std::shared_ptr<std::vector<map<int, int>>> DGVF::getGinv() {
 	}
 	return make_shared<vector<map<int, int>>>(g_inv);
 }
+shared_ptr<vector<map<int, list<int>>>> DGVF::getG() {
+	vector<map<int, std::list<int>>> ret(DIM);
+	for (pair<int, std::list<int>> az : g)   // tout trier par dimension
+	{
+		ret[K->dim(az.first)].insert(az);
+	}
+	return make_shared<vector<map<int, list<int>>>>(ret);
+}
 
 int DGVF::getDim(int pos) {
 	return K->dim(pos);

@@ -17,6 +17,7 @@ public:
 	typedef std::pair<int, int> cellBound;
 	typedef std::list<int> cellList;
 	typedef std::set<int> cellSet;
+	typedef std::pair<int, cellList> cluster;
 
 	DGVF(ComplexeCubique::Ptr p_K);
 	~DGVF() = default;
@@ -41,6 +42,8 @@ public:
 	void add2V(int sigma, int tau);
 	//une map qui a chaque cellule, associe la cellule critique qui définit le cluster, triés dans un tableau par dimension
 	std::shared_ptr<std::vector<std::map<int, int>>> getGinv();
+	//G trié par dimension et genre données séparées
+	std::shared_ptr<std::vector<std::map<int, std::list<int>>>> getG();
 
 	int getDim(int pos);
 
@@ -79,7 +82,7 @@ private:
 	ComplexeCubique::Ptr K;             // the cubical complex
 	bool cubical;               // true: the original complex; false: Morse complex
 	std::set<int> Cr[DIM];      // critical cells par dimension
-	std::map<int, std::list<int> > g;     // g (Cr -> ensemble de cellules)
+	std::map<int, std::list<int>> g;     // g (Cr -> ensemble de cellules)
 	std::map<int, std::set<int> > dM;     // boundary in the Morse complex. A une cellule, ses faces
 	std::map<int, std::set<int> > codM;   // coboundary in the Morse complex. A une cellule, ses cofaces
 

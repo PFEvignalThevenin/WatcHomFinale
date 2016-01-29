@@ -285,7 +285,7 @@ void Modeleur::initiatePgm() {
 		0, pgmTraite->getSize(Axe::y)*dist,
 		0, pgmTraite->getSize(Axe::z)*dist);
 }
-void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, int>>> g_inv) {
+void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g) {
 	ctrl->resetLists();
 	//traiter les clusters par dimension
 	cout << "TODO : \tfaire l'affichage des clusters dans Modeleur::initiateComplexeCubique" << endl;
@@ -295,7 +295,7 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, int>>> g_inv) 
 	std::vector<GLuint> *listObj;//variable des indices de liste d'une dimension
 	//dim0
 	listObj = ctrl->getFormes(Dim::d0);//liste de dim0
-	for (DGVF::cellBound bind : g_inv->at(0)) {
+	for (DGVF::cluster bind : g->at(0)) {//pour tout les clusters de dim 0
 		glNewList(cptr, GL_COMPILE);	//créer nouvelle liste
 		listObj->push_back(cptr);		//conserver identificateur
 		drawCube0(coord2Vert(ccTraite->pos2coord(bind.first)));//dessin
@@ -303,10 +303,30 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, int>>> g_inv) 
 		cptr++;
 	}
 	//dim1
-
+	cout << "DIM1" << endl;
+	for (DGVF::cluster clust : g->at(1)) {//tous clusters dim1
+		cout << "\t" << clust.first << " : ";
+		for (int cell : clust.second) {//afficher dim des cellules
+			cout << ccTraite->dim(cell) << " ";
+		}cout << endl;
+	}
 	//dim2
+	cout << "DIM2" << endl;
+	for (DGVF::cluster clust : g->at(2)) {//tous clusters dim2
+		cout << "\t" << clust.first << " : ";
+		for (int cell : clust.second) {//afficher dim des cellules
+			cout << ccTraite->dim(cell) << " ";
+		}cout << endl;
+	}
 
 	//dim3
+	cout << "DIM3" << endl;
+	for (DGVF::cluster clust : g->at(3)) {//tous clusters dim3
+		cout << "\t" << clust.first << " : ";
+		for (int cell : clust.second) {//afficher dim des cellules
+			cout << ccTraite->dim(cell) << " ";
+		}cout << endl;
+	}
 
 	ctrl->computeCenter(
 		0, ccTraite->getSize(Axe::x)*dist,

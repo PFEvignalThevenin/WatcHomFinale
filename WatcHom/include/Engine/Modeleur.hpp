@@ -37,7 +37,7 @@ public:
 	//initialise les listes de Controlleur2 selon l'objet à afficher
 	void initiateObjs();
 	void initiatePgm();
-	void initiateComplexeCubique(std::shared_ptr<std::vector<std::map<int, int>>> g_inv);
+	void initiateComplexeCubique(std::shared_ptr<std::vector<std::map<int, std::list<int>>>> g);
 
 	obj::Vertex coord2Vert(obj::coord co);
 private:
@@ -58,6 +58,5 @@ private:
 	std::shared_ptr<Controlleur2> ctrl;
 	
 };
-
 
 #endif
