@@ -7,9 +7,8 @@
 #include "Data\ComplexeCubique.hpp"
 #include "GL\freeglut.h"
 #include <map>
-#include <iostream>
 
-class Controlleur2;//inclusion croisée
+class Controlleur2;//inclusion croisÃ©e
 /*Classe de dessin openGL
  *contient un Obj sur lequel il se base pour dessiner.
  *sert notemment pour l'initialisation des listes de controleur2
@@ -22,7 +21,10 @@ public:
 	~Modeleur() = default;
 	//****************************Fonctions de Dessin********************************
 	void drawCube0(obj::Vertex center);
-	void drawCube1(std::vector<obj::Vertex> line);
+	void drawContour(std::vector<obj::coord> positions_2, std::vector<obj::coord> positions_tmp);
+	std::vector<obj::coord> computePositions(std::vector<obj::coord> positions, std::vector<obj::coord> Axes);
+	void drawCube1(std::vector<obj::coord> positions, std::vector<obj::coord> Axes);
+	void drawFace(std::vector<obj::coord> positions);
 	void drawFace(const obj::face &fa);
 	void drawPgm(PGM3D &pgm);
 	//return within 'center' the coordinates of the center of the object
@@ -32,7 +34,7 @@ public:
 	void setObj(obj::Obj2::Ptr obj);
 	void setPgm(PGM3D::Ptr pgm);
 	void setComplexeCubique(ComplexeCubique::Ptr cc);
-	//initialise les listes de Controlleur2 selon l'objet à afficher
+	//initialise les listes de Controlleur2 selon l'objet Ã  afficher
 	void initiateObjs();
 	void initiatePgm();
 	void initiateComplexeCubique(std::shared_ptr<std::vector<std::map<int, int>>> g_inv);
@@ -40,19 +42,19 @@ public:
 	obj::Vertex coord2Vert(obj::coord co);
 private:
 	/*les valeurs de parametrage de l'affichage 
-	 * dist(voisins dim0) = 2*rayon + 2*separation + longueur = dist
+	 * dist(voisins dim0) = rayon + 2*separation + longueur = dist
 	 * rayon : celui des cubes de dim 0
 	 * longuer : celle des cubes de dim 1
 	 * separation : espace entre les cubes
 	 */
 	float rayon, longueur, separation;
 	float dist;
-	//les objets à afficher
+	//les objets Ã  afficher
 	obj::Obj2::Ptr objAffiche;
 	PGM3D::Ptr pgmTraite;
 	ComplexeCubique::Ptr ccTraite;
 
-	//un pointeur vers son inséparable controleur2
+	//un pointeur vers son insÃ©parable controleur2
 	std::shared_ptr<Controlleur2> ctrl;
 	
 };

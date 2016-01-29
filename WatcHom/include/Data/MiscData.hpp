@@ -5,7 +5,7 @@
 #include <string>
 #include "GL\freeglut.h"
 /*
-*Classe d'exception pour les pb de m�moire
+*Classe d'exception pour les pb de mémoire
 *
 */
 class DataError : public std::exception
@@ -48,4 +48,8 @@ enum Axe { x = 0, y = 1, z = 2 };
 //fonction de conversion de int vers Axe
 Axe int2Axe(int i);
 /********************************************************************/
+//surcharge d'opérateurs pour coord
+bool operator==(obj::coord const& a, obj::coord const& b);
+obj::coord operator*(const float &a, const obj::coord &b);
+obj::coord operator+(const obj::coord &a, const obj::coord &b); 
 #endif
