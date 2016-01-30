@@ -6,15 +6,36 @@
 using namespace std;
 using namespace obj;
 //*********************************************Constructeur***************************************************
-Controlleur2::Controlleur2() {
+Controlleur2::Controlleur2() {/*
 	glEnable(GL_DEPTH_TEST);
 	//light
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glEnable(GL_COLOR_MATERIAL);
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
 	//glEnable(GL_DIFFUSE);
 	//glEnable(GL_COLOR_MATERIAL);
 	//glEnable(GL_SPECULAR);
-	glutInitDisplayMode(GLUT_RGBA);
+	//glutInitDisplayMode(GLUT_RGBA);*/
+	GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
+	/*	light_position is NOT default value	*/
+	GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+
+	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
+	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
+
+	glEnable(GL_LIGHTING);
+	glEnable(GL_LIGHT0);
+	glDepthFunc(GL_LESS);
+	glEnable(GL_DEPTH_TEST);
+	glShadeModel(GL_FLAT);
+	glEnable(GL_COLOR_MATERIAL);
+	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	//fin copy paste
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	setViewPort();
@@ -37,15 +58,23 @@ void Controlleur2::drawGL() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	setViewPort();
-	glClearColor(0.5f, 0.7f, 1.0f, 1.0f);//couleur de fond
+	/*static int MatDiff[4] = { 1,1,1,1 };//lumière matters
+	glMaterialiv(GL_FRONT_AND_BACK, GL_DIFFUSE, MatDiff); 
+	glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
+	//glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);*/
+	/*static int LightPos[4] = {1,1,1,1 };
+	glLightiv(GL_LIGHT0, GL_POSITION, LightPos); 
+	static GLfloat blc[4] = {1.0,1.0, 1.0, 1.0 };
+	glLightfv(GL_LIGHT0, GL_DIFFUSE, blc);*/
+	//couleur de fond
+	glClearColor(0.5f, 0.7f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	//début tracé
 	glMatrixMode(GL_MODELVIEW);
-	static int LightPos[4] = { 0,0,1,1 };
-	glLightiv(GL_LIGHT0, GL_POSITION, LightPos);
 	glLoadIdentity();
 	//position du repère de l'objet
 	static float angle = 0;
-	glTranslatef(translations[0], translations[1], -20.0f + translations[2]);//décalages
+	glTranslatef(translations[0], translations[1], -10.0f + translations[2]);//décalages
 	glPushMatrix();//rotations
 	tb.tbMatrix();//utilisateur
 	if (autoroll) {// autoroll : incrément
