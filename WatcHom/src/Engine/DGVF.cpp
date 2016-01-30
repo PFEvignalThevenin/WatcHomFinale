@@ -483,10 +483,22 @@ std::shared_ptr<std::vector<map<int, int>>> DGVF::getGinv() {
 }
 shared_ptr<vector<map<int, list<int>>>> DGVF::getG() {
 	vector<map<int, std::list<int>>> ret(DIM);
-	for (pair<int, std::list<int>> az : g)   // tout trier par dimension
+	vector<map<int, int>> g_inv(DIM);//cellules secondaire vers cellule critique, donc définit le cluster
+	for (int q = 0; q < DIM; q++)   // for each dimension
+	{
+		for (int it : Cr[q])//pour chaque cellule critique de dim q
+		{
+			map<int, list<int> >::iterator it_m = g.find(it);//itérateur vers g
+			if (it_m != g.end())//si non vide : cad si la Cr est ds g : cad définit un cluster->liste
+			{
+				ret[q].insert(*it_m);
+			}
+		}
+	}
+	/*for (pair<int, std::list<int>> az : g)   // tout trier par dimension
 	{
 		ret[K->dim(az.first)].insert(az);
-	}
+	}*/
 	return make_shared<vector<map<int, list<int>>>>(ret);
 }
 
