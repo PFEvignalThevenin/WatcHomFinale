@@ -47,7 +47,7 @@ void Modeleur::drawCube0(obj::Vertex center) {
 	glVertex3f(center.x + rayon, center.y - rayon, center.z - rayon);
 	glEnd();
 }
-void Modeleur::drawContour(vector<coord> positions_2, vector<coord> positions_tmp) {
+void Modeleur::drawContour(vector<Vertex> positions_2, vector<Vertex> positions_tmp) {
 	glBegin(GL_QUAD_STRIP);
 	glVertex3f(positions_2.at(2).x, positions_2.at(2).y, positions_2.at(2).z);
 	glVertex3f(positions_tmp.at(2).x, positions_tmp.at(2).y, positions_tmp.at(2).z);
@@ -61,12 +61,12 @@ void Modeleur::drawContour(vector<coord> positions_2, vector<coord> positions_tm
 	glVertex3f(positions_tmp.at(2).x, positions_tmp.at(2).y, positions_tmp.at(2).z);
 	glEnd();
 }
-vector<coord> Modeleur::computePositions(vector<coord> positions, std::vector<coord> Axes) {
+vector<Vertex> Modeleur::computePositions(vector<Vertex> positions, std::vector<coord> Axes) {
 
 	//positions des 4 points de départ
-	vector<coord> positions_2 = positions;
+	vector<Vertex> positions_2 = positions;
 	//positions des 4 points après translation
-	vector<coord> positions_tmp;
+	vector<Vertex> positions_tmp;
 	positions_tmp.resize(4);
 	//initialisation
 	for (unsigned int i = 0; i < positions_tmp.size(); i++)
@@ -212,16 +212,74 @@ vector<coord> Modeleur::computePositions(vector<coord> positions, std::vector<co
 	
 	return positions_2;
 }
-void Modeleur::drawCube1(vector<coord> positions, std::vector<coord> Axes) {
+void Modeleur::drawCube1(int pos, std::vector<coord> Axes) {
+	coord center = ccTraite->pos2coord(pos);
+	vector <Vertex> positions;
+	positions.resize(4);
+	Vertex center2 = coord2Vert(center);
 
+	if (Axes.at(0).x != 0) {
+		positions.at(0).x = center2.x - Axes.at(0).x*(rayon+dist/2);
+		positions.at(0).y = center2.y - rayon / 2;
+		positions.at(0).z = center2.z + rayon / 2;
+
+		positions.at(1).x = center2.x - Axes.at(0).x*(rayon + dist / 2);
+		positions.at(1).y = center2.y - rayon / 2;
+		positions.at(1).z = center2.z - rayon / 2;
+
+		positions.at(2).x = center2.x - Axes.at(0).x*(rayon + dist / 2);
+		positions.at(2).y = center2.y + rayon / 2;
+		positions.at(2).z = center2.z + rayon / 2;
+
+		positions.at(3).x = center2.x - Axes.at(0).x*(rayon + dist / 2);
+		positions.at(3).y = center2.y + rayon / 2;
+		positions.at(3).z = center2.z - rayon / 2;
+	}
+	else if (Axes.at(0).y != 0) {
+		positions.at(0).x = center2.x + rayon / 2;
+		positions.at(0).y = center2.y - Axes.at(0).y*(rayon + dist / 2);
+		positions.at(0).z = center2.z + rayon / 2;
+
+		positions.at(1).x = center2.x + rayon / 2;
+		positions.at(1).y = center2.y - Axes.at(0).y*(rayon + dist / 2);
+		positions.at(1).z = center2.z - rayon / 2;
+
+		positions.at(2).x = center2.x - rayon / 2;
+		positions.at(2).y = center2.y - Axes.at(0).y*(rayon + dist / 2);
+		positions.at(2).z = center2.z + rayon / 2;
+
+		positions.at(3).x = center2.x - rayon / 2;
+		positions.at(3).y = center2.y - Axes.at(0).y*(rayon + dist / 2);
+		positions.at(3).z = center2.z - rayon / 2;
+	}
+	else if (Axes.at(0).z != 0) {
+		positions.at(0).x = center2.x + rayon / 2;
+		positions.at(0).y = center2.y - rayon / 2;
+		positions.at(0).z = center2.z - Axes.at(0).z*(rayon + dist / 2);
+
+		positions.at(1).x = center2.x + rayon / 2;
+		positions.at(1).y = center2.y + rayon / 2;
+		positions.at(1).z = center2.z - Axes.at(0).z*(rayon + dist / 2);
+
+		positions.at(2).x = center2.x - rayon / 2;
+		positions.at(2).y = center2.y - rayon / 2;
+		positions.at(2).z = center2.z - Axes.at(0).z*(rayon + dist / 2);
+
+		positions.at(3).x = center2.x - rayon / 2;
+		positions.at(3).y = center2.y + rayon / 2;
+		positions.at(3).z = center2.z - Axes.at(0).z*(rayon + dist / 2);
+	}
 	drawFace(positions);
-	vector<coord> lastPos = computePositions(positions, Axes);
+	vector<Vertex> lastPos = computePositions(positions, Axes);
 	drawFace(lastPos);
 
 }
-void Modeleur::drawFace(vector<coord> positions) {
-	glBegin(GL_QUADS);
-	for (coord pos : positions) {
+void Modeleur::drawCube2(std::vector<obj::coord> positions, std::vector<obj::coord> Axes)
+{
+}
+void Modeleur::drawFace(vector<Vertex> positions ) {
+	glBegin(GL_QUAD_STRIP);
+	for (Vertex pos : positions) {
 		glVertex3f(pos.x, pos.y, pos.z);
 	}
 	glEnd();
@@ -302,13 +360,38 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 		glEndList();//fin definition liste
 		cptr++;
 	}
+	vector<coord> Axes;
 	//dim1
 	cout << "DIM1" << endl;
-	for (DGVF::cluster clust : g->at(1)) {//tous clusters dim1
-		cout << "\t" << clust.first << " : ";
-		for (int cell : clust.second) {//afficher dim des cellules
-			cout << ccTraite->dim(cell) << " ";
-		}cout << endl;
+	for (DGVF::cluster clust : g->at(1)) {//tous clusters dim 1
+		DGVF::cluster cluster = clust;
+		//cout << "\t" << clust.first << " : ";
+		//initialisation de la boucle
+		//permet de ne pas avoir de boucle infinie
+		int initial_size = cluster.second.size();
+		int count = 0;
+		//liste des elements qui vont servir à calculer les axes
+		list<int> list_for_axes;
+		list_for_axes = cluster_neighbors(cluster.second, cluster.first);
+		//calculer les axes et retirer les éléments traitées du cluster
+		for (int cell : list_for_axes) {
+			Axes.push_back(computeAxe(cluster.first, cell));
+			cluster.second.remove(cell);
+		}
+		while (cluster.second.size() != 0 && count <= initial_size) {
+			list<int> list_traitee = list_for_axes;
+			for (int cell_traitee : list_traitee) {
+				list_for_axes = cluster_neighbors(cluster.second, cell_traitee);
+			}
+			//calculer les axes et retirer les éléments traitées du cluster
+			for (int cell : list_for_axes) {
+				Axes.push_back(computeAxe(cluster.first, cell));
+				cluster.second.remove(cell);
+			}
+			count++;
+		}
+		drawCube1(cluster.first, Axes);
+		//cout << endl;
 	}
 	//dim2
 	cout << "DIM2" << endl;
@@ -333,6 +416,20 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 		0, ccTraite->getSize(Axe::y)*dist,
 		0, ccTraite->getSize(Axe::z)*dist);
 }
+
+list<int>  Modeleur::cluster_neighbors(list<int> cluster, int position)
+{
+	list<int> incluster;
+	list<int> voisins = ccTraite->neighbors(position);
+	for (int voisin : voisins) {
+		for (int cell : cluster)
+			if (voisin == cell) {
+				incluster.push_back(voisin);
+			}
+	}
+	return incluster;
+}
+
 //****************************************Gestion centre ************************************************
 void Modeleur::computeCenter() {
 	Vertex v = objAffiche->getVertex(1);;
@@ -350,7 +447,51 @@ void Modeleur::computeCenter() {
 	}
 	ctrl->computeCenter(xmin, xmax, ymin, ymax, zmin, zmax);
 }
-
+coord Modeleur::computeAxe(int first_pos, int next_pos) {
+	//conversion position ->coordonnées
+	coord axe;
+	coord first_coord = ccTraite->pos2coord(first_pos);
+	coord next_coord = ccTraite->pos2coord(next_pos);
+	if (first_coord.x != next_coord.x) {
+		if (first_coord.x < next_coord.x) {
+			axe.x = 1;
+			axe.x = 0;
+			axe.x = 0;
+		}
+		else if (first_coord.x > next_coord.x) {
+			axe.x = -1;
+			axe.x = 0;
+			axe.x = 0;
+		}
+	}
+	else if (first_coord.y != next_coord.y) {
+		if (first_coord.y < next_coord.y) {
+			axe.x = 0;
+			axe.x = 1;
+			axe.x = 0;
+		}
+		else if (first_coord.y > next_coord.y) {
+			axe.x = 0;
+			axe.x = -1;
+			axe.x = 0;
+		}
+	}
+	else if (first_coord.z != next_coord.z) {
+		if (first_coord.z < next_coord.z) {
+			axe.x = 0;
+			axe.x = 0;
+			axe.x = -1;
+		}
+		else if (first_coord.z > next_coord.z) {
+			axe.x = 0;
+			axe.x = 0;
+			axe.x = -1;
+		}
+	}
+	else 
+		throw CtrlError(to_string(1) + "deux éléments du cluster sont en réalité les mêmes");
+	return axe;
+}
 void Modeleur::setDistances(float rayon, float longueur, float separation) {
 	this->rayon = rayon;
 	this->longueur = longueur;
