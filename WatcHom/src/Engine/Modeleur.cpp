@@ -70,7 +70,7 @@ vector<Vertex> Modeleur::computePositions(vector<Vertex> positions, std::vector<
 	positions_tmp.resize(4);
 	//initialisation
 	for (unsigned int i = 0; i < positions_tmp.size(); i++)
-		positions_tmp.at(i) = positions_2.at(i) + dist*Axes.at(0);
+		positions_tmp.at(i) = positions_2.at(i) + (dist-rayon)*Axes.at(0);
 	
 	//permet de compenser la distance en cas de coude 
 	vector<int> compense;
@@ -84,7 +84,7 @@ vector<Vertex> Modeleur::computePositions(vector<Vertex> positions, std::vector<
 		//ne pas déssiner de vertices tant qu'on a la même direction mais faire la translation suivant l'axe 
 		while (Axes.at(i) == Axes.at(i + 1) && i < Axes.size()-1) {
 			for (unsigned int j = 0; j < positions_tmp.size(); j++) {
-				positions_tmp.at(j) = positions_tmp.at(j) + dist*Axes.at(i);
+				positions_tmp.at(j) = positions_tmp.at(j) + (dist-rayon)*Axes.at(i);
 			}
 			i++;
 			isLine = true;
@@ -204,7 +204,7 @@ vector<Vertex> Modeleur::computePositions(vector<Vertex> positions, std::vector<
 	}
 	//Désiner le dernier contour
 	for (unsigned int i = 0; i < positions_tmp.size(); i++)
-		positions_tmp.at(i) = positions_2.at(i) + dist*Axes.at(Axes.size()-1);
+		positions_tmp.at(i) = positions_2.at(i) + (dist-rayon)*Axes.at(Axes.size()-1);
 	
 	drawContour(positions_2, positions_tmp);
 	//mettre à jour les positions des derniers sommet
@@ -496,7 +496,7 @@ void Modeleur::setDistances(float rayon, float longueur, float separation) {
 	this->rayon = rayon;
 	this->longueur = longueur;
 	this->separation = separation;
-	dist = rayon + 2 * separation + longueur;
+	dist = 2*rayon + 2 * separation + longueur;
 }
 Vertex Modeleur::coord2Vert(coord co) {
 	Vertex v;
