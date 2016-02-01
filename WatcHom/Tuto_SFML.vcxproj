@@ -124,6 +124,8 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Engine\Trackball.cpp" />
+    <ClCompile Include="src\Interface\Navigateur.cpp" />
     <ClCompile Include="src\Buttons.cpp" />
     <ClCompile Include="include\Data\Object\Object.cpp" />
     <ClCompile Include="src\Data\MiscData.cpp" />
@@ -139,15 +141,19 @@
     <ClCompile Include="src\Engine\DGVF.cpp" />
     <ClCompile Include="src\Engine\DGVF_Console.cpp" />
     <ClCompile Include="src\Engine\Modeleur.cpp" />
-    <ClCompile Include="src\Engine\trackball.cpp" />
     <ClCompile Include="src\Interface\ClusterList.cpp" />
+    <ClCompile Include="src\Interface\DialogueBox.cpp" />
+    <ClCompile Include="src\Interface\ObjList.cpp" />
     <ClCompile Include="src\Interface\WindowOpenGL.cpp" />
     <ClCompile Include="src\Delay.cpp" />
+    <ClCompile Include="src\Interface\WinPaths.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Interface\Menu.cpp" />
     <ClCompile Include="src\Interface\ParamAffichageDim.cpp" />
     <ClCompile Include="src\Interface\OptionAffichage.cpp" />
     <ClCompile Include="src\Data\PGM3D.cpp" />
+    <ClCompile Include="src\Notebook.cpp" />
+    <ClCompile Include="src\ScrolledWindowViewport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Data\Conversion.hpp" />
@@ -163,15 +169,19 @@
     <ClInclude Include="include\Engine\Controlleur2.hpp" />
     <ClInclude Include="include\Engine\DGVF.hpp" />
     <ClInclude Include="include\Engine\Modeleur.hpp" />
-    <ClInclude Include="include\Engine\trackball.h" />
+    <ClInclude Include="include\Engine\Trackball.hpp" />
     <ClInclude Include="include\Interface\ClusterList.hpp" />
+    <ClInclude Include="include\Interface\DialogueBox.hpp" />
     <ClInclude Include="include\Interface\Menu.hpp" />
+    <ClInclude Include="include\Interface\ObjList.hpp" />
     <ClInclude Include="include\Interface\ParamAffichageDim.hpp" />
     <ClInclude Include="include\Interface\WindowOpenGL.hpp" />
     <ClInclude Include="include\Interface\OptionAffichage.hpp" />
     <ClInclude Include="include\Data\PGM3D.hpp" />
     <ClInclude Include="include\Engine\Controlleur.hpp" />
     <ClInclude Include="include\Engine\DGVF_Console.hpp" />
+    <ClInclude Include="include\Interface\WinPaths.hpp" />
+    <ClInclude Include="include\Interface\Navigateur.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,10 +1,10 @@
 #include "Engine\DGVF.hpp"
 
+#include "Data\FileSavable.hpp"
 #include <iostream>
 #include <fstream>	// ifstream, ofstream
 #include <list>
 #include <math.h>   // pow()
-#include <ctime>
 #include <thread>
 
 using namespace std;
@@ -446,7 +446,7 @@ set<int> DGVF::subset(set<int> v, int n)
 int DGVF::choix(std::string message, int max) {
 	int ans;
 	max = (max < 0) ? 0 : max;
-	cout <<endl<< message<<endl;//demander si clusteriser
+	std::cout <<endl<< message<<endl;//demander si clusteriser
 	do {
 		cin >> ans;
 	} while (ans<0 || ans>max);
@@ -502,4 +502,224 @@ int DGVF::getDim(int pos) {
 
 ComplexeCubique::Ptr DGVF::getComplexe() {
 	return K;
+}
+/**********************************Sauvegarde********************************************/
+bool DGVF::saveMorse(std::string path) {
+	//création du fichier
+	ofstream file(path.c_str(), ios::out | ios::trunc);
+	if (!file){
+		throw FileError(0,"Error in DGVF_Console::writeD(" + path + "): impossible to create the output text file.");
+	}
+
+	for (int q = 0; q < DIM; q++)//pour chaque dimension
+	{
+		//for (set<int>::iterator it = Cr[q].begin(); it != Cr[q].end(); ++it)//pour chaque cluster
+		for(int it : Cr[q])//pour chaque cell critique de la dimension
+		{
+			file << "\"" << q << "_" << it << "\": ";
+			auto l = boundary_cr(it);//récupérer les bords?
+			//for (list<int>::iterator it_l = l->begin(); it_l != l->end(); ++it_l)
+			for (int it_l : *l)//les enregistrer
+			{
+				file << "\"" << q - 1 << "_" << it_l << "\" ";
+			}
+			file << endl;
+		}
+	}
+	file.close();
+	return true;
+}
+bool DGVF::saveObj(std::string path, float r, float s){
+	//vérifications paramètres de distances (rayon et séparation)
+	if (0 >= s || s >= r || r >= 1) {
+		throw DataError("Error in fileName: wrong parameters. Choose 0 < s < r < 1 s= " + to_string(s) + " ed r = " + to_string(r));
+	}
+	// Create the file
+	ofstream file(path.c_str(), ios::out | ios::trunc);
+	if (!file){
+		throw FileError(0, "Error in DGVF_Console::write2Obj(" + path + "): impossible to create the output text file.");
+	}
+	file << "# Obj file created by WatcHom (Aldo Gonzalez-Lorenzo)" << endl;//commentaire de l'auteur
+	/* Compute g_inv */
+	/*On parcours tous les clusters et on cherche auquel appartient la cellule */
+	//g : cluster
+	//g_inv : map qui associe à une cellule un numéro de cluster (numéro de la cellule critique qui le définit après calcul)
+	map<int, int> g_inv;//cellules secondaire vers cellule critique, donc définit le cluster
+	for (int q = 0; q < DIM; q++)   // for each dimension
+	{
+		for (int it : Cr[q])//pour chaque cellule critique de dim q
+		{
+			map<int, list<int> >::iterator it_m = g.find(it);//itérateur vers g
+			if (it_m != g.end())//si non vide : cad si la Cr est ds g : cad définit un cluster->liste
+			{
+				for (int it_l : it_m->second)//mettre à jour g_inv : associer le num du cluster pour à cellule de ce cluster
+				{
+					if (g_inv.count(it_l) > 0) {//débogage
+						throw DataError("Error: " + to_string(it_l) + " has two inverses by g");
+					}
+					g_inv[it_l] = it;
+				}
+			}
+		}
+	}
+
+	/* We compute the shape of the complex, leaving spaces between the cells */
+	map< vector<int>, int > M;   // cuboids printed
+	for (int q = 0; q <= 3; q++)//pour chaque dimension
+	{
+		for (int c = 0; c < K->nbrCubes(); c++)//pour toutes les cellules
+		{
+			auto it_g = g_inv.find(c);//itérateur qui pointe sur c
+			if (it_g != g_inv.end() && K->dim(c) == q)//si de dimension q
+			{
+				obj::coord temp_coord = K->pos2coord(c);//lire coords
+				vector<int> coor(3);					//et convertir
+				coor[0] = temp_coord.x;
+				coor[1] = temp_coord.y;
+				coor[2] = temp_coord.z;
+				//cout << "c = " << c << ", ["<<coor[0]<<" "<<coor[1]<<" "<<coor[2]<<"], g-inv = "<<it_g->second<<endl;
+				set<int> v;          // set des coords impaires
+				for (int i = 0; i < 3; i++)//pour chaque coords
+				{
+					if (coor.at(i) % 2 == 1)//si position impaire
+						v.insert(i);//insérer ds v
+				}
+				for (int i1 = 0; i1 < pow(2, v.size()); i1++)//de 0 à 2^taille (nbr de sous ensembles possibles)
+				{
+					set<int> v1 = subset(v, i1);     // corner that we check, in absolute value
+					for (int i2 = 0; i2 < pow(2, v1.size()); i2++)
+					{
+						set<int> v2 = subset(v1, i2);     // the coordinates that are negative
+						vector<int> p = coor; p[0] = 2 * p[0]; p[1] = 2 * p[1]; p[2] = 2 * p[2];//avoir espace pour afficher points
+						for (int it : v1)
+							p.at(it) += 2;
+						for (int it : v2)
+							p.at(it) -= 4;
+						auto f = M.find(p);
+						if (f == M.end() || f->second == it_g->second) // if that cuboid does not exist or was put by the same critical cell
+						{
+							for (int i3 = 0; i3 < pow(2, v1.size()); i3++)
+							{
+								set<int> v3 = subset(v1, i3);     // the coordinates that are negative
+								vector<int> p2 = p;
+								for (int it  : v3){
+									p2.at(it) = (v2.count(it) > 0) ? p2.at(it) + 1 : p2.at(it) - 1;
+								}
+								M[p2] = it_g->second;
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+
+	/* We decide which square faces we will print */
+	vector< vector<double> > vertices;
+	map<vector<int>, int> index;
+	vector< vector<int> > faces;
+	map<int, list<int> > facesG;
+	for (map< vector<int>, int >::iterator it = M.begin(); it != M.end(); ++it)
+	{
+		vector<int> p = it->first;
+		addFace(p, +1, 0, r, s, &M, &vertices, &index, &faces, &facesG);
+		addFace(p, -1, 0, r, s, &M, &vertices, &index, &faces, &facesG);
+		addFace(p, +1, 1, r, s, &M, &vertices, &index, &faces, &facesG);
+		addFace(p, -1, 1, r, s, &M, &vertices, &index, &faces, &facesG);
+		addFace(p, +1, 2, r, s, &M, &vertices, &index, &faces, &facesG);
+		addFace(p, -1, 2, r, s, &M, &vertices, &index, &faces, &facesG);
+	}
+	//	cout << "faces computed" << endl;
+
+	/* Write the file */
+	file << "# " << vertices.size() << " vertices" << endl;
+	file << "# " << faces.size() << " square faces" << endl;
+	for (vector<double> verts : vertices)
+	{
+		file << "v " << verts[0] << " " << verts[1] << " " << verts[2] << endl;
+	}
+	for (int q = 0; q < DIM; q++)
+	{
+		for (int it_cr : Cr[q])
+		{
+			file << "o " << q << "_" << it_cr << endl;
+			list<int> l = facesG[it_cr];
+			for (int it_l : l)
+			{
+				vector<int> v = faces.at(it_l);
+				file << "f " << v.at(0) << " " << v.at(1) << " " << v.at(2) << " " << v.at(3) << endl;
+			}
+		}
+	}
+	file.close();
+	return true;
+}
+
+void DGVF::addFace(vector<int> p, int dir, int axis,
+	double r, double s, map<vector<int>, int> * M,
+	vector< vector<double> > * vertices, map<vector<int>, int> * index,
+	vector< vector<int> > * faces, map<int, list<int> > * facesG)
+{
+	vector<int> next = p; next[axis] += dir;
+	//on ne doit pas avoir un voisin
+	if (next[axis] < 0 || next[axis] >= 2 * K->getSize(int2Axe(axis)) - 1 || M->count(next) == 0)
+	{
+		vector< vector<int> > a(4);
+		vector<int> v = p;
+		if (dir>0)// Calcul de 4 sommets de la face. pour changer selon dim?
+		{
+			v[axis]++;			a[0] = v;
+			v[(axis + 1) % 3]++;	a[1] = v;
+			v[(axis + 2) % 3]++;	a[2] = v;
+			v[(axis + 1) % 3]--;	a[3] = v;
+		}
+		else
+		{
+			a[0] = v;
+			v[(axis + 2) % 3]++;	a[1] = v;
+			v[(axis + 1) % 3]++;	a[2] = v;
+			v[(axis + 2) % 3]--;	a[3] = v;
+		}
+
+		vector<int> face(4);
+		for (int i = 0; i < 4; i++)
+		{
+			map<vector<int>, int>::iterator it = index->find(a[i]);//chercher sommet
+			if (it == index->end())	// if the vertex is found for the first time
+			{
+				vector<double> a2(3);
+				for (int j = 0; j < 3; j++)//le creer
+				{
+					if (a[i][j] % 4 == 0)
+						a2[j] = a[i][j] / 4 - r + s;
+					else if (a[i][j] % 4 == 1)
+						a2[j] = a[i][j] / 4 + r - s;
+					else if (a[i][j] % 4 == 2)
+						a2[j] = a[i][j] / 4 + r + s;
+					else if (a[i][j] % 4 == 3)
+						a2[j] = a[i][j] / 4 + 1 - r - s;
+				}
+				vertices->push_back(a2);//l'ajouter
+				index->insert(pair<vector<int>, int>(a[i], vertices->size()));//avec map pour rapidité
+				face[i] = vertices->size();//index du sommet
+			}
+			else//sinon utiliser celui trouvé
+			{
+				face[i] = it->second;
+			}
+		}
+		/* We add the new face */
+		faces->push_back(face);
+		map<int, list<int> >::iterator it = facesG->find(M->at(p));//chercher cluster
+		if (it == facesG->end())//si pas encore définit
+		{
+			list<int> l;
+			l.push_back(faces->size() - 1);
+			facesG->insert(pair<int, list<int> >(M->at(p), l));//ajouter
+		}
+		else
+		{
+			it->second.push_back(faces->size() - 1);
+		}
+	}
 }

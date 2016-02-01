@@ -24,7 +24,6 @@ WindowOpenGL::Ptr WindowOpenGL::Create() {
 	WindowOpenGL::Ptr ret(new WindowOpenGL());
 	ret->gbl_clusterList->setMainWindow(ret);
 	ret->gbl_navigateur->setMainWindow(ret);
-	cout << ret.use_count() << endl;
 	return ret;
 }
 

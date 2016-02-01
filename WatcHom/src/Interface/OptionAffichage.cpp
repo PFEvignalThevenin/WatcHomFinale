@@ -54,7 +54,7 @@ sfg::Box::Ptr OptionAffichage::BoxTailles() {
 	std::string labels[] = { "Rayon","Longueur","Espace" };
 	auto ret = Box::Create();
 	for (std::string lab : labels) {
-		auto entry = SpinButton::Create(0, 10, 1);
+		auto entry = SpinButton::Create(1, 10, 1);
 		espaces.insert(std::pair<std::string, SpinButton::Ptr>(lab, entry));
 		//délégation de la mise à jour
 		entry->GetSignal(sfg::Widget::OnStateChange).Connect(std::bind(&OptionAffichage::affectEspaceChanges, this));//mise à jour sur utilisation du scale
@@ -71,6 +71,7 @@ void OptionAffichage::setEspaces(int rayon, int Longeur, int separation) {
 	espaces.at("Rayon")->SetValue((float)rayon);
 	espaces.at("Longueur")->SetValue((float)Longeur);
 	espaces.at("Espace")->SetValue((float)separation);
+	espaces.at("Espace")->SetRange(0, 10);//tous les autres ne peuvent avoir 0
 	affectEspaceChanges();
 }
 float OptionAffichage::getRayon() {

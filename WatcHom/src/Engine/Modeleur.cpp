@@ -79,7 +79,7 @@ vector<Vertex> Modeleur::computePositions(vector<Vertex> positions, std::vector<
 		compense.at(i) = 0;
 
 	// desinner tous les contours autour du chemin sauf le dernier
-	for (int i = 0; i < Axes.size()-1; i++) {
+	for (unsigned int i = 0; i < Axes.size()-1; i++) {
 		bool isLine = false;
 		//ne pas déssiner de vertices tant qu'on a la même direction mais faire la translation suivant l'axe 
 		while (Axes.at(i) == Axes.at(i + 1) && i < Axes.size()-1) {
@@ -307,11 +307,10 @@ void Modeleur::initiateObjs() {
 	ctrl->resetLists();
 	Object obj;
 	std::vector<GLuint> *listObj;
-	cout << "construction" << endl;
+	cout << "affichage Obj..." << endl;
 	int cptr = 1;//compte toutes les listes. Il ne doit pas y avoir de doublons
 	for (Dim a : {Dim::d0,Dim::d1,Dim::d2,Dim::d3}) {
 		//pour chaque dimension
-		cout << "DIM : " << to_string(a) << endl;
 		listObj = ctrl->getFormes(a);
 		for (int i = 0; i < objAffiche->nbrObjects(); i++) {//parcourir les objets
 			obj = objAffiche->getObject(i);
@@ -321,24 +320,24 @@ void Modeleur::initiateObjs() {
 				for (obj::face f : obj.getFaces()) {//tracer l'objet
 					drawFace(f);
 				}
-				cout << to_string(cptr) << endl;
 				glEndList();
 				ctrl->setNameList(cptr,obj.getName());
 				cptr++;
 			}
 		}
 	}
+	cout << "affichage Obj Done" << endl;
 	computeCenter();
 }
 void Modeleur::initiatePgm() {
 	ctrl->resetLists();
 	std::vector<GLuint> *listObj = ctrl->getFormes(Dim::d0);
-	cout << "construction PGM..." << endl;
+	cout << "affichage PGM..." << endl;
 	glNewList(1, GL_COMPILE);	//créer nouvelle liste
 	listObj->push_back(1);		//conserver identificateur
 	drawPgm(*pgmTraite);
 	glEndList();
-	cout << "construction PGM Done" << endl;
+	cout << "affichage PGM Done" << endl;
 	ctrl->computeCenter(
 		0, pgmTraite->getSize(Axe::x)*dist,
 		0, pgmTraite->getSize(Axe::y)*dist,
@@ -364,7 +363,7 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 	vector<coord> Axes;
 	//dim1
 	cout << "DIM1" << endl;
-	for (DGVF::cluster clust : g->at(1)) {//tous clusters dim 1
+	/*for (DGVF::cluster clust : g->at(1)) {//tous clusters dim 1
 		DGVF::cluster cluster = clust;
 		//initialisation de la boucle
 		//permet de ne pas avoir de boucle infinie
@@ -392,7 +391,7 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 		}
 		drawCube1(cluster.first, Axes);
 		//cout << endl;
-	}
+	}*/
 	//dim2
 	cout << "DIM2" << endl;
 	for (DGVF::cluster clust : g->at(2)) {//tous clusters dim2

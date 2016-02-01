@@ -2,6 +2,7 @@
 #include "Data\PGM3D.hpp"
 #include "Data\Conversion.hpp"
 #include <iostream>
+#include <ctime>
 
 using namespace std;
 using namespace obj;
@@ -152,7 +153,9 @@ bool Controlleur2::loadPgm(std::string path) {
 }
 //***********************************************fonctions DGVF***********************************************
 void Controlleur2::cellClustering() {
+	clock_t begin = clock();
 	dgvf->CellClustering();
+	std::cout << "Cell Clustering in " << double(clock() - begin) / CLOCKS_PER_SEC << " secs." << endl;
 	etapesSave.push_back(dgvf->getG());
 	modeleur->initiateComplexeCubique(etapesSave.back());
 }
@@ -166,7 +169,9 @@ std::shared_ptr<std::vector<DGVF::cellBound>> Controlleur2::getCollapses() {
 	return dgvf->computeCollapses();
 }
 void Controlleur2::collapse(int c1, int c2) {
+	clock_t begin = clock();
 	dgvf->add2V(c1, c2);
+	std::cout << "Collapse in " << double(clock() - begin) / CLOCKS_PER_SEC << " secs." << endl;
 	etapesSave.push_back(dgvf->getG());
 	modeleur->initiateComplexeCubique(etapesSave.back());
 }
@@ -217,7 +222,7 @@ void Controlleur2::setDistances(float rayon, float longueur, float separation) {
 void Controlleur2::setDimFenetre(double width, double height) {
 	viewX = width;
 	viewH = height;
-	tb.tbReshape(width, height);
+	tb.tbReshape((int)width,(int) height);
 }
 Dim Controlleur2::int2Dim(int d) {
 	switch (d) {
@@ -314,10 +319,31 @@ bool Controlleur2::getAfficherListe(GLuint liste) {
 }
 //***************************fonctions de sauvegarde***************************
 bool Controlleur2::saveObj(std::string path) {
-	cout << "save OBJ : " << path << endl;
-	return true;
+	cout << "save OBJ at : \n\t" << path << endl;
+	cout << "\tTODO : utiliser une autre fonction, qui soit mieux construite et dans le modeleur, ou équivalent"<< endl;
+	try {
+		clock_t begin = clock();
+		bool ret = dgvf->saveObj(path);
+		std::cout << path << " written in " << double(clock() - begin) / CLOCKS_PER_SEC << " secs." << endl;
+		return ret;
+	}
+	catch (FileError fe) {
+		std::cout << fe.what();
+	}
+	catch (exception fe) {
+		std::cout << fe.what();
+	}
+	return false;
 }
 bool Controlleur2::saveMorse(std::string path) {
-	cout << "save Morse : " << path << endl;
-	return true;
+	cout << "save Morse at :\n\t" << path << endl;
+	try {
+		return 	dgvf->saveMorse(path);
+	}
+	catch (FileError fe) {
+		std::cout << fe.what();
+	}catch (exception fe) {
+		std::cout << fe.what();
+	}
+	return false;
 }

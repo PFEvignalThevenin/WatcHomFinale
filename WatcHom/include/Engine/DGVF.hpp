@@ -50,6 +50,14 @@ public:
 
 	/*paramètre le nombre de threads à utiliser. Déterminé par utilisateur. >0.*/
 	void setNbrThread(unsigned int nbr);
+
+	/**********************************Sauvegarde********************************************/
+	bool saveMorse(std::string path);
+	bool saveObj(std::string path, float r = 0.1, float s = 0.05 );//par pitié, enlevez-moi ça! mettre un équivalent dans le modeleur.
+	void DGVF::addFace(std::vector<int> p, int dir, int axis,
+		double r, double s, std::map<std::vector<int>, int> * M,
+		std::vector< std::vector<double> > * vertices, std::map<std::vector<int>, int> * index,
+		std::vector< std::vector<int> > * faces, std::map<int, std::list<int> > * facesG);//et pour ça aussi!!!!!!!!!!!!!!!!!!!!!!!!
 protected:
 	//calcule les bords et renvoie l'ensemble des Cr parmis les bords
 	std::shared_ptr<cellList> boundary_cr(int c);
