@@ -58,12 +58,7 @@ void Trackball::tbStop() {
 void Trackball::tbMatrix()
 {
 	if (active) {
-		//glPushMatrix();
-		//glLoadIdentity();
 		glRotatef(tb_angle, tb_axis[0], tb_axis[1], tb_axis[2]);
-		//glMultMatrixf((GLfloat *)tb_transform);
-		//glGetFloatv(GL_MODELVIEW_MATRIX, (GLfloat *)tb_transform);
-		//glPopMatrix();
 	}
 	glMultMatrixf((GLfloat *)tb_transform);
 

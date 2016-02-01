@@ -1,4 +1,6 @@
 #include "Interface\WinPaths.hpp"
+#include "Engine\Controlleur2.hpp"
+#include <sstream>
 
 using namespace std;
 using namespace sfg;
@@ -7,7 +9,7 @@ WinPaths::WinPaths() : sfg::Window(Window::Style::TOPLEVEL | Window::Style::CLOS
 {
 	objLoadPath = Entry::Create("fertility100_11_V.obj");
 	pgmLoadPath = Entry::Create("fertility3.pgm");
-	repoSavePath = Entry::Create("./");
+	repoSavePath = Entry::Create("./results");
 	objSuffixe = Entry::Create("_O_");
 	morseSuffixe = Entry::Create("_V_");
 	zommMulti = SpinButton::Create(2, 20, 2);;
@@ -37,12 +39,6 @@ WinPaths::Ptr WinPaths::Create() {
 	}));
 	return ret;
 }
-void WinPaths::resetInc() {
-	increment = 0;
-}
-void WinPaths::inc() {
-	increment++;
-}
 int WinPaths::getZoomMultiply() {
 	return (int)zommMulti->GetValue();
 }
@@ -53,8 +49,33 @@ std::string WinPaths::getPgmLoad() {
 	return pgmLoadPath->GetText();
 }
 std::string WinPaths::getObjSave() {
-	return "";
+	string ret = repo() + getObjName() + objSuffixe->GetText() + to_string(Controlleur2::get()->getNbrIterations() + 1) + ".obj";
+	return ret;
 }
 std::string WinPaths::getMorseSave() {
-	return "";
+	string ret = repo() + getObjName() + morseSuffixe->GetText() + to_string(Controlleur2::get()->getNbrIterations() + 1) + "";
+	return ret;
+}
+std::string WinPaths::getObjName() {
+	istringstream ss(pgmLoadPath->GetText());
+	string token;
+	while (std::getline(ss, token, '/')) {}
+	istringstream ss2(token);
+	while (std::getline(ss2, token, '\\')) {}
+	//ici : token contient la dernière partie d'un chemin de répertoire : en gros un fichier
+	istringstream ss3(token);
+	std::getline(ss3, token, '.');//là on enlève l'extention
+	return token;
+}
+#include <windows.h>
+std::string WinPaths::repo() {
+	std::string ret = repoSavePath->GetText();
+	//ajouter un slash final s'il en manque
+	if (ret.back() == '/'  || ret.back() == '\\' ) {}
+	else {
+		ret.push_back('/');
+	}
+	//créer le répertoire.
+	CreateDirectory(ret.c_str(), NULL);
+	return ret;
 }

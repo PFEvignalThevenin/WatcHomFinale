@@ -15,7 +15,7 @@ public:
 	static std::shared_ptr<ComplexeCubique> PGM3D2ComplexeCubique(PGM3D &pgm, bool primal=true);//warning : ne fait pas des primal=false
 	//Représentation maillée d'un PGM3D
 	static std::shared_ptr<obj::Obj> PGM3D2Obj(PGM3D &pgm);
-	//Remrésentation maillée d'un ComplexeCubique
+	//Représentation maillée d'un ComplexeCubique
 	static std::shared_ptr<obj::Obj> ComplexeCubique2Obj(ComplexeCubique &pgm);
 private:
 	//calcul permettant de faire la correspondance pour l'interprétation de PGM3D2CC

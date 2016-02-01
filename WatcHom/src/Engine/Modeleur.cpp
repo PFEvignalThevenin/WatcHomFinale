@@ -265,6 +265,7 @@ void Modeleur::initiateObjs() {
 				}
 				cout << to_string(cptr) << endl;
 				glEndList();
+				ctrl->setNameList(cptr,obj.getName());
 				cptr++;
 			}
 		}
@@ -307,7 +308,7 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 	for (DGVF::cluster clust : g->at(1)) {//tous clusters dim1
 		cout << "\t" << clust.first << " : ";
 		for (int cell : clust.second) {//afficher dim des cellules
-			cout << ccTraite->dim(cell) << " ";
+			cout << cell << " ";
 		}cout << endl;
 	}
 	//dim2
@@ -315,7 +316,7 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 	for (DGVF::cluster clust : g->at(2)) {//tous clusters dim2
 		cout << "\t" << clust.first << " : ";
 		for (int cell : clust.second) {//afficher dim des cellules
-			cout << ccTraite->dim(cell) << " ";
+			cout << cell << " ";
 		}cout << endl;
 	}
 
@@ -324,7 +325,7 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 	for (DGVF::cluster clust : g->at(3)) {//tous clusters dim3
 		cout << "\t" << clust.first << " : ";
 		for (int cell : clust.second) {//afficher dim des cellules
-			cout << ccTraite->dim(cell) << " ";
+			cout << cell << " ";
 		}cout << endl;
 	}
 

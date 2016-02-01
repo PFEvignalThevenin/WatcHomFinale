@@ -58,14 +58,6 @@ void Controlleur2::drawGL() {
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	setViewPort();
-	/*static int MatDiff[4] = { 1,1,1,1 };//lumière matters
-	glMaterialiv(GL_FRONT_AND_BACK, GL_DIFFUSE, MatDiff); 
-	glColorMaterial(GL_FRONT_AND_BACK,GL_DIFFUSE);
-	//glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);*/
-	/*static int LightPos[4] = {1,1,1,1 };
-	glLightiv(GL_LIGHT0, GL_POSITION, LightPos); 
-	static GLfloat blc[4] = {1.0,1.0, 1.0, 1.0 };
-	glLightfv(GL_LIGHT0, GL_DIFFUSE, blc);*/
 	//couleur de fond
 	glClearColor(0.5f, 0.7f, 1.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -106,7 +98,8 @@ void Controlleur2::drawObj() {
 		if (!affDim[i]) continue;//court-circuiter l'affichage de cette dimension
 		glColor4f(couleurs[i].rouge, couleurs[i].vert, couleurs[i].bleu, couleurs[i].alpha);//couleur appropriée
 		for (int j : listObj[i]) {//afficher chaque objet
-			glCallList(j);
+			if(infoListObj[j].second)//si candidat à l'affichage
+				glCallList(j);
 		}
 	}
 }
@@ -146,6 +139,7 @@ bool Controlleur2::loadPgm(std::string path) {
 		modeleur->initiatePgm();
 		modeleur->setComplexeCubique(cc);
 		afficher = true;
+		etapesSave.clear();
 		return true;
 	}
 	catch (FileError fe) {
@@ -159,12 +153,8 @@ bool Controlleur2::loadPgm(std::string path) {
 //***********************************************fonctions DGVF***********************************************
 void Controlleur2::cellClustering() {
 	dgvf->CellClustering();
-	modeleur->initiateComplexeCubique(dgvf->getG());
-	if (saveObj) {
-		cout << "TODO : saveOBJ after cell clustering" << endl;
-	}if (saveMorse) {
-		cout << "TODO : saveMorse after cell clustering" << endl;
-	}
+	etapesSave.push_back(dgvf->getG());
+	modeleur->initiateComplexeCubique(etapesSave.back());
 }
 bool Controlleur2::isPerfect() {
 	return dgvf->perfect();
@@ -177,15 +167,23 @@ std::shared_ptr<std::vector<DGVF::cellBound>> Controlleur2::getCollapses() {
 }
 void Controlleur2::collapse(int c1, int c2) {
 	dgvf->add2V(c1, c2);
-	modeleur->initiateComplexeCubique(dgvf->getG());
-	if (saveObj) {
-		cout << "TODO : saveOBJ after collapse" << endl;
-	}if (saveMorse) {
-		cout << "TODO : saveMorse after collapse" << endl;
-	}
+	etapesSave.push_back(dgvf->getG());
+	modeleur->initiateComplexeCubique(etapesSave.back());
 }
 int Controlleur2::getDim(int pos) {
 	return dgvf->getDim(pos);
+}
+int Controlleur2::getNbrIterations() {
+	return etapesSave.size();
+}
+void Controlleur2::retourIterPrecedente() {
+	cout << "Retour itération précedente, ok pour affichage, mais pas pour l'algorithme, donc en suspend" << endl;
+	bool DGVFPeuxRetourArrière = false;
+	if (DGVFPeuxRetourArrière) {
+		if (etapesSave.size() < 2) return;
+		etapesSave.pop_back();
+		modeleur->initiateComplexeCubique(etapesSave.back());
+	}
 }
 
 //**********************************************Gestion listes ************************************************
@@ -196,6 +194,7 @@ void Controlleur2::resetLists() {
 		}
 		listObj[i].resize(0);
 	}
+	infoListObj.clear();
 }
 vector<GLuint>* Controlleur2::getFormes(Dim dim) {
 	return &listObj[dim];
@@ -248,13 +247,7 @@ void Controlleur2::recentrer() {
 }
 void Controlleur2::rotation(int x, int y) {
 	tb.tbMotion(x, y);
-}/*
-void Controlleur2::startRotation(int x, int y){
-	tb.tbMouse(1, GLUT_DOWN, x, y);
 }
-void Controlleur2::stopRotation(int x, int y) {
-	tb.tbMouse(1, GLUT_UP, x, y);
-}*/
 void Controlleur2::startRotation(int x, int y) {
 	tb.tbStart(x, y);
 }
@@ -267,10 +260,6 @@ void Controlleur2::setAutoroll(bool set) {
 void Controlleur2::setAffichageDim(Dim d, bool set ) {
 	affDim[d] = set;
 }
-void Controlleur2::setSave(bool obj , bool morse ) {
-	saveObj = obj;
-	saveMorse = morse;
-}
 //***************************fonctions privées diverses***************************
 void Controlleur2::setViewPort() {
 	static const auto pi = 3.1415926535897932384626433832795f;
@@ -281,4 +270,54 @@ void Controlleur2::setViewPort() {
 	auto frustum_height = std::tan(fov / 360 * pi) * near_distance;
 	auto frustum_width = frustum_height * aspect;
 	glFrustum(-frustum_width, frustum_width, -frustum_height, frustum_height, near_distance, far_distance);
+}
+
+//***************************Fontions de liste***************************
+
+void Controlleur2::setNameList(GLuint liste, string nom) {
+	//si il n'existe pas d'entrée, la créer. Sinon faire modif
+	if (infoListObj.find(liste) != infoListObj.end()) {//il existe une entrée
+		infoListObj[liste].first = nom;
+	}
+	else {
+		infoListObj.insert(pair<GLuint,pair<string,bool>>(liste,  pair<string, bool>(nom, true)));
+	}
+}
+string Controlleur2::getNameList(int liste) {
+	//si il n'existe pas d'entrée, la créer. Sinon faire modif
+	if (infoListObj.find(liste) != infoListObj.end()) {//il existe une entrée
+		return infoListObj[liste].first;
+	}
+	else {
+		infoListObj.insert(pair<GLuint, pair<string, bool>>(liste, pair<string, bool>(to_string(liste), true)));
+		return to_string(liste);
+	}
+}
+void Controlleur2::setAfficherList(GLuint liste, bool aff) {
+	//si il n'existe pas d'entrée, la créer. Sinon faire modif
+	if (infoListObj.find(liste) != infoListObj.end()) {//il existe une entrée
+		infoListObj[liste].second = aff;
+	}
+	else {
+		infoListObj.insert(pair<GLuint, pair<string, bool>>(liste, pair<string, bool>(to_string(liste), aff)));
+	}
+}
+bool Controlleur2::getAfficherListe(GLuint liste) {
+	//si il n'existe pas d'entrée, la créer. Sinon faire modif
+	if (infoListObj.find(liste) != infoListObj.end()) {//il existe une entrée
+		return infoListObj[liste].second;
+	}
+	else {
+		infoListObj.insert(pair<GLuint, pair<string, bool>>(liste, pair<string, bool>(to_string(liste), true)));
+		return true;
+	}
+}
+//***************************fonctions de sauvegarde***************************
+bool Controlleur2::saveObj(std::string path) {
+	cout << "save OBJ : " << path << endl;
+	return true;
+}
+bool Controlleur2::saveMorse(std::string path) {
+	cout << "save Morse : " << path << endl;
+	return true;
 }

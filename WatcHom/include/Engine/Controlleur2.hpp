@@ -52,38 +52,45 @@ public:
 	void setAutoroll(bool set);
 	//activation du court-circuitage d'affichages des objets de certaines dimensions
 	void setAffichageDim(Dim d, bool set = true);
-	//paramétrage pour enregistrer le résultat aux formats obj ou morse après une étape de l'algo
-	void setSave(bool obj = true, bool morse = false);
-	//accès aux id des lists de calcul des polygones
-	std::vector<GLuint>* getFormes(Dim dim);
 
 	//***************************fonctions de chargement***************************
 	//charge un obj et le sauvegarde ds objAffiche pour l'afficher
 	//return false si pb de chargement
 	bool loadObj(std::string path);
+	//initialise les listes de Controlleur avec tracés du Modeleur
+	void initiateObjs();
 	/*charge un pgm et commence le traitement dans DGVF, puis affiche une vue rapide.
 	 *init aussi le panneau des clusters
 	 *return false si pb de chargement
 	 */
 	bool Controlleur2::loadPgm(std::string path);
 
-	//***************************fonctions DGVF***************************
+	//***************************fonctions de sauvegarde***************************
+	bool saveObj(std::string path);
+	bool saveMorse(std::string path);
+
+	//******************************fonctions DGVF*********************************
 	void cellClustering();
 	bool isPerfect();
 	bool isClusterisable();
 	std::shared_ptr<std::vector<DGVF::cellBound>> getCollapses();
 	void collapse(int c1, int c2);
 	int getDim(int pos);
-
+	int getNbrIterations();//renvoie le nombre de fois qu'in collapse ou un merge a été effectué
+	void retourIterPrecedente();//recharge l'itération précédente et supprime la dernière
 
 	//calcule les valeurs du centre selon la taille du cube délimité par les paramètres
 	void Controlleur2::computeCenter(float xmin, float xmax, float ymin, float ymax, float zmin, float zmax);
-	
-	//***************************initialisation de liste***************************
-	//initialise les listes de Controlleur avec tracés du Modeleur
-	void initiateObjs();
-	//vide les listes openGL
+
+	//***************************Fontions de liste***************************
+	//accès aux id des lists de calcul des polygones
+	std::vector<GLuint>* getFormes(Dim dim);
+	//vide les listes openGL et la map associée : 'infoListObj'
 	void resetLists();
+	void setNameList(GLuint liste, std::string nom);
+	std::string getNameList(int liste);
+	void setAfficherList(GLuint liste, bool aff = true);
+	bool getAfficherListe(GLuint liste);
 
 	//convertit de int vers l'énumération correspondante
 	static Dim int2Dim(int d);
@@ -92,18 +99,19 @@ private:
 	std::shared_ptr<Modeleur> modeleur;//ne pas remplacer par Modeleur::Ptr car inclusion croisée, tout ça...
 	DGVF::Ptr dgvf;
 
+	std::vector<std::shared_ptr<std::vector<DGVF::clustMap>>> etapesSave;//tableau des clusters par étapes
 	bool afficher = false;
 	obj::Vertex center;			//le centre du repère d'affichage
 	std::vector<GLuint> listObj[DIM];	//une liste par dimension
+	std::map<int, std::pair<std::string, bool>> infoListObj;//associe à un liste, un nom et l'autorisation d'afficher
 	couleur couleurs[DIM];		//une couleur par dimension, (entre 0 et 1)
 	GLdouble viewX=800.f, viewH=600.f;		//taille de la fenêtre
 	GLfloat translations[3];
 	Trackball tb;
 	bool autoroll;
 	bool affDim[DIM];
-	bool saveObj, saveMorse;
 
-	//***************************fonctions de dessin***************************
+	//******************************fonctions de dessin******************************
 	//dessine un petit cube tout mignion
 	void drawDefault();
 	//dessine l'obj tel que listé par le Modeleur

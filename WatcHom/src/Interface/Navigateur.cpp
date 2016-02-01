@@ -18,6 +18,8 @@ Navigateur::Navigateur() : sfg::Bin()
 	affectAffDim();
 	but_centrer = Button::Create("Centrer");
 	but_centrer->GetSignal(Button::OnLeftClick).Connect(bind(&Navigateur::recentrer, this));
+	butSaveObj = Button::Create("Export obj");//boutons de sauvegarde
+	butSaveMorse = Button::Create("Export Morse");
 	autoroll = CheckButton::Create("Autoroll");
 	autoroll->GetSignal(CheckButton::OnToggle).Connect(bind(&Navigateur::affectAutoroll, this));
 	setAutoroll(true);
@@ -33,6 +35,9 @@ Navigateur::Ptr Navigateur::Create() {
 	auto hbf1 = Box::Create(Box::Orientation::VERTICAL);
 	hbf1->Pack(ret->saveObj);
 	hbf1->Pack(ret->saveMorse);
+	hbf1->Pack(ret->butSaveObj);
+	hbf1->Pack(ret->butSaveMorse);
+
 	f_saves->Add(hbf1);
 	//frame dims
 	auto hbf2 = Box::Create(Box::Orientation::VERTICAL);
@@ -51,6 +56,11 @@ Navigateur::Ptr Navigateur::Create() {
 	hb->Pack(f_nav);
 	ret->Add(hb);
 	return ret;
+}
+void Navigateur::setMainWindow(std::shared_ptr<WindowOpenGL> main_win) {
+	this->main_win = main_win;
+	butSaveObj->GetSignal(Button::OnLeftClick).Connect(bind(&WindowOpenGL::saveObj, main_win));
+	butSaveMorse->GetSignal(Button::OnLeftClick).Connect(bind(&WindowOpenGL::saveMorse, main_win));
 }
 const std::string& Navigateur::GetName() const {
 	static const std::string name("Navigateur");
@@ -91,7 +101,7 @@ void Navigateur::recentrer() {
 	Controlleur2::get()->recentrer();
 }
 void Navigateur::affectSaves() {
-	Controlleur2::get()->setSave(saveObj->IsActive(),saveMorse->IsActive());
+	main_win->setSave(saveObj->IsActive(),saveMorse->IsActive());
 }
 void Navigateur::affectAffDim() {
 	Controlleur2::Ptr c = Controlleur2::get();

@@ -158,8 +158,8 @@ int main()
 		cin >> x;
 	}
 	else if (choix == 1) {
-		WindowOpenGL app_window;
-		app_window.run();
+		WindowOpenGL::Ptr app_window = WindowOpenGL::Create();
+		app_window->run();
 	}
 	return 0;
 }

@@ -9,14 +9,23 @@ using namespace std;
 using namespace sfg;
 using namespace sf;
 
+#define LARGEUR_NAV 210
+
 WindowOpenGL::WindowOpenGL() : app(sf::VideoMode(800, 600, 32), "WatcHom")
 {
 	win_menu = initMenuWindow();
 	win_optAff = initOptionAffichageWindow();
 	win_optAff->Show(false);
-	win_NavPanel = initNavPanel();
 	win_paths = initPathWindow();
 	win_paths->Show(false);
+	win_NavPanel = initNavPanel();
+}
+WindowOpenGL::Ptr WindowOpenGL::Create() {
+	WindowOpenGL::Ptr ret(new WindowOpenGL());
+	ret->gbl_clusterList->setMainWindow(ret);
+	ret->gbl_navigateur->setMainWindow(ret);
+	cout << ret.use_count() << endl;
+	return ret;
 }
 
 //******************************
@@ -120,7 +129,6 @@ sfg::Window::Ptr WindowOpenGL::initMenuWindow() {
 	auto window = sfg::Window::Create(0);
 	gbl_menu = Menu::Create();
 	window->Add(gbl_menu);
-	//window->SetAllocation(FloatRect(0, 0, 50, 20));
 	//linker bouton quitter
 	gbl_menu->getButton("Quitter")->GetSignal(sfg::Window::OnMouseLeftPress).Connect(
 		std::bind([=]() {
@@ -129,15 +137,12 @@ sfg::Window::Ptr WindowOpenGL::initMenuWindow() {
 	//linker bouton charger
 	gbl_menu->getButton("Ouvrir Obj")->GetSignal(sfg::Window::OnMouseLeftPress).Connect(
 		std::bind([=]() {
-		//Controlleur2::get()->loadObj("fertility100_11_V.obj");
-		//Controlleur2::get()->loadObj(getUserString("Ouverture .obj", "Chemin vers un fichier :"));
 		Controlleur2::get()->loadObj(win_paths->getObjLoad());
+		gbl_objList->majNav();
 	}));
 	//linker bouton pgm
 	gbl_menu->getButton("Importer Pgm")->GetSignal(sfg::Window::OnMouseLeftPress).Connect(
 		std::bind([=]() {
-		//if(Controlleur2::get()->loadPgm("fertility3.pgm"))
-		//if (Controlleur2::get()->loadPgm(getUserString("Ouverture .pgm", "Chemin vers un fichier :")))
 		if (Controlleur2::get()->loadPgm(win_paths->getPgmLoad()))
 			gbl_clusterList->refresh();
 	}));
@@ -165,12 +170,18 @@ sfg::Window::Ptr WindowOpenGL::initOptionAffichageWindow() {
 sfg::Window::Ptr WindowOpenGL::initNavPanel() {
 	auto window = sfg::Window::Create(sfg::Window::Style::BACKGROUND);
 	auto note = Notebook::Create();
-	gbl_clusterList = ClusterList::Create();
+	gbl_objList = ObjList::Create();
+	gbl_clusterList = ClusterList::Create(gbl_objList);
 	gbl_navigateur = Navigateur::Create();
 	note->AppendPage(gbl_clusterList, Label::Create("Algo"));
 	note->AppendPage(gbl_navigateur, Label::Create("Nav"));
-	window->Add(note);
+	note->AppendPage(gbl_objList, Label::Create("Objs"));
+	//window->Add(note);
 	window->SetAllocation(FloatRect(200, 100, 50, 20));
+	auto scroll1 = sfg::ScrolledWindow::Create();
+	scroll1->AddWithViewport(note);
+	scroll1->SetScrollbarPolicy(sfg::ScrolledWindow::HORIZONTAL_NEVER | sfg::ScrolledWindow::VERTICAL_AUTOMATIC);
+	window->Add(scroll1);
 	return window;
 }
 WinPaths::Ptr WindowOpenGL::initPathWindow() {
@@ -197,7 +208,7 @@ void WindowOpenGL::afficherOptionChemins() {
 }
 void WindowOpenGL::positionnerNavPanel() {
 	sf::Vector2u appSize = app.getSize();
-	sf::Vector2f size(200, (float)appSize.y);
+	sf::Vector2f size(LARGEUR_NAV, (float)appSize.y);
 	win_NavPanel->SetRequisition(size);
 	win_NavPanel->SetAllocation(sf::FloatRect(appSize.x-size.x, 0, size.x, size.y));
 }
@@ -205,4 +216,23 @@ void WindowOpenGL::positionnerNavPanel() {
 std::string WindowOpenGL::getUserString(std::string nameMessage, std::string description) {
 	//attention : ne fonctionne pas : freeze l'écran si en-dehors des case de la gestion d'évènements
 	return DialogueBox::GetString(app, sfgui, nameMessage, description);
+}
+
+//****************************Fonctions de sauvegarde*********************************
+void WindowOpenGL::setSave(bool obj, bool morse) {
+	b_saveObj = obj;
+	b_saveMorse = morse;
+}
+void WindowOpenGL::autoSave() {
+	if (b_saveObj) {
+		saveObj();
+	}if (b_saveMorse) {
+		saveMorse();
+	}
+}
+bool WindowOpenGL::saveMorse() {
+	return Controlleur2::get()->saveMorse(win_paths->getMorseSave());
+}
+bool WindowOpenGL::saveObj() {
+	return Controlleur2::get()->saveObj(win_paths->getObjSave());
 }

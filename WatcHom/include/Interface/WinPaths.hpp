@@ -13,18 +13,20 @@ public:
 
 	static WinPaths::Ptr Create();
 
-	void resetInc();
-	void inc();
-
 	int getZoomMultiply();
 	std::string getObjLoad();
 	std::string getPgmLoad();
 	std::string getObjSave();
 	std::string getMorseSave();
+
 private:
 	sfg::Entry::Ptr objLoadPath, pgmLoadPath;
 	sfg::Entry::Ptr repoSavePath;
 	sfg::Entry::Ptr objSuffixe, morseSuffixe;
 	sfg::SpinButton::Ptr zommMulti;
-	int increment = 0;
+
+	//get the pgm file and extract the extension and rep path
+	std::string WinPaths::getObjName();
+	//vérifie que chemin ver répertoire. Le créé si n'existe pas, et rajoute un '/' final si necessaire
+	std::string repo();
 };

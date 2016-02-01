@@ -266,8 +266,6 @@ void DGVF::add2V(int sigma, int tau)
 	Cr[q].erase(sigma);
 	Cr[q + 1].erase(tau);
 	/* We update dM and codM */
-	//if(!cubical) {cout << "V <- " << sigma << ", " << tau << endl;}
-	//cout << "V <- " << sigma<<"["<<K->dim(sigma)<<"] - "<< tau<<"["<<K->dim(tau)<<"]"<<endl;
 }
 
 
@@ -469,7 +467,7 @@ std::shared_ptr<std::vector<map<int, int>>> DGVF::getGinv() {
 			map<int, list<int> >::iterator it_m = g.find(it);//itérateur vers g
 			if (it_m != g.end())//si non vide : cad si la Cr est ds g : cad définit un cluster->liste
 			{
-				for (int it_l : it_m->second)//mettre à jour g_inv : associer le num du cluster pour à cellule de ce cluster
+				for (int it_l : it_m->second)//mettre à jour g_inv : associer le num du cluster pour chaque cellule de ce cluster
 				{
 					if (g_inv[q].count(it_l) > 0) {//débogage
 						throw DataError("Error: " + to_string(it_l) + " has two inverses by g");
@@ -495,10 +493,6 @@ shared_ptr<vector<map<int, list<int>>>> DGVF::getG() {
 			}
 		}
 	}
-	/*for (pair<int, std::list<int>> az : g)   // tout trier par dimension
-	{
-		ret[K->dim(az.first)].insert(az);
-	}*/
 	return make_shared<vector<map<int, list<int>>>>(ret);
 }
 

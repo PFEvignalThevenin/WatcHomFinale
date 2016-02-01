@@ -18,6 +18,7 @@ public:
 	typedef std::list<int> cellList;
 	typedef std::set<int> cellSet;
 	typedef std::pair<int, cellList> cluster;
+	typedef std::map<int, cellList> clustMap;
 
 	DGVF(ComplexeCubique::Ptr p_K);
 	~DGVF() = default;
@@ -43,7 +44,7 @@ public:
 	//une map qui a chaque cellule, associe la cellule critique qui définit le cluster, triés dans un tableau par dimension
 	std::shared_ptr<std::vector<std::map<int, int>>> getGinv();
 	//G trié par dimension et genre données séparées
-	std::shared_ptr<std::vector<std::map<int, std::list<int>>>> getG();
+	std::shared_ptr<std::vector<clustMap>> getG();
 
 	int getDim(int pos);
 
@@ -66,7 +67,7 @@ protected:
 	/*trier les cellules par dimension dans les tableaux des cellules critiques*/
 	void trierCellulesCritiques();
 	//permet de calculer toutes les combinaisons de V selon n (n index de la combinaison)
-	std::set<int> subset(std::set<int> v, int n);
+	cellSet subset(std::set<int> v, int n);
 	//choix utilisateur entre 0 et max
 	int choix(std::string message, int max);
 	//accès au complexe traité
