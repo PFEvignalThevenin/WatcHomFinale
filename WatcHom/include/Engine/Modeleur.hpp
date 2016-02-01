@@ -45,7 +45,7 @@ public:
 	obj::Vertex coord2Vert(obj::coord co);
 private:
 	/*les valeurs de parametrage de l'affichage 
-	 * dist(voisins dim0) = rayon + 2*separation + longueur = dist
+	 * dist(voisins dim0) = 2*rayon + 2*separation + longueur = dist
 	 * rayon : celui des cubes de dim 0
 	 * longuer : celle des cubes de dim 1
 	 * separation : espace entre les cubes
