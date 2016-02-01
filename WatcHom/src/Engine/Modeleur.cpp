@@ -364,16 +364,8 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 	vector<coord> Axes;
 	//dim1
 	cout << "DIM1" << endl;
-<<<<<<< HEAD
-	for (DGVF::cluster clust : g->at(1)) {//tous clusters dim1
-		cout << "\t" << clust.first << " : ";
-		for (int cell : clust.second) {//afficher dim des cellules
-			cout << cell << " ";
-		}cout << endl;
-=======
 	for (DGVF::cluster clust : g->at(1)) {//tous clusters dim 1
 		DGVF::cluster cluster = clust;
-		//cout << "\t" << clust.first << " : ";
 		//initialisation de la boucle
 		//permet de ne pas avoir de boucle infinie
 		int initial_size = cluster.second.size();
@@ -400,7 +392,6 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 		}
 		drawCube1(cluster.first, Axes);
 		//cout << endl;
->>>>>>> 461f1733bf5f57c7c708b74e8b029c8cdb45bf02
 	}
 	//dim2
 	cout << "DIM2" << endl;
