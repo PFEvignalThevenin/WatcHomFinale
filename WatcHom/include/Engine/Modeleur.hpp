@@ -21,14 +21,16 @@ public:
 	~Modeleur() = default;
 	//****************************Fonctions de Dessin********************************
 	void drawCube0(obj::Vertex center);
-	void drawContour(std::vector<obj::coord> positions_2, std::vector<obj::coord> positions_tmp);
-	std::vector<obj::coord> computePositions(std::vector<obj::coord> positions, std::vector<obj::coord> Axes);
-	void drawCube1(std::vector<obj::coord> positions, std::vector<obj::coord> Axes);
-	void drawFace(std::vector<obj::coord> positions);
+	void drawContour(std::vector<obj::Vertex> positions_2, std::vector<obj::Vertex> positions_tmp);
+	std::vector<obj::Vertex> computePositions(std::vector<obj::Vertex> positions, std::vector<obj::coord> Axes);
+	void drawCube1(int pos, std::vector<obj::coord> Axes);
+	void drawCube2(std::vector<obj::coord> positions, std::vector<obj::coord> Axes);
+	void Modeleur::drawFace(std::vector<obj:: Vertex> positions);
 	void drawFace(const obj::face &fa);
 	void drawPgm(PGM3D &pgm);
 	//return within 'center' the coordinates of the center of the object
 	void computeCenter();
+	obj::coord Modeleur::computeAxe(int first, int next);
 	void setDistances(float rayon, float longueur, float separation);
 	//set l'objet a afficher, mais ne change pas l'affichage effectif
 	void setObj(obj::Obj2::Ptr obj);
@@ -38,11 +40,12 @@ public:
 	void initiateObjs();
 	void initiatePgm();
 	void initiateComplexeCubique(std::shared_ptr<std::vector<std::map<int, std::list<int>>>> g);
+	std::list<int> cluster_neighbors(std::list<int> cluster, int position);
 
 	obj::Vertex coord2Vert(obj::coord co);
 private:
 	/*les valeurs de parametrage de l'affichage 
-	 * dist(voisins dim0) = rayon + 2*separation + longueur = dist
+	 * dist(voisins dim0) = 2*rayon + 2*separation + longueur = dist
 	 * rayon : celui des cubes de dim 0
 	 * longuer : celle des cubes de dim 1
 	 * separation : espace entre les cubes

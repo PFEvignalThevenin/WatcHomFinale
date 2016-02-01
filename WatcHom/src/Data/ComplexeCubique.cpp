@@ -17,7 +17,7 @@ ComplexeCubique::ComplexeCubique(int xSize, int ySize, int zSize) : StructureCub
 ComplexeCubique::~ComplexeCubique()
 {
 }
-//dimension du cube à la position donnée
+//dimension du cube Ã  la position donnÃ©e
 int ComplexeCubique::dim(int pos) {
 	obj::coord c= pos2coord(pos);
 	return dim(c.x, c.y, c.z);
@@ -69,6 +69,33 @@ std::list<int> ComplexeCubique::coboundary(int x, int y, int z) {
 		ret.push_back(coord2pos(x, y, z - 1));
 	}
 	return ret;
+}
+std::list<int> ComplexeCubique::neighbors(int x, int y , int z)
+{
+	//liste contenant les voisins
+	list <int> voisins;
+	//suivant x
+	if (x + 2 < size[0] && get(x+2,y,z)) 		
+		voisins.push_back(coord2pos(x + 2,y,z));
+	if (x >= 2 && get(x-2,y,z))
+		voisins.push_back(coord2pos(x - 2, y, z));
+	//suivant y
+	if (y +2 < size[1] && get(x, y+2, z))
+		voisins.push_back(coord2pos(x, y+2, z));
+	if (y >= 2 && get(x, y - 2, z))
+		voisins.push_back(coord2pos(x, y - 2, z));
+	//suivant z
+	if (z + 2 <size[2] && get(x, y, z + 2))
+		voisins.push_back(coord2pos(x, y, z + 2));
+	if (z >= 2 && get(x, y, z - 2))
+		voisins.push_back(coord2pos(x, y, z - 2));
+
+	return voisins;
+}
+std::list<int> ComplexeCubique::neighbors(int pos)
+{
+	obj::coord XYZ = pos2coord(pos);
+	return neighbors(XYZ.x,XYZ.y,XYZ.z);
 }
 //accessseurs : primal
 void ComplexeCubique::setPrimal(bool p_primal) {

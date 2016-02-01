@@ -48,8 +48,8 @@ enum Axe { x = 0, y = 1, z = 2 };
 //fonction de conversion de int vers Axe
 Axe int2Axe(int i);
 /********************************************************************/
-//surcharge d'opérateurs pour coord
+//surcharge d'opérateurs pour Vertex et coord
 bool operator==(obj::coord const& a, obj::coord const& b);
-obj::coord operator*(const float &a, const obj::coord &b);
-obj::coord operator+(const obj::coord &a, const obj::coord &b); 
+obj::Vertex operator*(const float &a, const obj::coord &b);
+obj::Vertex operator+(const obj::Vertex &a, const obj::Vertex &b);
 #endif
