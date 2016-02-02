@@ -29,7 +29,7 @@ public:
 	std::list<int> coboundary(int pos) override;
 	std::list<int> coboundary(int x, int y, int z);
 	std::list<int> neighbors(int x, int y, int z);
-	std::list<int> neighbors(int pos);
+	std::list<int> neighbors(int pos) override;
 	//primalité du complexe
 	void setPrimal(bool p_primal);
 	bool isPrimal();			
