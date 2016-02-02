@@ -59,7 +59,13 @@ void Modeleur::drawContour(vector<Vertex> positions_2, vector<Vertex> positions_
 	}
 	glEnd();
 }
-vector<Vertex> Modeleur::computePositions(vector<Vertex> positions, std::vector<coord> Axes) {
+void Modeleur::drawCube1(int pos, std::vector<dir> Axes) {
+	coord center = ccTraite->pos2coord(pos);
+	Vertex center2 = coord2Vert(center);
+	
+	vector<Vertex> positions = computeCarre(center2, Axes.at(0));
+	drawCarre(positions);
+
 	//positions des 4 points de départ
 	vector<Vertex> positions_2 = positions;
 	//positions des 4 points après translation
@@ -67,8 +73,8 @@ vector<Vertex> Modeleur::computePositions(vector<Vertex> positions, std::vector<
 	positions_tmp.resize(4);
 	//initialisation
 	for (unsigned int i = 0; i < positions_tmp.size(); i++)
-		positions_tmp.at(i) = positions_2.at(i) + (dist-rayon)*Axes.at(0);
-	
+		positions_tmp.at(i).translation(Axes.at(0), dist - rayon);
+
 	//permet de compenser la distance en cas de coude 
 	vector<int> compense;
 	compense.resize(4);
@@ -76,12 +82,12 @@ vector<Vertex> Modeleur::computePositions(vector<Vertex> positions, std::vector<
 		compense.at(i) = 0;
 
 	// desinner tous les contours autour du chemin sauf le dernier
-	for (unsigned int i = 0; i < Axes.size()-1; i++) {
+	for (unsigned int i = 0; i < Axes.size() - 1; i++) {
 		bool isLine = false;
 		//ne pas déssiner de vertices tant qu'on a la même direction mais faire la translation suivant l'axe 
-		while (Axes.at(i) == Axes.at(i + 1) && i < Axes.size()-1) {
+		while (Axes.at(i).first == Axes.at(i + 1).first && i < Axes.size() - 1) {
 			for (unsigned int j = 0; j < positions_tmp.size(); j++) {
-				positions_tmp.at(j) = positions_tmp.at(j) + (dist-rayon)*Axes.at(i);
+				positions_tmp.at(j).translation(Axes.at(i), dist - rayon);
 			}
 			i++;
 			isLine = true;
@@ -95,93 +101,92 @@ vector<Vertex> Modeleur::computePositions(vector<Vertex> positions, std::vector<
 			positions_2 = positions_tmp;
 		}
 
-		if (i < Axes.size()-1){
+		if (i < Axes.size() - 1) {
 			//redéfinir la position de certain des nouveaux sommets en fonction de l'axe
 			unsigned int sens;
-			if (Axes.at(i).x != 0) {
-				sens = (1 + Axes.at(i).x) / 2; // 1 si x sens positif, 0 sinon
-				if (Axes.at(i + 1).y = 1) {
-					positions_tmp.at(0) = positions_tmp.at(0) + sens*rayon*Axes.at(i);
-					positions_tmp.at(1) = positions_tmp.at(1) + sens*rayon*Axes.at(i);
-					positions_tmp.at(2) = positions_tmp.at(2) + (1 - sens)*rayon*Axes.at(i);
-					positions_tmp.at(3) = positions_tmp.at(3) + (1 - sens)*rayon*Axes.at(i);
-					compense.at(0) = compense.at(1) = sens;
-					compense.at(2) = compense.at(3) = (1 -sens);
-				}
-				else if (Axes.at(i + 1).y = -1) {
-					positions_tmp.at(0) = positions_tmp.at(0) + (1 - sens)*rayon*Axes.at(i);
-					positions_tmp.at(1) = positions_tmp.at(1) + (1 - sens)*rayon*Axes.at(i);
-					positions_tmp.at(2) = positions_tmp.at(2) + sens*rayon*Axes.at(i);
-					positions_tmp.at(3) = positions_tmp.at(3) + sens*rayon*Axes.at(i);
-					compense.at(2) = compense.at(3) = sens;
-					compense.at(0) = compense.at(1) = (1 - sens);
-				}
-				else if (Axes.at(i + 1).z = 1) {
-					positions_tmp.at(1) = positions_tmp.at(1) + rayon*Axes.at(i);
-					positions_tmp.at(2) = positions_tmp.at(2) + rayon*Axes.at(i);
-					compense.at(1) = compense.at(2) = 1;
-					compense.at(0) = compense.at(3) = 0;
-				}
-				else if (Axes.at(i + 1).z = -1) {
-					positions_tmp.at(0) = positions_tmp.at(0) + rayon*Axes.at(i);
-					positions_tmp.at(3) = positions_tmp.at(3) + rayon*Axes.at(i);
-					compense.at(0) = compense.at(3) = 1;
-					compense.at(1) = compense.at(2) = 0;
-				}
-			}
-			else if (Axes.at(i).y != 0) {
-				sens = (1 + Axes.at(i).y) / 2; // 1 si y sens positif, 0 sinon
-				if (Axes.at(i + 1).x = 1) {
-					positions_tmp.at(0) = positions_tmp.at(0) + (1 - sens)*rayon*Axes.at(i);
-					positions_tmp.at(1) = positions_tmp.at(1) + (1 - sens)*rayon*Axes.at(i);
-					positions_tmp.at(2) = positions_tmp.at(2) + sens*rayon*Axes.at(i);
-					positions_tmp.at(3) = positions_tmp.at(3) + sens*rayon*Axes.at(i);
-					compense.at(2) = compense.at(3) = sens;
-					compense.at(0) = compense.at(1) = (1 - sens);
-				}
-				else if (Axes.at(i + 1).x = -1) {
-					positions_tmp.at(0) = positions_tmp.at(0) + sens*rayon*Axes.at(i);
-					positions_tmp.at(1) = positions_tmp.at(1) + sens*rayon*Axes.at(i);
-					positions_tmp.at(2) = positions_tmp.at(2) + (1 - sens)*rayon*Axes.at(i);
-					positions_tmp.at(3) = positions_tmp.at(3) + (1 - sens)*rayon*Axes.at(i);
+			sens = (Axes.at(i).second) ? 1 : 0; // 1 si x sens positif, 0 sinon
+			if (Axes.at(i).first == 0) {
+				if (Axes.at(i + 1).first == 1 && Axes.at(i + 1).second) {
+					positions_tmp.at(0).translation(Axes.at(i), sens*rayon);
+					positions_tmp.at(1).translation(Axes.at(i), sens*rayon);
+					positions_tmp.at(2).translation(Axes.at(i), (1 - sens)*rayon);
+					positions_tmp.at(3).translation(Axes.at(i), (1 - sens)*rayon);
 					compense.at(0) = compense.at(1) = sens;
 					compense.at(2) = compense.at(3) = (1 - sens);
 				}
-				else if (Axes.at(i + 1).z = 1) {
-					positions_tmp.at(1) = positions_tmp.at(1) + rayon*Axes.at(i);
-					positions_tmp.at(2) = positions_tmp.at(2) + rayon*Axes.at(i);
+				else if (Axes.at(i + 1).first == 1 && !Axes.at(i + 1).second) {
+					positions_tmp.at(0).translation(Axes.at(i), (1 - sens)*rayon);
+					positions_tmp.at(1).translation(Axes.at(i), (1 - sens)*rayon);
+					positions_tmp.at(2).translation(Axes.at(i), sens*rayon);
+					positions_tmp.at(3).translation(Axes.at(i), sens*rayon);
+					compense.at(2) = compense.at(3) = sens;
+					compense.at(0) = compense.at(1) = (1 - sens);
+				}
+				else if (Axes.at(i + 1).first == 2 && Axes.at(i + 1).second) {
+					positions_tmp.at(1).translation(Axes.at(i), rayon);
+					positions_tmp.at(2).translation(Axes.at(i), (1 - sens)*rayon);
 					compense.at(1) = compense.at(2) = 1;
 					compense.at(0) = compense.at(3) = 0;
 				}
-				else if (Axes.at(i + 1).z = -1) {
-					positions_tmp.at(0) = positions_tmp.at(0) + rayon*Axes.at(i);
-					positions_tmp.at(3) = positions_tmp.at(3) + rayon*Axes.at(i);
+				else if (Axes.at(i + 1).first == 2 && !Axes.at(i + 1).second) {
+					positions_tmp.at(0).translation(Axes.at(i), rayon);
+					positions_tmp.at(3).translation(Axes.at(i), rayon);
 					compense.at(0) = compense.at(3) = 1;
 					compense.at(1) = compense.at(2) = 0;
 				}
 			}
-			else if (Axes.at(i).z != 0) {
-				if (Axes.at(i + 1).x = 1) {
-					positions_tmp.at(0) = positions_tmp.at(0) + rayon*Axes.at(i);
-					positions_tmp.at(3) = positions_tmp.at(3) + rayon*Axes.at(i);
-					compense.at(0) = compense.at(3) = 1;
-					compense.at(1) = compense.at(2) = 0;
+			else if (Axes.at(i).first == 1) {
+				if (Axes.at(i + 1).first == 0 && Axes.at(i + 1).second) {
+					positions_tmp.at(0).translation(Axes.at(i), (1 - sens)*rayon);
+					positions_tmp.at(1).translation(Axes.at(i), (1 - sens)*rayon);
+					positions_tmp.at(2).translation(Axes.at(i), sens*rayon);
+					positions_tmp.at(3).translation(Axes.at(i), sens*rayon);
+					compense.at(2) = compense.at(3) = sens;
+					compense.at(0) = compense.at(1) = (1 - sens);
 				}
-				else if (Axes.at(i + 1).x = -1) {
-					positions_tmp.at(1) = positions_tmp.at(1) + rayon*Axes.at(i);
-					positions_tmp.at(2) = positions_tmp.at(2) + rayon*Axes.at(i);
+				else if (Axes.at(i + 1).first == 0 && !Axes.at(i + 1).second) {
+					positions_tmp.at(0).translation(Axes.at(i), sens*rayon);
+					positions_tmp.at(1).translation(Axes.at(i), sens*rayon);
+					positions_tmp.at(2).translation(Axes.at(i), (1 - sens)*rayon);
+					positions_tmp.at(3).translation(Axes.at(i), (1 - sens)*rayon);
+					compense.at(0) = compense.at(1) = sens;
+					compense.at(2) = compense.at(3) = (1 - sens);
+				}
+				else if (Axes.at(i + 1).first == 2 && Axes.at(i + 1).second) {
+					positions_tmp.at(1).translation(Axes.at(i), rayon);
+					positions_tmp.at(2).translation(Axes.at(i), rayon);
 					compense.at(1) = compense.at(2) = 1;
 					compense.at(0) = compense.at(3) = 0;
 				}
-				else if (Axes.at(i + 1).y = 1) {
-					positions_tmp.at(0) = positions_tmp.at(0) + rayon*Axes.at(i);
-					positions_tmp.at(1) = positions_tmp.at(1) + rayon*Axes.at(i);
+				else if (Axes.at(i + 1).first == 2 && !Axes.at(i + 1).second) {
+					positions_tmp.at(0).translation(Axes.at(i), rayon);
+					positions_tmp.at(3).translation(Axes.at(i), rayon);
+					compense.at(0) = compense.at(3) = 1;
+					compense.at(1) = compense.at(2) = 0;
+				}
+			}
+			else if (Axes.at(i).first == 2) {
+				if (Axes.at(i + 1).first == 0 && Axes.at(i + 1).second) {
+					positions_tmp.at(0).translation(Axes.at(i), rayon);
+					positions_tmp.at(3).translation(Axes.at(i), rayon);
+					compense.at(0) = compense.at(3) = 1;
+					compense.at(1) = compense.at(2) = 0;
+				}
+				else if (Axes.at(i + 1).first == 0 && !Axes.at(i + 1).second) {
+					positions_tmp.at(1).translation(Axes.at(i), rayon);
+					positions_tmp.at(2).translation(Axes.at(i), rayon);
+					compense.at(1) = compense.at(2) = 1;
+					compense.at(0) = compense.at(3) = 0;
+				}
+				else if (Axes.at(i + 1).first == 1 && Axes.at(i + 1).second) {
+					positions_tmp.at(0).translation(Axes.at(i), rayon);
+					positions_tmp.at(1).translation(Axes.at(i), rayon);
 					compense.at(0) = compense.at(1) = 1;
 					compense.at(2) = compense.at(3) = 0;
 				}
-				else if (Axes.at(i + 1).y = -1) {
-					positions_tmp.at(2) = positions_tmp.at(2) + rayon*Axes.at(i);
-					positions_tmp.at(3) = positions_tmp.at(3) + rayon*Axes.at(i);
+				else if (Axes.at(i + 1).first == 1 && !Axes.at(i + 1).second) {
+					positions_tmp.at(2).translation(Axes.at(i), rayon);
+					positions_tmp.at(3).translation(Axes.at(i), rayon);
 					compense.at(2) = compense.at(3) = 1;
 					compense.at(0) = compense.at(1) = 0;
 				}
@@ -194,104 +199,62 @@ vector<Vertex> Modeleur::computePositions(vector<Vertex> positions, std::vector<
 			positions_2 = positions_tmp;
 			//Faire la compensation
 			for (unsigned int j = 0; j < 4; i++) {
-				positions_tmp.at(j).x += compense.at(j) * Axes.at(i+1).x*rayon;
-				positions_tmp.at(j).y += compense.at(j) * Axes.at(i+1).y*rayon;
-				positions_tmp.at(j).z += compense.at(j) * Axes.at(i+1).z*rayon;
-				compense.at(i) = 0;
+				int direction = (Axes.at(i + 1).second) ? 1 : -1;
+				positions_tmp.at(j).x += compense.at(j) * direction*rayon;
+				positions_tmp.at(j).y += compense.at(j) * direction*rayon;
+				positions_tmp.at(j).z += compense.at(j) * direction*rayon;
+				compense.at(j) = 0;
 			}
 			cout << "azr" << endl;
 		}
 	}
 	cout << "azr" << endl;
 	//Désiner le dernier contour
-	for (unsigned int i = 0; i < positions_tmp.size(); i++)
-		positions_tmp.at(i) = positions_2.at(i) + (dist-rayon)*Axes.at(Axes.size()-1);
-	
+	for (unsigned int i = 0; i < positions_tmp.size(); i++) {
+		int direction = (Axes.at(Axes.size() - 1).second) ? 1 : -1;
+		positions_tmp.at(i)[Axes.at(Axes.size() - 1).first] = positions_2.at(i)[Axes.at(Axes.size() - 1).first] + direction*(dist - rayon);
+	}
 	drawContour(positions_2, positions_tmp);
 	//mettre à jour les positions des derniers sommet
 	positions_2 = positions_tmp;
 	cout << "azr" << endl;
-	
-	return positions_2;
-}
-void Modeleur::drawCube1(int pos, std::vector<coord> Axes) {
-	coord center = ccTraite->pos2coord(pos);
-	Vertex center2 = coord2Vert(center);
-	
-	vector<Vertex> positions = computeCarre(center2, Axes.at(0));
-	
-	//debug
-	for (coord c : Axes) {
-		cout << c.x << " " << c.y << " " << c.z << endl;
-	}
 
-	drawFace(positions);
-	cout << "machinA" << endl;
-	vector<Vertex> lastPos = computePositions(positions, Axes);
-	cout << "machinB" << endl;
-	drawFace(lastPos);
+	//dessiner la dernière face
+	drawCarre(positions_2);
 	cout << "machinC" << endl;
 
 }
 void Modeleur::drawCube2(std::vector<obj::coord> positions, std::vector<obj::coord> Axes)
 {
 }
-
-vector <Vertex> Modeleur::computeCarre(Vertex center, coord Axe) {
+vector <Vertex> Modeleur::computeCarre(Vertex center, dir axe) {
 	vector <Vertex> positions;
 	positions.resize(4);
-	for (unsigned int j = 0; j < 4; j++){
-		if (Axe[j] != 0) {
-			for (int i = 0; i < 4; i++) {
-				for (int k = 0; k < 4; i++)
-					positions.at(i)[k] = center[j] - Axe[j]*(rayon + dist / 2);
+	float sens = (axe.second) ? 1 : -1;
+	for (unsigned int j = 0; j < 3; j++) {
+			for (unsigned int i = 0; i < 4; i++) {
+
+				positions.at(i)[axe.first] = center[axe.first] - sens * (rayon + dist / 2);
 			}
-			positions.at(0).y = center2.y - rayon / 2;//les coins
-			positions.at(0).z = center2.z + rayon / 2;
-
-			positions.at(1).y = center2.y - rayon / 2;
-			positions.at(1).z = center2.z - rayon / 2;
-
-			positions.at(2).y = center2.y + rayon / 2;
-			positions.at(2).z = center2.z + rayon / 2;
-
-			positions.at(3).y = center2.y + rayon / 2;
-			positions.at(3).z = center2.z - rayon / 2;
-		}
-	}else if (Axes.at(0).y != 0) {
-		for (int i = 0; i < 4; i++) {//aligner selon normale y
-			positions.at(i).y = center2.y - Axes.at(0).y*(rayon + dist / 2);
-		}
-		positions.at(0).x = center2.x + rayon / 2;//les coins
-		positions.at(0).z = center2.z + rayon / 2;
-
-		positions.at(1).x = center2.x + rayon / 2;
-		positions.at(1).z = center2.z - rayon / 2;
-
-		positions.at(2).x = center2.x - rayon / 2;
-		positions.at(2).z = center2.z + rayon / 2;
-
-		positions.at(3).x = center2.x - rayon / 2;
-		positions.at(3).z = center2.z - rayon / 2;
+			unsigned int j1 = (j + 1) % 3;
+			unsigned int j2 = (j + 2) % 3;
+			positions.at(0)[j1] = center[j1] - sens * rayon / 2;
+			positions.at(0)[j2] = center[j2] + sens * rayon / 2;
+			positions.at(1)[j1] = center[j1] + rayon / 2;
+			positions.at(1)[j2] = center[j2] + rayon / 2;
+			positions.at(2)[j1] = center[j1] + sens * rayon / 2;
+			positions.at(2)[j2] = center[j2] - sens * rayon / 2;
+			positions.at(3)[j1] = center[j1] - rayon / 2;
+			positions.at(3)[j2] = center[j2] - rayon / 2;
 	}
-	else if (Axes.at(0).z != 0) {
-		for (int i = 0; i < 4; i++) {//aligner selon normale z
-			positions.at(0).z = center2.z - Axes.at(0).z*(rayon + dist / 2);
-		}
-		positions.at(0).x = center2.x + rayon / 2;//les coins
-		positions.at(0).y = center2.y - rayon / 2;
-
-		positions.at(1).x = center2.x + rayon / 2;
-		positions.at(1).y = center2.y + rayon / 2;
-
-		positions.at(2).x = center2.x - rayon / 2;
-		positions.at(2).y = center2.y - rayon / 2;
-
-		positions.at(3).x = center2.x - rayon / 2;
-		positions.at(3).y = center2.y + rayon / 2;
-	}
-
 	return positions;
+}
+void Modeleur::drawCarre(vector<Vertex> pos) {
+	glBegin(GL_QUADS);
+	for (Vertex v : pos) {
+		glVertex3f(v[0], v[1], v[2]);
+	}
+	glEnd();
 }
 
 void Modeleur::drawFace(const obj::face &fa) {
@@ -371,7 +334,7 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 		cptr++;
 	}
 	//dim1
-	vector<coord> Axes;
+	vector<dir> Axes;
 	try {
 		cout << "DIM1" << endl;
 		for (DGVF::cluster clust : g->at(1)) {//tous clusters dim 1
@@ -461,20 +424,22 @@ void Modeleur::computeCenter() {
 	}
 	ctrl->computeCenter(xmin, xmax, ymin, ymax, zmin, zmax);
 }
-coord Modeleur::computeAxe(int first_pos, int next_pos) {
+dir Modeleur::computeAxe(int first_pos, int next_pos) {
 	//conversion position ->coordonnées
-	coord axe;
-	axe.x = 0; axe.y = 0; axe.z = 0;
+	dir axe;
 	coord first_coord = ccTraite->pos2coord(first_pos);
 	coord next_coord = ccTraite->pos2coord(next_pos);
 	if (first_coord.x != next_coord.x) {
-		axe.x = (first_coord.x < next_coord.x) ? 1 : -1;
+		axe.first  = Axe::x;
+		axe.second = (first_coord.x < next_coord.x) ? true : false;
 	}
 	else if (first_coord.y != next_coord.y) {
-		axe.y = (first_coord.y < next_coord.y) ? 1 : -1;
+		axe.first = Axe::y;
+		axe.second = (first_coord.y < next_coord.y) ? true : false;
 	}
 	else if (first_coord.z != next_coord.z) {
-		axe.z = (first_coord.z < next_coord.z) ? 1 : -1;
+		axe.first = Axe::z;
+		axe.second = (first_coord.z < next_coord.z) ? true : false;
 	}
 	else 
 		throw CtrlError(to_string(1) + "deux éléments du cluster sont en réalité les mêmes");
