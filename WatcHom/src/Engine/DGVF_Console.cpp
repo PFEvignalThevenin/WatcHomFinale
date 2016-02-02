@@ -64,7 +64,6 @@ void DGVF_Console::CellClustering()
 			if (coboundary_cr(it)->size() != 2)
 			{
 				blocked.insert(it);
-				//cout << "blocked <- "<<*it <<"["<<K->dim(*it)<<"]"<<endl;
 			}
 		}
 		cout << "Cells blocked..." << endl;

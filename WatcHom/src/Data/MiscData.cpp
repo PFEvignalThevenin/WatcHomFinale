@@ -18,27 +18,87 @@ Axe int2Axe(int i) {
 }
 
 //surcharge d'opérateurs pour Vertex
-bool operator==(obj::coord const& a, obj::coord const& b)
+float& obj::Vertex::operator[](unsigned int i)
+{
+	switch (i)
+	{
+	case 1:
+		return this->x;
+		break;
+	case 2:
+		return this->y;
+		break;
+	case 3:
+		return this->z;
+		break;
+	default:
+		throw DataError("DataError: the specified component" + std::to_string(i)+ "doesn't exist");
+	}
+}
+bool obj::Vertex::operator==(obj::Vertex const& b)
 {
 	//Teste si a.m_heure == b.m_heure etc.  
-	if (a.x == b.x && a.y == b.y && a.z == b.z)
+	if (this->x == b.x &&this->y == b.y && this->z == b.z)
 		return true;
 	else
 		return false;
 }
-obj::Vertex operator*(const float &a, const obj::coord &b)
+obj::Vertex obj::Vertex::operator*(const float &b)
 {
 	obj::Vertex result;
-	result.x = a * b.x;
-	result.y = a * b.y;
-	result.z = a * b.z;
+	result.x = this->x * b;
+	result.y = this->y * b;
+	result.z = this->z * b;
 	return result;
 }
-obj::Vertex operator+(const obj::Vertex &a, const obj::Vertex &b)
+obj::Vertex obj::Vertex::operator+(const obj::Vertex &b)
 {
 	obj::Vertex result;
-	result.x = a.x + b.x;
-	result.y = a.y + b.y;
-	result.z = a.z + b.z;
+	result.x = this->x + b.x;
+	result.y = this->y + b.y;
+	result.z = this->z + b.z;
+	return result;
+}
+
+//surcharge d'opérateurs pour coord
+int& obj::coord::operator[](unsigned int i)
+{
+	switch (i)
+	{
+	case 1:
+		return this->x;
+		break;
+	case 2:
+		return this->y;
+		break;
+	case 3:
+		return this->z;
+		break;
+	default:
+		throw DataError("DataError: the specified component" + std::to_string(i) + "doesn't exist");
+	}
+}
+bool obj::coord::operator==(obj::coord const& b)
+{
+	//Teste si a.m_heure == b.m_heure etc.  
+	if (this->x == b.x &&this->y == b.y && this->z == b.z)
+		return true;
+	else
+		return false;
+}
+obj::coord obj::coord::operator*(const int &b)
+{
+	obj::coord result;
+	result.x = this->x * b;
+	result.y = this->y * b;
+	result.z = this->z * b;
+	return result;
+}
+obj::coord obj::coord::operator+(const obj::coord &b)
+{
+	obj::coord result;
+	result.x = this->x + b.x;
+	result.y = this->y + b.y;
+	result.z = this->z + b.z;
 	return result;
 }

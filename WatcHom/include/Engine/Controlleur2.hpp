@@ -38,8 +38,11 @@ public:
 	void setDistances(float rayon, float longueur, float separation);
 	//set taille de la fenêtre
 	void setDimFenetre(double width, double height);
-	//change la valeur de zoom. (addition avec l'ancienne valeur)
-	void zoom(GLfloat mod);
+	//change la distance de TRAVELLING. (addition avec l'ancienne valeur)
+	void travelling(GLfloat mod);
+	//zoom
+	void setZoom(GLfloat z);
+	GLfloat getZoom();
 	//translation
 	void translation(GLfloat axeX, GLfloat axeY);
 	//rotation
@@ -107,6 +110,7 @@ private:
 	couleur couleurs[DIM];		//une couleur par dimension, (entre 0 et 1)
 	GLdouble viewX=800.f, viewH=600.f;		//taille de la fenêtre
 	GLfloat translations[3];
+	GLfloat facteurZoom = 1.0f;
 	Trackball tb;
 	bool autoroll;
 	bool affDim[DIM];

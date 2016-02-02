@@ -52,47 +52,57 @@ void DGVF::homology(string name, double r, double s)
 	}
 }
 
+void DGVF::CellClusteringByDim(int dim) {
+	set<int> final;
+	bool idem;
+	/* block critical q-1 cells with !=2 critical cofaces */
+	set<int> blocked;
+	for (int it : Cr[dim - 1])
+	{
+		if (coboundary_cr(it)->size() != 2)
+		{
+			blocked.insert(it);
+		}
+	}
+	do {
+		/* We look for a not final critical q-cube */
+		int gamma = -1; //cube final choisi
+		for (int it : Cr[dim])
+		{
+			if (final.count(it) == 0)
+			{
+				gamma = it;//cellule trouvée
+				break;
+			}
+		}
+		/* We spread this cube *///flèches qui partent de ce cube
+		if (gamma >= 0)
+		{
+			idem = false;                        // a new gamma was found
+			final.insert(gamma);                 // add it to final
+			spread(gamma, &blocked, &final);
+		}
+		else//une cellule finale n'a pas été trouvée, donc on passe à la suivante
+		{
+			idem = true;
+		}
+	} while (!idem);
+}
 
 void DGVF::CellClustering()
 {
 	cout << "cell clustering" << endl;
-	set<int> final;
-	bool idem;
+	vector<thread> th;
 	for (int q = 3; q >= 1; q--)// from dimension 3 to 1
 	{
-		/* block critical q-1 cells with !=2 critical cofaces */
-		set<int> blocked;
-		for (int it : Cr[q - 1])
-		{
-			if (coboundary_cr(it)->size() != 2)
-			{
-				blocked.insert(it);
-				//cout << "blocked <- "<<*it <<"["<<K->dim(*it)<<"]"<<endl;
-			}
-		}
-		do {
-			/* We look for a not final critical q-cube */
-			int gamma = -1; //cube final choisi
-			for (set<int>::iterator it = Cr[q].begin(); it != Cr[q].end() && gamma<0; ++it)
-			{
-				if (final.count(*it) == 0)
-				{
-					gamma = *it;
-				}
-			}
-			/* We spread this cube *///flèches qui partent de ce cube
-			if (gamma >= 0)
-			{
-				idem = false;                        // a new gamma was found
-				final.insert(gamma);                 // add it to final
-				spread(gamma, &blocked, &final);
-			}
-			else//une cellule finale n'a pas été trouvée, donc on passe à la suivante
-			{
-				idem = true;
-			}
-		} while (!idem);
+		time_t time = clock();
+		CellClusteringByDim(q);
+		cout << "cluster dim " << q << " in " << (clock() - time) / 1000 << " secondes" << endl;
+		//th.push_back(thread(&DGVF::CellClusteringByDim, this, q));
 	}
+	/*for (int i = 0; i < th.size(); i++) {
+		th[i].join();
+	}*/
 	updateComplex();
 }
 
@@ -235,15 +245,15 @@ shared_ptr<DGVF::cellList> DGVF::coboundary_cr(int c)
 	if (cubical)
 	{
 		list<int> l = K->coboundary(c);
-		for (list<int>::iterator it = l.begin(); it != l.end(); ++it)
+		for (int it : l)
 		{
-			if (getV(*it) < 0)
-				cob->push_back(*it);
+			if (getV(it) < 0)//si Cellule critique
+				cob->push_back(it);
 		}
 	}
 	else    // the Morse complex
 	{
-		map<int, set<int> >::iterator it = codM.find(c);
+		auto it = codM.find(c);
 		if (it != codM.end())
 		{
 			set<int> s = it->second;
@@ -274,18 +284,14 @@ int DGVF::coface_spread(int c, set<int> * fi)
 	int n = 0, cr;
 
 	auto l = coboundary_cr(c);
-	//		cout << "coface_spread("<<c<<") - ";
-	for (list<int>::iterator it = l->begin(); it != l->end(); ++it)
+	for (int it : *l)
 	{
-		//		cout << *it << " ";
-		if (fi->count(*it) == 0)
+		if (fi->count(it) == 0)
 		{
 			n++;
-			cr = *it;
-			//            cout << "(nf) ";
+			cr = it;
 		}
 	}
-	//    cout << endl;
 	return (n == 1) ? cr : -1;
 }
 
@@ -321,7 +327,7 @@ void DGVF::spread(int gamma, set<int> * bl, set<int> * fi)
 				{
 					if (!cubical)
 					{
-						map<int, list<int> >::iterator it_m = g.find(tau);
+						auto it_m = g.find(tau);
 						if (it_m != g.end())
 						{
 							for (int it_l : it_m->second)
@@ -366,7 +372,7 @@ list<int> DGVF::Vd(int c)//de primaire vers secondaire
 
 int DGVF::getV(int c)
 {
-	map<int, int>::iterator f = V.find(c);
+	auto f = V.find(c);
 	if (f != V.end())
 		return f->second;
 	return -1;

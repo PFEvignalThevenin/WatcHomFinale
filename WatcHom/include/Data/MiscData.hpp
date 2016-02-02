@@ -26,14 +26,26 @@ private:
 };
 namespace obj {
 	/****************************Vertex**********************************/
-	struct Vertex {
-		float x, y, z;
+	class Vertex {
+	public:
+		float x = 0, y=0, z=0;
+
+		float& operator[](unsigned int);
+		bool operator==(Vertex const&);
+		Vertex operator*(const float &);				
+		Vertex operator+(const Vertex &);
 	};
 	/****************************Face************************************/
 	typedef std::vector<int> face;
 	/*****************************Coord***********************************/
-	struct coord {
-		int x, y, z;
+	class coord {
+	public:
+		int x = 0, y = 0, z = 0;
+
+		int& operator[](unsigned int);
+		bool operator==(coord const&);
+		coord operator*(const int &);
+		coord operator+(const coord &);
 	};
 }
 /*****************************Couleur********************************/
@@ -48,8 +60,4 @@ enum Axe { x = 0, y = 1, z = 2 };
 //fonction de conversion de int vers Axe
 Axe int2Axe(int i);
 /********************************************************************/
-//surcharge d'opérateurs pour Vertex et coord
-bool operator==(obj::coord const& a, obj::coord const& b);
-obj::Vertex operator*(const float &a, const obj::coord &b);
-obj::Vertex operator+(const obj::Vertex &a, const obj::Vertex &b);
 #endif

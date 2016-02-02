@@ -25,7 +25,7 @@ public:
 	std::vector<obj::Vertex> computePositions(std::vector<obj::Vertex> positions, std::vector<obj::coord> Axes);
 	void drawCube1(int pos, std::vector<obj::coord> Axes);
 	void drawCube2(std::vector<obj::coord> positions, std::vector<obj::coord> Axes);
-	void Modeleur::drawFace(std::vector<obj:: Vertex> positions);
+	std::vector <obj::Vertex> Modeleur::computeCarre(obj::Vertex center, obj::coord Axe);
 	void drawFace(const obj::face &fa);
 	void drawPgm(PGM3D &pgm);
 	//return within 'center' the coordinates of the center of the object

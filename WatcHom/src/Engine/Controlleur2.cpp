@@ -77,6 +77,7 @@ void Controlleur2::drawGL() {
 	glRotatef(angle*0.3f, 0, 1, 0);
 	glRotatef(angle*1.4f, 1, 0, 0);
 	//affichage spécifique de 'objet
+	glScalef(facteurZoom, facteurZoom, facteurZoom);
 	glTranslatef(center.x, center.y, center.z);//centrer
 	if (!afficher) {//si aucun objet n'a été chargé
 		drawDefault();
@@ -238,8 +239,14 @@ Dim Controlleur2::int2Dim(int d) {
 		throw CtrlError(to_string(d) + "ne correspond à aucune dimension. Limité entre 0 et 3");
 	}
 }
-void Controlleur2::zoom(GLfloat mod) {
+void Controlleur2::travelling(GLfloat mod) {
 	translations[2] += mod;
+}
+void Controlleur2::setZoom(GLfloat z) {
+	facteurZoom = (z < 0.01) ? 0.01 : z;
+}
+GLfloat Controlleur2::getZoom() {
+	return facteurZoom;
 }
 void Controlleur2::translation(GLfloat axeX, GLfloat axeY) {
 	translations[0] += axeX;

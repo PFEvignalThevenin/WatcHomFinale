@@ -9,7 +9,7 @@ using namespace std;
 using namespace sfg;
 using namespace sf;
 
-#define LARGEUR_NAV 210
+#define LARGEUR_NAV 250
 
 WindowOpenGL::WindowOpenGL() : app(sf::VideoMode(800, 600, 32), "WatcHom")
 {
@@ -62,7 +62,7 @@ void WindowOpenGL::run() {
 					positionnerNavPanel();
 					break;
 				case Event::MouseWheelMoved:
-					Controlleur2::get()->zoom((float)-event.mouseWheel.delta * win_paths->getZoomMultiply());
+					Controlleur2::get()->travelling((float)-event.mouseWheel.delta * win_paths->getZoomMultiply());
 					break;
 				case Event::MouseButtonPressed:
 					if (event.mouseButton.button == sf::Mouse::Right) {
@@ -92,6 +92,14 @@ void WindowOpenGL::run() {
 						Controlleur2::get()->translation((float)(event.mouseMove.x - pmx) / 10, (float)(pmy - event.mouseMove.y) / 10);//inverser axe y
 						pmx = event.mouseMove.x;
 						pmy = event.mouseMove.y;
+					}
+					break;
+				case Event::KeyPressed:
+					if (event.key.code == 68) {//+
+						Controlleur2::get()->setZoom(Controlleur2::get()->getZoom() - mulRot * 0.01f);
+					}
+					else if (event.key.code == 67) {//-
+						Controlleur2::get()->setZoom(Controlleur2::get()->getZoom() + mulRot * 0.01f);
 					}
 					break;
 				default:
@@ -207,7 +215,8 @@ void WindowOpenGL::afficherOptionChemins() {
 }
 void WindowOpenGL::positionnerNavPanel() {
 	sf::Vector2u appSize = app.getSize();
-	sf::Vector2f size(LARGEUR_NAV, (float)appSize.y);
+	//sf::Vector2f size(LARGEUR_NAV, (float)appSize.y);
+	sf::Vector2f size(win_NavPanel->GetChild()->GetRequisition().x+20, (float)appSize.y);
 	win_NavPanel->SetRequisition(size);
 	win_NavPanel->SetAllocation(sf::FloatRect(appSize.x-size.x, 0, size.x, size.y));
 }

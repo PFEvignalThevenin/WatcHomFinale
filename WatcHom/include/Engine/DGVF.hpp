@@ -27,6 +27,8 @@ public:
 	void homology(std::string name, double r, double s);
 	//calculer les clusters. Puis updateComplex();
 	void CellClustering();
+	//calcul des clusters pour une dimension donnée. Dim>0
+	void CellClusteringByDim(int dim);
 	// update d, g and inv_g à partir des clusters calculés
 	void updateComplex();
 	// true if the DGVF is perfect, that is, dM = 0
