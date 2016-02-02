@@ -24,28 +24,24 @@ public:
 private:
 	std::string m_phrase;            //Description de l'erreur
 };
+/*******************************Axe**********************************/
+enum Axe { x = 0, y = 1, z = 2 };
+/****************************direction************************************/
+typedef std::pair<Axe, bool> dir;
+/*************************************************************************/
 namespace obj {
-	/****************************Vertex**********************************/
-	class Vertex {
-	public:
-		float x = 0, y=0, z=0;
-
-		float& operator[](unsigned int);
-		bool operator==(Vertex const&);
-		Vertex operator*(const float &);				
-		Vertex operator+(const Vertex &);
-	};
 	/****************************Face************************************/
 	typedef std::vector<int> face;
 	/*****************************Coord***********************************/
 	class coord {
 	public:
+		coord() = default;
+		~coord() = default;
 		int x = 0, y = 0, z = 0;
 
 		int& operator[](unsigned int);
 		bool operator==(coord const&);
-		coord operator*(const int &);
-		coord operator+(const coord &);
+		coord& operator*(const int &);
 	};
 }
 /*****************************Couleur********************************/
@@ -55,8 +51,6 @@ struct couleur {
 /*******************************Dim**********************************/
 enum Dim { d0 = 0, d1 = 1, d2 = 2, d3 = 3 };
 #define DIM 4	//because we work on 4 dimensions (from 0 to 3)
-/*******************************Axe**********************************/
-enum Axe { x = 0, y = 1, z = 2 };
 //fonction de conversion de int vers Axe
 Axe int2Axe(int i);
 /********************************************************************/

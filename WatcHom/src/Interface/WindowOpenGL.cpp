@@ -9,8 +9,6 @@ using namespace std;
 using namespace sfg;
 using namespace sf;
 
-#define LARGEUR_NAV 250
-
 WindowOpenGL::WindowOpenGL() : app(sf::VideoMode(800, 600, 32), "WatcHom")
 {
 	win_menu = initMenuWindow();

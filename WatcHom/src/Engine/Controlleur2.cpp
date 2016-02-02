@@ -7,10 +7,10 @@
 using namespace std;
 using namespace obj;
 //*********************************************Constructeur***************************************************
-Controlleur2::Controlleur2() {/*
+Controlleur2::Controlleur2() {
 	glEnable(GL_DEPTH_TEST);
 	//light
-	glEnable(GL_LIGHTING);
+	/*glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
@@ -243,7 +243,7 @@ void Controlleur2::travelling(GLfloat mod) {
 	translations[2] += mod;
 }
 void Controlleur2::setZoom(GLfloat z) {
-	facteurZoom = (z < 0.01) ? 0.01 : z;
+	facteurZoom = (z < 0.01) ? 0.01f : z;
 }
 GLfloat Controlleur2::getZoom() {
 	return facteurZoom;

@@ -75,9 +75,6 @@
     <ClCompile Include="src\Data\StructureCubique.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\Buttons.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="src\Interface\ClusterList.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
@@ -93,16 +90,13 @@
     <ClCompile Include="src\Interface\Navigateur.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
-    <ClCompile Include="src\ScrolledWindowViewport.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
-    <ClCompile Include="src\Notebook.cpp">
-      <Filter>Fichiers sources</Filter>
-    </ClCompile>
     <ClCompile Include="src\Engine\Trackball.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
     <ClCompile Include="src\Interface\ObjList.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
+    <ClCompile Include="src\Data\Object\Vertex.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
   </ItemGroup>

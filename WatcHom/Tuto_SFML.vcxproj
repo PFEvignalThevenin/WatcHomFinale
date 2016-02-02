@@ -106,7 +106,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>C:\LibC\assimp-3.2\Build\code;C:\LibC\freeglut-3.0.0\Build\lib;C:\LibC\SFGUI-0.3.0\Build\lib;C:\LibC\SFML-2.3.2\lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;Release\sfgui.lib;Release\freeglut.lib;Release\assimp-vc130-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>sfml-graphics.lib;sfml-window.lib;sfml-system.lib;Release\sfgui.lib;Debug\freeglutd.lib;Release\freeglut.lib;Release\assimp-vc130-mt.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -124,9 +124,9 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Data\Object\Vertex.cpp" />
     <ClCompile Include="src\Engine\Trackball.cpp" />
     <ClCompile Include="src\Interface\Navigateur.cpp" />
-    <ClCompile Include="src\Buttons.cpp" />
     <ClCompile Include="include\Data\Object\Object.cpp" />
     <ClCompile Include="src\Data\MiscData.cpp" />
     <ClCompile Include="src\Data\Obj.cpp" />
@@ -152,8 +152,6 @@
     <ClCompile Include="src\Interface\ParamAffichageDim.cpp" />
     <ClCompile Include="src\Interface\OptionAffichage.cpp" />
     <ClCompile Include="src\Data\PGM3D.cpp" />
-    <ClCompile Include="src\Notebook.cpp" />
-    <ClCompile Include="src\ScrolledWindowViewport.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Data\Conversion.hpp" />

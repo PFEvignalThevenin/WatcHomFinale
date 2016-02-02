@@ -1,0 +1,165 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" GroupingSetting="Access">
+  <Class Name="WindowOpenGL" Collapsed="true">
+    <Position X="4.5" Y="2.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Typedef Name="WindowOpenGL::Ptr" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>include\Interface\WindowOpenGL.hpp</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>ICAgCiQAABAAAAAgCIABCABAwAAQQEABCDABAIgAABY=</HashCode>
+      <FileName>include\Interface\WindowOpenGL.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="WinPaths" Collapsed="true">
+    <Position X="8.5" Y="3.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Typedef Name="WinPaths::Ptr" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>include\Interface\WinPaths.hpp</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAIASABAAAAAEAEERgAAAAAAAEAACQAgAAAIgAA=</HashCode>
+      <FileName>include\Interface\WinPaths.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="DialogueBox" Collapsed="true">
+    <Position X="3" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Typedef Name="DialogueBox::Ptr" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>include\Interface\DialogueBox.hpp</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AEAAAAAAAAAAAAgAAAAABAAAACAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>include\Interface\DialogueBox.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Menu" Collapsed="true">
+    <Position X="4.75" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Typedef Name="Menu::Ptr" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>include\Interface\Menu.hpp</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AABAAAACAABAAgBAAAAAAAAAAAAIAEAAEAACAIAABAA=</HashCode>
+      <FileName>include\Interface\Menu.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Navigateur" Collapsed="true">
+    <Position X="1.25" Y="1.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Typedef Name="Navigateur::Ptr" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>include\Interface\Navigateur.hpp</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAIAAAAAAQAgAAhBAABAAIAAAAAgMAEEAAIBBEIBgA=</HashCode>
+      <FileName>include\Interface\Navigateur.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ObjList" Collapsed="true">
+    <Position X="3" Y="1.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Typedef Name="ObjList::Ptr" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>include\Interface\ObjList.hpp</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAgAgCAAIAAAAQAAEAAAAAAAAAAEAAEAAAAAAABAA=</HashCode>
+      <FileName>include\Interface\ObjList.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="OptionAffichage" Collapsed="true">
+    <Position X="8.25" Y="1.75" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Typedef Name="OptionAffichage::Ptr" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>include\Interface\OptionAffichage.hpp</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAACQAABJAAAEAAAgAAAAAAgAEAQEAAAAACIBEA=</HashCode>
+      <FileName>include\Interface\OptionAffichage.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ParamAffichageDim" Collapsed="true">
+    <Position X="1.25" Y="4" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Typedef Name="ParamAffichageDim::Ptr" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>include\Interface\ParamAffichageDim.hpp</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAQBAAAAAAAAAJAgABAAAAAAEAAAAEAAQBIFIA=</HashCode>
+      <FileName>include\Interface\ParamAffichageDim.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="ClusterList" Collapsed="true">
+    <Position X="1.25" Y="0.5" Width="1.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <NestedTypes>
+      <Typedef Name="ClusterList::Ptr" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>include\Interface\ClusterList.hpp</NewMemberFileName>
+        </TypeIdentifier>
+      </Typedef>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>QBAAAEAAAAAAAQgBCAAoAAAAAAAAIEEEEIAgAAAkBAA=</HashCode>
+      <FileName>include\Interface\ClusterList.hpp</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Tahoma" Size="8.25" />
+</ClassDiagram>

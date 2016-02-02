@@ -19,8 +19,8 @@ void Trackball::_tbPointToVector(int x, int y, int width, int height, float v[3]
 {
 	float d, a;
 	/* project x, y onto a hemi-sphere centered within width, height. */
-	v[0] = (2.0 * x - width) / width;
-	v[1] = (height - 2.0 * y) / height;
+	v[0] = (float)(2.0 * x - width) / width;
+	v[1] = (float)(height - 2.0 * y) / height;
 	d = (float)sqrt(v[0] * v[0] + v[1] * v[1]);//norme
 	v[2] = (float)cos((3.14159265 / 2.0) * ((d < 1.0) ? d : 1.0));
 	a = 1.0 / (float)sqrt(v[0] * v[0] + v[1] * v[1] + v[2] * v[2]);

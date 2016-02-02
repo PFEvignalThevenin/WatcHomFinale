@@ -5,8 +5,8 @@
 
 /*Classe de Complexe au sens Topographique
  *interface. 
- *l'implémentation dépend de la spécificité du complexe : Cubique ou simple
- *pos est l'index de l'entité
+ *l'implÃ©mentation dÃ©pend de la spÃ©cificitÃ© du complexe : Cubique ou simple
+ *pos est l'index de l'entitÃ©
  */
 
 class Complexe
@@ -17,6 +17,7 @@ private:
 	virtual int dim(int pos) = 0;
 	virtual std::list<int> boundary(int pos) = 0;
 	virtual std::list<int> coboundary(int pos) = 0;
+	virtual std::list<int> neighbors(int pos) = 0;
 };
 
 #endif
