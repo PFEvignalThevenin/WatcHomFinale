@@ -22,15 +22,15 @@ public:
 	//****************************Fonctions de Dessin********************************
 	void drawCube0(obj::Vertex center);
 	void drawContour(std::vector<obj::Vertex> positions_2, std::vector<obj::Vertex> positions_tmp);
-	std::vector<obj::Vertex> computePositions(std::vector<obj::Vertex> positions, std::vector<obj::coord> Axes);
-	void drawCube1(int pos, std::vector<obj::coord> Axes);
+	void drawCube1(int pos, std::vector<dir> Axes);
 	void drawCube2(std::vector<obj::coord> positions, std::vector<obj::coord> Axes);
-	std::vector <obj::Vertex> Modeleur::computeCarre(obj::Vertex center, obj::coord Axe);
+	std::vector <obj::Vertex> Modeleur::computeCarre(obj::Vertex center, dir);
+	void Modeleur::drawCarre(std::vector<obj::Vertex> pos);
 	void drawFace(const obj::face &fa);
 	void drawPgm(PGM3D &pgm);
 	//return within 'center' the coordinates of the center of the object
 	void computeCenter();
-	obj::coord Modeleur::computeAxe(int first, int next);
+	dir Modeleur::computeAxe(int first, int next);
 	void setDistances(float rayon, float longueur, float separation);
 	//set l'objet a afficher, mais ne change pas l'affichage effectif
 	void setObj(obj::Obj2::Ptr obj);
