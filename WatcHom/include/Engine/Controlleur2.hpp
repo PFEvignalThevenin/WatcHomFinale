@@ -99,6 +99,7 @@ public:
 	static Dim int2Dim(int d);
 private:
 	Controlleur2();
+	void initiateOpenGL();
 	std::shared_ptr<Modeleur> modeleur;//ne pas remplacer par Modeleur::Ptr car inclusion croisée, tout ça...
 	DGVF::Ptr dgvf;
 

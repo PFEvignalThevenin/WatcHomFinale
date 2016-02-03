@@ -8,7 +8,14 @@ using namespace std;
 using namespace obj;
 //*********************************************Constructeur***************************************************
 Controlleur2::Controlleur2() {
-	glEnable(GL_DEPTH_TEST);
+	//initiateOpenGL();
+	setCouleur(Dim::d0, 255, 0, 0,255);
+	setCouleur(Dim::d1, 0, 255, 0, 255);
+	setCouleur(Dim::d2, 0, 0, 255, 255);
+	setCouleur(Dim::d3, 100, 0, 100, 255);
+	tb.tbReshape(800, 600);
+}
+void Controlleur2::initiateOpenGL() {
 	//light
 	/*glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
@@ -18,15 +25,13 @@ Controlleur2::Controlleur2() {
 	//glEnable(GL_COLOR_MATERIAL);
 	//glEnable(GL_SPECULAR);
 	//glutInitDisplayMode(GLUT_RGBA);*/
-	GLfloat light_ambient[] = { 0.0, 0.0, 0.0, 1.0 };
+	GLfloat light_ambient[] = { 0.8, 0.8, 0.2, 1.0 };
 	GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
-	GLfloat light_specular[] = { 1.0, 1.0, 1.0, 1.0 };
 	/*	light_position is NOT default value	*/
-	GLfloat light_position[] = { 1.0, 1.0, 1.0, 0.0 };
+	GLfloat light_position[] = { 1.0, 1.0, 1.0, 1.0 };
 
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-	glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
 	glEnable(GL_LIGHTING);
@@ -36,15 +41,6 @@ Controlleur2::Controlleur2() {
 	glShadeModel(GL_FLAT);
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-	//fin copy paste
-	glMatrixMode(GL_PROJECTION);
-	glLoadIdentity();
-	setViewPort();
-	setCouleur(Dim::d0, 255, 0, 0,255);
-	setCouleur(Dim::d1, 0, 255, 0, 255);
-	setCouleur(Dim::d2, 0, 0, 255, 255);
-	setCouleur(Dim::d3, 100, 0, 100, 255);
-	tb.tbReshape(800, 600);
 }
 Controlleur2::Ptr Controlleur2::get() {
 	static  Controlleur2::Ptr inst = Controlleur2::Ptr(new Controlleur2);
@@ -56,6 +52,11 @@ Controlleur2::Ptr Controlleur2::get() {
 }
 //************************************************Rafraichissement affichage************************************************
 void Controlleur2::drawGL() {
+	static bool initiate = true;
+	if (initiate) {
+		initiate = false;
+		initiateOpenGL();
+	}
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	setViewPort();
