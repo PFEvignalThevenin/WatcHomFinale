@@ -54,12 +54,16 @@ private:
 protected:
 	//****************************Fonctions de Dessin spécifiques*******************************
 	void drawContour(std::vector<obj::Vertex> positions_2, std::vector<obj::Vertex> positions_tmp);
-	std::vector <obj::Vertex> Modeleur::computeCarre(obj::Vertex center, dir);
+	std::vector <obj::Vertex> Modeleur::computeCarre(obj::Vertex center, dir, float, float);
 	void Modeleur::drawCarre(std::vector<obj::Vertex> pos);
 	void drawFace(const obj::face &fa);
+	void DrawRalonge(std::list<obj::Vertex> positions, dir direct, unsigned int a, unsigned int b);
+	void drawRaccord(std::vector<obj::Vertex> positions, dir direct1, dir durect2, unsigned int i);
 	void drawPgm(PGM3D &pgm);
 	dir Modeleur::computeAxe(int first, int next);
 	//****************************Fonctions de Gestion diverse**********************************
+	bool InCluster(DGVF::cellList cluster, int pos);
+	bool InCluster(DGVF::cellList cluster, float x, float y, float z);
 	std::list<int> cluster_neighbors(std::list<int> cluster, int position);
 	//return within 'center' the coordinates of the center of the object
 	void computeCenter();
