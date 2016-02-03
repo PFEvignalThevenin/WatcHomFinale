@@ -1,6 +1,7 @@
 #include "Engine\Modeleur.hpp"
 #include <algorithm>
 #include <iostream>
+#include "..\..\include\Engine\Modeleur.hpp"
 using namespace std;
 using namespace obj;
 
@@ -157,7 +158,7 @@ void Modeleur::drawCube1(int pos, std::vector<dir> Axes) {
 	coord center = ccTraite->pos2coord(pos);
 	Vertex center2 = coord2Vert(center);
 	
-	vector<Vertex> positions = computeCarre(center2, Axes.at(0));
+	vector<Vertex> positions = computeCarre(center2, Axes.at(0), rayon + dist / 2, rayon);
 	drawCarre(positions);
 
 	//positions des 4 points de départ
@@ -320,12 +321,154 @@ void Modeleur::drawCube1(int pos, std::vector<dir> Axes) {
 }
 void Modeleur::drawCube2(DGVF::cellList cluster) {
 	for (int cell : cluster) {
-		drawCube0(coord2Vert(ccTraite->pos2coord(cell)));
+		Vertex center = coord2Vert(ccTraite->pos2coord(cell));
+		vector <Vertex> positions;
+		positions.resize(4);
+
+		dir axe;
+		if (center[Axe::z] % 2 == 0){
+			axe.first = Axe::z;
+		}
+		else {
+			if (center[Axe::x] % 2 == 0) {
+				axe.first = Axe::x;
+			}
+			else {
+				axe.first = Axe::x;
+			}
+
+		}
+		axe.second = true;
+		positions = computeCarre(center, axe, rayon/2, longueur);
+		drawCarre(positions);
+		axe.second = false;
+		positions = computeCarre(center, axe, rayon / 2, longueur);
+		drawCarre(positions);
 	}
 }
+
 void Modeleur::drawCube3(DGVF::cellList cluster) {
+	bool voisins[3][3][3];
 	for (int cell : cluster) {
-		drawCube0(coord2Vert(ccTraite->pos2coord(cell)));
+		Vertex center = coord2Vert(ccTraite->pos2coord(cell));
+
+		dir directX;
+		directX.first = Axe::x;
+		directX.second = false;
+		dir directY;
+		directY.first = Axe::y;
+		directY.second = false;
+		dir directZ;
+		directZ.first = Axe::z;
+		directZ.second = false;
+
+		//definir les faces selon chaque axe
+		//X
+		vector <obj::Vertex> positionsX = computeCarre(center, directX, longeur, longueur/2);
+		//Y
+		vector <obj::Vertex> positionsY = computeCarre(center, directY, longeur, longueur/2);
+		//Z
+		vector <Vertex> positionsZ = computeCarre(center, directZ, longeur, longueur/2);
+
+		directX.second = true;
+		directY.second = true;
+		directZ.second = true;
+
+		//-X
+		vector <obj::Vertex> positionsX = computeCarre(center, directX, longeur, longueur / 2);
+		//-Y
+		vector <obj::Vertex> positionsY = computeCarre(center, directY, longeur, longueur / 2);
+		//-Z
+		vector <Vertex> positionsZ = computeCarre(center, directZ, longeur, longueur / 2);
+
+
+
+		voisins[2][1][1] = InCluster(cluster, center[Axe::x] + 2, center[Axe::y], center[Axe::z]);
+		voisins[1][2][1] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2, center[Axe::z]);
+		voisins[1][1][2] = InCluster(cluster, center[Axe::x], center[Axe::y], center[Axe::z] + 2);
+
+		voisins[0][1][1] = InCluster(cluster, center[Axe::x] - 2, center[Axe::y], center[Axe::z]);
+		voisins[1][0][1] = InCluster(cluster, center[Axe::x], center[Axe::y] - 2, center[Axe::z]);
+		voisins[1][1][0] = InCluster(cluster, center[Axe::x], center[Axe::y], center[Axe::z] - 2);
+
+		if (!voisins[2][1][1]) 
+			drawCarre(positionsX);
+		/*else {
+			voisins[2][1][2] = InCluster(cluster, center[Axe::x] + 2, center[Axe::y], center[Axe::z] + 2);
+			if (!(voisins[1][1][2] && voisins[2][1][2])) {
+				//dessiner cxz+
+				DrawRalonge(positionsX, directX, 1, 0);
+			}
+			voisins[2][2][1] = InCluster(cluster, center[Axe::x] + 2, center[Axe::y] + 2, center[Axe::z]);
+			if (!(voisins[1][2][1] && voisins[2][2][1])) {
+				// si dessine cxy+
+				DrawRalonge(positionsX, directX, 1, 2);
+			}
+		}*/
+
+		if (!voisins[1][2][1])
+			drawCarre(positionsY);
+		/*else {
+			voisins[2][2][1] = InCluster(cluster, center[Axe::x] + 2, center[Axe::y] + 2, center[Axe::z]);
+			if (!(voisins[2][1][1] && voisins[2][2][1])) {
+				// si dessine cyx+
+				DrawRalonge(positionsY, directY, 0, 1);
+			}
+			voisins[1][2][2] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2, center[Axe::z]+2);
+			if (!(voisins[1][1][2] && voisins[1][2][2])) {
+				// si dessine cyz+
+				DrawRalonge(positionsY, directY, 1, 2);
+			}
+		}*/
+
+		if (!voisins[1][1][2])
+			drawCarre(positionsY);
+		/*else {
+			voisins[2][1][2] = InCluster(cluster, center[Axe::x] + 2, center[Axe::y], center[Axe::z] + 2);
+			if (!(voisins[2][1][1] && voisins[2][1][2])) {
+				// si dessine czx+
+				DrawRalonge(positionsZ, directZ, 1, 2);
+			}
+			voisins[1][2][2] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2, center[Axe::z]+2);
+			if (!(voisins[1][2][1] && voisins[1][2][2])) {
+				// si dessine czy+
+				DrawRalonge(positionsZ, directZ, 1, 0);
+			}
+		}*/
+
+			// si dessine cxy-
+			//DrawRalonge(positionsX, directX, 3, 0);
+			// si dessine cxz-
+			//DrawRalonge(positionsX, directX, 2, 3);
+		
+			// si dessine cyx-
+			//DrawRalonge(positionsY, directY, 2, 3);
+			// si dessine cyz-
+			//DrawRalonge(positionsY, directY, 3, 0);
+		
+			// si dessine czx-
+			//DrawRalonge(positionsZ, directZ, 3, 0);
+			// si dessine czy-
+			//DrawRalonge(positionsZ, directZ, 2, 2);
+
+		
+		
+		
+		if (!voisins[0][1][1]){
+			//-X
+			vector <obj::Vertex> positionsX = computeCarre(center, directX, longeur, longueur / 2);
+			drawCarre(positionsY);
+		}
+		if (!voisins[1][1][0]){
+			//-Y
+			vector <obj::Vertex> positionsY = computeCarre(center, directY, longeur, longueur / 2);
+			drawCarre(positionsY);
+		}
+		if (!voisins[1][1][0]){
+			//-Z
+			vector <Vertex> positionsZ = computeCarre(center, directZ, longeur, longueur / 2);
+			drawCarre(positionsY);
+		}
 	}
 }
 //*************************************Dessin de CC spécifiques *******************************************
@@ -341,25 +484,25 @@ void Modeleur::drawContour(vector<Vertex> positions_2, vector<Vertex> positions_
 	}
 	glEnd();
 }
-vector <Vertex> Modeleur::computeCarre(Vertex center, dir axe) {
+vector <Vertex> Modeleur::computeCarre(Vertex center, dir axe, float profondeur, float largeur) {
 	vector <Vertex> positions;
 	positions.resize(4);
-	float sens = (axe.second) ? 1.0f : -1.0f;
+	float sens = (axe.second) ? -1.0f : 1.0f;
 	for (unsigned int j = 0; j < 3; j++) {
 			for (unsigned int i = 0; i < 4; i++) {
 
-				positions.at(i)[axe.first] = center[axe.first] - sens * (rayon + dist / 2);
+				positions.at(i)[axe.first] = center[axe.first] - sens * profondeur;
 			}
 			unsigned int j1 = (j + 1) % 3;
 			unsigned int j2 = (j + 2) % 3;
-			positions.at(0)[j1] = center[j1] - sens * rayon / 2;
-			positions.at(0)[j2] = center[j2] + sens * rayon / 2;
-			positions.at(1)[j1] = center[j1] + rayon / 2;
-			positions.at(1)[j2] = center[j2] + rayon / 2;
-			positions.at(2)[j1] = center[j1] + sens * rayon / 2;
-			positions.at(2)[j2] = center[j2] - sens * rayon / 2;
-			positions.at(3)[j1] = center[j1] - rayon / 2;
-			positions.at(3)[j2] = center[j2] - rayon / 2;
+			positions.at(0)[j1] = center[j1] - sens * largeur / 2;
+			positions.at(0)[j2] = center[j2] + sens * largeur / 2;
+			positions.at(1)[j1] = center[j1] + largeur / 2;
+			positions.at(1)[j2] = center[j2] + largeur / 2;
+			positions.at(2)[j1] = center[j1] + sens * largeur / 2;
+			positions.at(2)[j2] = center[j2] - sens * largeur / 2;
+			positions.at(3)[j1] = center[j1] - largeur / 2;
+			positions.at(3)[j2] = center[j2] - largeur / 2;
 	}
 	return positions;
 }
@@ -378,6 +521,28 @@ void Modeleur::drawFace(const obj::face &fa) {
 		glVertex3f(v.x, v.y, v.z);
 	}
 	glEnd();
+}
+void DrawRalonge(list<Vertex> positions, dir direct, unsigned int a, unsigned int b) {
+	list<Vertex> pos;
+	pos.resize(4);
+	pos.at(0) = positions.at(a);
+	pos.at(1) = positions.at(b);
+	pos.at(2) = positions.at(b);
+	pos.at(2).translation(direct, 2 * separation + rayon);
+	pos.at(3) = positions.at(a);
+	pos.at(3).translation(directX, 2 * separation + rayon);
+	drawCarre(pos);
+}
+void drawRaccord(vector<Vertex> positions, dir direct1, dir durect2, unsigned int i) {
+	list<Vertex> pos;
+	pos.resize(4);
+
+	pos.at(0) = pos.at(1) = pos.at(3) = positions.at(i);
+	pos.at(1).translation(direct1, 2 * separation + rayon);
+	pos.at(2) = pos.at(1);
+	pos.at(2).translation(direct2, 2 * separation + rayon);
+	pos.at(3).translation(direct2, 2 * separation + rayon);
+	drawCarre(pos);
 }
 //****************************************Gestion Obj2 ************************************************
 void Modeleur::setObj(obj::Obj2::Ptr obj) {
@@ -463,6 +628,22 @@ Vertex Modeleur::coord2Vert(coord co) {
 	v.z = co.z * dist;
 	return v;
 }
+bool Modeleur::InCluster(DGVF::cellList cluster, float x, float y, float z)
+{
+	bool presence = false;
+	for (int cell : cluster) {
+		Vertex pos = coord2Vert(ccTraite->pos2coord(cell));
+		if (pos[Axe::x] == x && pos[Axe::y] == y && pos[Axe::z] == z) presence = true;
+	}
+	return presence;
+}
+bool Modeleur::InCluster(DGVF::cellList cluster, int pos)
+{
+	bool presence = false;
+	for (int cell : cluster)
+		if (pos == cell) presence = true;
+	return presence;
+}
 list<int>  Modeleur::cluster_neighbors(list<int> cluster, int position)
 {
 	list<int> incluster;
@@ -475,4 +656,3 @@ list<int>  Modeleur::cluster_neighbors(list<int> cluster, int position)
 	}
 	return incluster;
 }
-
