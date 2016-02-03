@@ -22,7 +22,7 @@ Navigateur::Navigateur() : sfg::Bin()
 	butSaveMorse = Button::Create("Export Morse");
 	autoroll = CheckButton::Create("Autoroll");
 	autoroll->GetSignal(CheckButton::OnToggle).Connect(bind(&Navigateur::affectAutoroll, this));
-	setAutoroll(true);
+	setAutoroll(false);
 }
 Navigateur::Ptr Navigateur::Create() {
 	Navigateur::Ptr ret = Navigateur::Ptr(new Navigateur());

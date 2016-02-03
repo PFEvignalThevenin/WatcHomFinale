@@ -36,6 +36,7 @@ bool StructureCubique<D>::isEmpty(int x, int y, int z) const {
 }
 template<typename D>
 bool StructureCubique<D>::isOccupied(int x, int y, int z) const {
+	if (without(x, y, z))return false;
 	return (data[coord2pos(x, y, z)]) ? true : false;
 }
 template<typename D>
@@ -54,6 +55,7 @@ bool StructureCubique<D>::isEmpty(int pos) const {
 }
 template<typename D>
 bool StructureCubique<D>::isOccupied(int pos) const {
+	if (without(pos))return false;
 	return (data[pos]) ? true : false;
 }
 template<typename D>

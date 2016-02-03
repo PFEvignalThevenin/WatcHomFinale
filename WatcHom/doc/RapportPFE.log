@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.2.2)  2 FEB 2016 17:00
+This is pdfTeX, Version 3.14159265-2.6-1.40.16 (MiKTeX 2.9) (preloaded format=pdflatex 2016.2.2)  3 FEB 2016 11:29
 entering extended mode
 **./RapportPFE.tex
 (RapportPFE.tex
@@ -431,7 +431,7 @@ Package: algorithmic 2009/08/24 v0.1 Document Style `algorithmic'
 \ALC@tlm=\skip52
 \algorithmicindent=\skip53
 )
-No file RapportPFE.aux.
+(RapportPFE.aux)
 \openout1 = `RapportPFE.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 13.
@@ -449,7 +449,7 @@ LaTeX Font Info:    ... okay on input line 13.
 LaTeX Info: Redefining \degres on input line 13.
 LaTeX Info: Redefining \dots on input line 13.
 LaTeX Info: Redefining \up on input line 13.
-("C:\Logiciels\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
+ ("C:\Logiciels\MiKTeX 2.9\tex\context\base\supp-pdf.mkii"
 [Loading MPS to PDF converter (version 2006.09.02).]
 \scratchcounter=\count112
 \scratchdimen=\dimen117
@@ -508,14 +508,11 @@ Chapitre 4.
 
 LaTeX Warning: There were undefined references.
 
-
-LaTeX Warning: Label(s) may have changed. Rerun to get cross-references right.
-
  ) 
 Here is how much of TeX's memory you used:
- 3856 strings out of 493634
- 47552 string characters out of 3145362
- 114538 words of memory out of 3000000
+ 3858 strings out of 493634
+ 47580 string characters out of 3145362
+ 114548 words of memory out of 3000000
  7182 multiletter control sequences out of 15000+200000
  20219 words of font info for 54 fonts, out of 3000000 for 9000
  1025 hyphenation exceptions out of 8191
@@ -541,9 +538,9 @@ amsfonts/cm/cmr7.pfb><C:/Logiciels/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cm
 sy10.pfb><C:/Logiciels/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy5.pfb><C:/
 Logiciels/MiKTeX 2.9/fonts/type1/public/amsfonts/cm/cmsy7.pfb><C:/Logiciels/MiK
 TeX 2.9/fonts/type1/public/amsfonts/symbols/msbm10.pfb>
-Output written on RapportPFE.pdf (7 pages, 201327 bytes).
+Output written on RapportPFE.pdf (7 pages, 201706 bytes).
 PDF statistics:
- 361 PDF objects out of 1000 (max. 8388607)
+ 362 PDF objects out of 1000 (max. 8388607)
  0 named destinations out of 1000 (max. 500000)
  1 words of extra memory for PDF output out of 10000 (max. 10000000)
 

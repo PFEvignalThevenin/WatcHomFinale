@@ -17,23 +17,24 @@
 \chapter{Introduction}
 
 \section{Contexte}
-Ce projet a été réalisé dans le cadre de la dernière année du cycle ingénieur au pôle informatique de l'école polytech'Marseille. Il a été supervisé et fait à la demande de monsieur Aldo González Lorenzo, doctorant au laboratoire LSIS, dans le cadre de sa thèse en homologie.
+Ce projet a été réalisé dans le cadre de la dernière année du cycle ingénieur au pôle informatique de l'école polytech'Marseille. Il a été supervisé par Mme Alexandra Bac et réalisé à la demande de monsieur Aldo González Lorenzo, doctorant au laboratoire LSIS, dans le cadre de sa thèse en homologie.
 
-En topologie algébrique, l'homologie est une construction qui permet d'associer à un espace topologique une suite homologique. Cette association est un invariant topologique non complet, c'est-à-dire que si deux espaces sont homéomorphes alors ils ont mêmes groupes d'homologie singulière en chaque degré mais que la réciproque est fausse.
-Or les "trous" présents dans un objet sont des composantes essentielles pour établir à quelles groupes d'homologie singulière appartient l'objet.
+En topologie algébrique, l'homologie est une construction qui permet d'associer à un espace topologique une suite homologique. Cette association est un invariant topologique non complet, c'est-à-dire que si deux espaces sont homéomorphes alors ils ont mêmes groupes d'homologie en chaque degré mais que la réciproque est fausse.
+Or les "trous" présents dans un objet sont des composantes essentielles pour établir le groupe d'homologie singulière auquel appartient l'objet.
  
 \section{Objectifs}
 Le but de ce projet est d'implémenter une interface pour un algorithme développé par Mr González Lorenzo.
-Cet algorithme sert à simplifier une structure topologique pariculière : des complexes cubiques. Ceux-ci sont générés à partir d'ensembes de voxels. La simplification est utilisée pour diminuer le temps de calcul d'un algorithme plus couteux servant à compter le nombre de cavités et d'anses dans une structure topologique. Les résultats de la simplification peuvent varier, et parfois aboutir à une structure (finale?terminale?Minimae? genre, idem que si l'autre algo)
+Cet algorithme sert à simplifier une structure topologique particulière : des complexes cubiques. Ceux-ci sont souvent générés à partir d'ensembles de voxels. La simplification est utilisée pour diminuer le temps de calcul de son homologie. Les résultats de la simplification peuvent varier, et parfois aboutir à une structure minimale.
 
 \section{Choix Techniques}
 
 L'application sera codée en C++, pour les performances, et parce que l'algorithme était déjà implémenté dans ce langage.
 
-Les bibliothèques utiisées sont : 
-	-openGL pour l'affichage 3D
-	-SFGui pour les interfaces
-
+Les bibliothèques utilisées sont :
+\begin{itemize}
+\item openGL pour l'affichage 3D
+\item SFGui pour les interfaces
+\end{itemize}
 
 \chapter{L'algorithme}
 

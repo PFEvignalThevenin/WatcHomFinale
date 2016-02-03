@@ -41,68 +41,70 @@ void WindowOpenGL::run() {
 	app.setVerticalSyncEnabled(true);	//se synchroniser sur le rafraichissement de la carte
 	app.resetGLStates();
 	//boucle de rafraichissement
-	try {
-		while (!quitter) {
-			Event event;
-			static bool rightPressed = false;//gestion clics gauches prolongés
-			static bool midPressed = false;//gestion clics 3 prolongés
-			static int pmx;
-			static int pmy;
-			static int mulRot = 1;
-			while (app.pollEvent(event)) {
-				desktop.HandleEvent(event);
-				switch (event.type) {
-				case Event::Closed:
-					quitter = true;
-					break;
-				case Event::Resized:
-					Controlleur2::get()->setDimFenetre(event.size.width, event.size.height);
-					positionnerNavPanel();
-					break;
-				case Event::MouseWheelMoved:
-					Controlleur2::get()->travelling((float)-event.mouseWheel.delta * win_paths->getZoomMultiply());
-					break;
-				case Event::MouseButtonPressed:
-					if (event.mouseButton.button == sf::Mouse::Right) {
-						rightPressed = true;
-						Controlleur2::get()->startRotation(mulRot*event.mouseButton.x, mulRot*event.mouseButton.y);
-					}
-					else if (event.mouseButton.button == sf::Mouse::Middle) {
-						midPressed = true;
-						pmx = event.mouseButton.x;
-						pmy = event.mouseButton.y;
-					}
-					break;
-				case Event::MouseButtonReleased:
-					if (event.mouseButton.button == sf::Mouse::Right) {
-						rightPressed = false;
-						Controlleur2::get()->stopRotation();
-					}
-					else if (event.mouseButton.button == sf::Mouse::Middle) {
-						midPressed = false;
-					}
-					break;
-				case Event::MouseMoved:
-					if (rightPressed) {
-						Controlleur2::get()->rotation(mulRot*event.mouseMove.x, mulRot*event.mouseMove.y);
-					}
-					else if (midPressed) {
-						Controlleur2::get()->translation((float)(event.mouseMove.x - pmx) / 10, (float)(pmy - event.mouseMove.y) / 10);//inverser axe y
-						pmx = event.mouseMove.x;
-						pmy = event.mouseMove.y;
-					}
-					break;
-				case Event::KeyPressed:
-					if (event.key.code == 68) {//+
-						Controlleur2::get()->setZoom(Controlleur2::get()->getZoom() - mulRot * 0.01f);
-					}
-					else if (event.key.code == 67) {//-
-						Controlleur2::get()->setZoom(Controlleur2::get()->getZoom() + mulRot * 0.01f);
-					}
-					break;
-				default:
+	static bool rightPressed = false;//gestion clics gauches prolongés
+	static bool midPressed = false;//gestion clics 3 prolongés
+	static int pmx;
+	static int pmy;
+	while (!quitter) {
+		Event event;
+		while (app.pollEvent(event)) {
+			desktop.HandleEvent(event);
+			switch (event.type) {
+			case Event::Closed:
+				quitter = true;
+				break;
+			case Event::Resized:
+				Controlleur2::get()->setDimFenetre(event.size.width, event.size.height);
+				positionnerNavPanel();
+				break;
+			case Event::MouseWheelMoved:
+				if (event.mouseWheel.x > app.getSize().x - win_NavPanel->GetAllocation().width) {//si dsn le menu de navigation
+					navScroll->GetVerticalAdjustment()->SetValue(navScroll->GetVerticalAdjustment()->GetValue() - event.mouseWheel.delta * 50.f);
 					break;
 				}
+				Controlleur2::get()->setZoom(Controlleur2::get()->getZoom() - event.mouseWheel.delta*win_paths->getZoomMultiply()* 0.1f);
+				break;
+			case Event::MouseButtonPressed:
+				if (event.mouseButton.button == sf::Mouse::Right) {
+					rightPressed = true;
+					Controlleur2::get()->startRotation(event.mouseButton.x,event.mouseButton.y);
+				}
+				else if (event.mouseButton.button == sf::Mouse::Middle) {
+					midPressed = true;
+					pmx = event.mouseButton.x;
+					pmy = event.mouseButton.y;
+				}
+				break;
+			case Event::MouseButtonReleased:
+				if (event.mouseButton.button == sf::Mouse::Right) {
+					rightPressed = false;
+					Controlleur2::get()->stopRotation();
+				}
+				else if (event.mouseButton.button == sf::Mouse::Middle) {
+					midPressed = false;
+				}
+				break;
+			case Event::MouseMoved:
+				if (rightPressed) {
+					Controlleur2::get()->rotation(event.mouseMove.x, event.mouseMove.y);
+				}
+				else if (midPressed) {
+					Controlleur2::get()->translation((float)(event.mouseMove.x - pmx) / 10, (float)(pmy - event.mouseMove.y) / 10);//inverser axe y
+					pmx = event.mouseMove.x;
+					pmy = event.mouseMove.y;
+				}
+				break;
+			case Event::KeyPressed:
+				if (event.key.code == 68) {//+
+					Controlleur2::get()->travelling((float) -win_paths->getZoomMultiply());
+				}
+				else if (event.key.code == 67) {//-
+					Controlleur2::get()->travelling((float) +win_paths->getZoomMultiply());
+				}
+				break;
+			default:
+				break;
+					
 			}
 			desktop.Update(1.0f);
 			app.clear();
@@ -110,11 +112,6 @@ void WindowOpenGL::run() {
 			sfgui.Display(app);
 			app.display();
 		}
-	}
-	catch (exception e) {
-		cout << e.what();
-		char c;
-		cin >> c;
 	}
 }
 
@@ -183,10 +180,10 @@ sfg::Window::Ptr WindowOpenGL::initNavPanel() {
 	note->AppendPage(gbl_objList, Label::Create("Objs"));
 	//window->Add(note);
 	window->SetAllocation(FloatRect(200, 100, 50, 20));
-	auto scroll1 = sfg::ScrolledWindow::Create();
-	scroll1->AddWithViewport(note);
-	scroll1->SetScrollbarPolicy(sfg::ScrolledWindow::HORIZONTAL_NEVER | sfg::ScrolledWindow::VERTICAL_AUTOMATIC);
-	window->Add(scroll1);
+	navScroll = sfg::ScrolledWindow::Create();
+	navScroll->AddWithViewport(note);
+	navScroll->SetScrollbarPolicy(sfg::ScrolledWindow::HORIZONTAL_NEVER | sfg::ScrolledWindow::VERTICAL_AUTOMATIC);
+	window->Add(navScroll);
 	return window;
 }
 WinPaths::Ptr WindowOpenGL::initPathWindow() {

@@ -29,6 +29,8 @@ void Modeleur::drawPgm(PGM3D &pgm) {
 void Modeleur::initiatePgm() {
 	ctrl->resetLists();
 	std::vector<GLuint> *listObj = ctrl->getFormes(Dim::d0);
+	float s_sep = separation, s_long = longueur;//sauvegarder les distances d'affichage
+	setDistances(rayon, 0, 0);
 	cout << "affichage PGM..." << endl;
 	glNewList(1, GL_COMPILE);	//créer nouvelle liste
 	listObj->push_back(1);		//conserver identificateur
@@ -39,6 +41,8 @@ void Modeleur::initiatePgm() {
 		0, pgmTraite->getSize(Axe::x)*dist,
 		0, pgmTraite->getSize(Axe::y)*dist,
 		0, pgmTraite->getSize(Axe::z)*dist);
+	//remettre les disances originales
+	setDistances(rayon, s_long, s_sep);
 }
 //*******************************Dessin de Complexe Cubique par dimension*********************************
 void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g) {

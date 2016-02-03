@@ -39,6 +39,7 @@ private:
 	sfg::Window::Ptr win_NavPanel;	//fenetre des listes de cluster
 	sfg::SFGUI sfgui;				//contexte sfgui
 	sf::RenderWindow app;
+	sfg::ScrolledWindow::Ptr navScroll;
 protected:
 	WindowOpenGL();
 	sfg::Window::Ptr initMenuWindow();				//initialise la fenetre du menu

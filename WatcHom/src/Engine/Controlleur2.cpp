@@ -25,10 +25,10 @@ void Controlleur2::initiateOpenGL() {
 	//glEnable(GL_COLOR_MATERIAL);
 	//glEnable(GL_SPECULAR);
 	//glutInitDisplayMode(GLUT_RGBA);*/
-	GLfloat light_ambient[] = { 0.8, 0.8, 0.2, 1.0 };
-	GLfloat light_diffuse[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_ambient[] = { 0.5f,0.5f,0.5f, 1.0f };
+	GLfloat light_diffuse[] = {0.9f,0.9f,0.9f, 1.0f };
 	/*	light_position is NOT default value	*/
-	GLfloat light_position[] = { 1.0, 1.0, 1.0, 1.0 };
+	GLfloat light_position[] = { 1.0, 1.0, 1.0, 0 };
 
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
@@ -36,11 +36,12 @@ void Controlleur2::initiateOpenGL() {
 
 	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
-	glDepthFunc(GL_LESS);
+	//glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
-	glShadeModel(GL_FLAT);
+	//glShadeModel(GL_FLAT);
 	glEnable(GL_COLOR_MATERIAL);
 	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
 }
 Controlleur2::Ptr Controlleur2::get() {
 	static  Controlleur2::Ptr inst = Controlleur2::Ptr(new Controlleur2);
@@ -278,7 +279,7 @@ void Controlleur2::setViewPort() {
 	static const auto pi = 3.1415926535897932384626433832795f;
 	static const auto fov = 90.f;
 	static const auto near_distance = .1f;
-	static const auto far_distance = 100.f;
+	static const auto far_distance = 1000.f;
 	auto aspect = viewX / viewH;
 	auto frustum_height = std::tan(fov / 360 * pi) * near_distance;
 	auto frustum_width = frustum_height * aspect;

@@ -28,9 +28,10 @@ private:
 	std::shared_ptr<WindowOpenGL> main_win;//utilisé pour la sauvegarde
 	std::shared_ptr<std::vector<DGVF::cellBound>> clusters;
 	std::vector<sfg::RadioButton::Ptr> radios;
-	sfg::Button::Ptr b_merge, b_collapse, b_retour;//retour : en arrière d'une itération
+	sfg::Box::Ptr hb_collapseList[4]; //contient chacune des listes de radios triés par dimension
+	sfg::Button::Ptr but[4];	//boutons pour ouvrir et fermet la liste par dimension
+	sfg::Button::Ptr b_merge, b_collapse, b_retour;//merge, collapse, retour : en arrière d'une itération
 	sfg::Label::Ptr lab_tete;
-	sfg::Box::Ptr hb_collapseList;
 
 	sf::Vector2f CalculateRequisition() override;
 	
