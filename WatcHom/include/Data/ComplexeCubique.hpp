@@ -32,7 +32,13 @@ public:
 	std::list<int> neighbors(int pos) override;
 	//primalité du complexe
 	void setPrimal(bool p_primal);
-	bool isPrimal();			
+	bool isPrimal();
+	//renvoie la normale de la face. Détecte parfois que ce n'est pas une dim2, et lance une dataError.
+	Axe normaleDim2(int pos);
+	Axe normaleDim2(int x, int y, int z);
+	//renvoie la direction de l'arrête. détecte parfois que ce n'est pas une dim1, et lance une dataError.
+	Axe directionDim1(int pos);
+	Axe directionDim1(int x, int y, int z);
 private:
 	bool primal;
 

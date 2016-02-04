@@ -104,5 +104,25 @@ void ComplexeCubique::setPrimal(bool p_primal) {
 bool ComplexeCubique::isPrimal() {
 	return primal;
 }
+Axe ComplexeCubique::normaleDim2(int pos) {
+	obj::coord co = pos2coord(pos);
+	return normaleDim2(co.x, co.y, co.z);
+}
+Axe ComplexeCubique::directionDim1(int pos) {
+	obj::coord co = pos2coord(pos);
+	return directionDim1(co.x, co.y, co.z);
+}
+Axe ComplexeCubique::normaleDim2(int x, int y, int z) {
+	if (z % 2 == 0) return Axe::z;
+	if (y % 2 == 0) return Axe::y;
+	if (x % 2 == 0) return Axe::x;
+	throw DataError("cell at pos (" + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + ") may not be of dim 2\n");
+}
+Axe ComplexeCubique::directionDim1(int x, int y, int z) {
+	if (z % 2 == 1) return Axe::z;
+	if (x % 2 == 1) return Axe::x;
+	if (y % 2 == 1) return Axe::y;
+	throw DataError("cell at pos (" +std::to_string(x) +","+ std::to_string(y) + "," + std::to_string(z) + ") may not be of dim 1\n");
+}
 
 #endif

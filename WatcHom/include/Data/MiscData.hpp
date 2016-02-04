@@ -26,6 +26,10 @@ private:
 };
 /*******************************Axe**********************************/
 enum Axe { x = 0, y = 1, z = 2 };
+//fonction de conversion de int vers Axe
+Axe int2Axe(int i);
+//tourner dans le sens direct
+Axe nextAxe(Axe a);
 /****************************direction************************************/
 typedef std::pair<Axe, bool> dir;
 /*************************************************************************/
@@ -51,7 +55,5 @@ struct couleur {
 /*******************************Dim**********************************/
 enum Dim { d0 = 0, d1 = 1, d2 = 2, d3 = 3 };
 #define DIM 4	//because we work on 4 dimensions (from 0 to 3)
-//fonction de conversion de int vers Axe
-Axe int2Axe(int i);
 /********************************************************************/
 #endif

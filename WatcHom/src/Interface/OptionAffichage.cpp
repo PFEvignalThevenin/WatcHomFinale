@@ -75,13 +75,13 @@ void OptionAffichage::setEspaces(int rayon, int Longeur, int separation) {
 	affectEspaceChanges();
 }
 float OptionAffichage::getRayon() {
-	return espaces.at("Rayon")->GetValue() / 10;
+	return espaces.at("Rayon")->GetValue() / 20;
 }
 float OptionAffichage::getLongueur() {
 	return espaces.at("Longueur")->GetValue() / 10;
 }
 float OptionAffichage::getSeparation() {
-	return espaces.at("Espace")->GetValue() / 10;
+	return espaces.at("Espace")->GetValue() / 20;
 }
 void OptionAffichage::affectColorChanges(int dim) {
 	paramsRGBA[dim]->affectColorChange();

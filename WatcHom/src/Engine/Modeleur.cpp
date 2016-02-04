@@ -70,14 +70,11 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 	listObj = ctrl->getFormes(Dim::d1);//liste de dim0
 	try {
 		for (DGVF::cluster clust : g->at(1)) {//tous clusters dim 1
-			DGVF::cluster cluster = clust;
-			//initialisation de la boucle
-			//permet de ne pas avoir de boucle infinie
-			int initial_size = cluster.second.size();
-			int count = 0;
-			//liste des elements qui vont servir à calculer les axes
-			list<int> list_for_axes;
-			list_for_axes = cluster_neighbors(cluster.second, cluster.first);
+			//pré-traitement
+			/*DGVF::cluster cluster = clust;
+			int initial_size = cluster.second.size();//initialisation de la boucle
+			int count = 0;							 //permet de ne pas avoir de boucle infinie
+			list<int> list_for_axes = cluster_neighbors(cluster.second, cluster.first);//liste des elements qui vont servir à calculer les axes
 			//calculer les axes et retirer les éléments traitées du cluster
 			for (int cell : list_for_axes) {
 				Axes.push_back(computeAxe(cluster.first, cell));
@@ -94,12 +91,19 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 					}
 				}
 				count++;
-			}
-			drawCube1(cluster.first, Axes);
+			}*/
+			//affichage
+			glNewList(cptr, GL_COMPILE);	//créer nouvelle liste
+			listObj->push_back(cptr);		//conserver identificateur
+			drawCube1(clust.second);
+			glEndList();//fin definition liste
+			cptr++;
 		}
 	}
 	catch (exception e) {
 		cout << e.what();
+		glEndList();
+		cptr++;
 	}cout << endl;
 
 	//dim2
@@ -133,12 +137,12 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 void Modeleur::drawCube0(obj::Vertex center) {
 	glBegin(GL_QUADS);//les côtés
 	glNormal3f(1.0f, 0.0f, 0.0f);
-	glVertex3f(center.x + rayon, center.y - rayon, center.z + rayon);
+	glVertex3f(center.x + rayon, center.y - rayon, center.z + rayon);//X+
 	glVertex3f(center.x + rayon, center.y - rayon, center.z - rayon);
 	glVertex3f(center.x + rayon, center.y + rayon, center.z - rayon);
 	glVertex3f(center.x + rayon, center.y + rayon, center.z + rayon);
 	glNormal3f(0.0f, 1.0f, 0.0f);
-	glVertex3f(center.x + rayon, center.y + rayon, center.z + rayon);
+	glVertex3f(center.x + rayon, center.y + rayon, center.z + rayon);//Y+
 	glVertex3f(center.x + rayon, center.y + rayon, center.z - rayon);
 	glVertex3f(center.x - rayon, center.y + rayon, center.z - rayon);
 	glVertex3f(center.x - rayon, center.y + rayon, center.z + rayon);
@@ -152,8 +156,6 @@ void Modeleur::drawCube0(obj::Vertex center) {
 	glVertex3f(center.x - rayon, center.y - rayon, center.z - rayon);
 	glVertex3f(center.x + rayon, center.y - rayon, center.z - rayon);
 	glVertex3f(center.x + rayon, center.y - rayon, center.z + rayon);
-	glEnd();
-	glBegin(GL_QUADS);
 	glNormal3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(center.x + rayon, center.y - rayon, center.z + rayon);//le dessus
 	glVertex3f(center.x + rayon, center.y + rayon, center.z + rayon);
@@ -165,6 +167,50 @@ void Modeleur::drawCube0(obj::Vertex center) {
 	glVertex3f(center.x + rayon, center.y + rayon, center.z - rayon);
 	glVertex3f(center.x + rayon, center.y - rayon, center.z - rayon);
 	glEnd();
+}
+void Modeleur::drawCube1(DGVF::cellList cluster) {
+	Vertex center;//centre du cube de dim1
+	coord co;	//coord du cube de dim 1
+	coord nav;	//pour naviguer entre les voisins
+	Axe axe;	//axe du cube de dim1
+	Axe p1, p2;//axes perpendiculaires
+	float prolongation = separation + 2 * rayon;
+	float prolongationD = prolongation + separation;
+	float longueurTot;
+	for (int cell : cluster) {
+		longueurTot = longueur;
+		co = ccTraite->pos2coord(cell);
+		center = coord2Vert(co);
+		axe = ccTraite->directionDim1(cell);
+		p1 = nextAxe(axe);
+		p2 = nextAxe(p1);
+		//coté sens direct
+		for (int signe = -1; signe <=1; signe += 2) {//pour signe = -1 et 1
+			nav = co;
+			nav[axe] += signe*2;
+			if (InCluster(cluster, nav.x, nav.y, nav.z)) {//en face
+				center[axe] += signe*prolongationD / 2;
+				longueurTot += prolongationD;
+				continue;
+			}
+			nav[axe] -= signe*1; nav[p1] += signe*1;
+			if (!InCluster(cluster, nav.x, nav.y, nav.z)) {//en haut
+				nav[p1] -= signe*2;
+				if (!InCluster(cluster, nav.x, nav.y, nav.z)) {//en bas
+					nav[p2] += signe * 1; nav[p1] += signe * 1;
+					if (!InCluster(cluster, nav.x, nav.y, nav.z)) {//a gauche
+						nav[p2] -= signe * 2;
+						if (!InCluster(cluster, nav.x, nav.y, nav.z)) {//a droite
+							continue;
+						}
+					}
+				}
+			}
+			center[axe] += signe*(prolongation / 2);
+			longueurTot += prolongation;
+		}
+		drawPave(center, longueurTot, 2 * rayon, 2 * rayon, axe, p1);
+	}
 }
 void Modeleur::drawCube1(int pos, std::vector<dir> Axes) {
 	coord center = ccTraite->pos2coord(pos);
@@ -725,4 +771,63 @@ obj::Vertex Modeleur::computeNormales(obj::Vertex points[3]) {
 		res[a] = vector[0][(a + 1) % 3] * vector[1][(a + 2) % 3] - vector[1][(a + 1) % 3] * vector[0][(a + 2) % 3];
 	}
 	return res;
+}
+//****************************Fonctions de Dessin générales********************************
+void Modeleur::drawPave(Vertex center, GLfloat largeur, GLfloat hauteur , GLfloat profondeur, Axe sensLargeur, Axe sensProfondeur) {
+	GLfloat la = largeur / 2, ha = hauteur /2, pr = profondeur/2;
+	if (sensLargeur == sensProfondeur) throw DataError("un pave doit être orienté selon 2 directions différentes\n");
+	glPushMatrix();
+	glTranslatef(center.x, center.y, center.z);
+	glPushMatrix();
+	if (sensLargeur == Axe::y) {
+		glRotated(90, 0, 0, 1);
+		if (sensProfondeur == Axe::x)
+			glRotated(90, 1, 0, 0);
+		//if (sensProfondeur == Axe::z)//ok
+	}
+	else if (sensLargeur == Axe::z) {
+		glRotated(90, 0, 1, 0);
+		if (sensProfondeur == Axe::y)
+			glRotated(90, 1, 0, 0);
+		//if (sensProfondeur == Axe::x)//ok
+	}
+	else {//sensLargeur == x
+		//if (sensProfondeur == Axe::z)//ok
+		if (sensProfondeur == Axe::y)
+			glRotated(90, 1, 0, 0);
+	}
+	glBegin(GL_QUADS);//les côtés
+	glNormal3f(1.0f, 0.0f, 0.0f);//X+
+	glVertex3f( +la,  -ha,  +pr);
+	glVertex3f( +la,  -ha,  -pr);
+	glVertex3f( +la,  +ha,  -pr);
+	glVertex3f( +la,  +ha,  +pr);
+	glNormal3f(0.0f, 1.0f, 0.0f);//Y+
+	glVertex3f( +la,  +ha,  +pr);
+	glVertex3f( -la,  +ha,  +pr);
+	glVertex3f( -la,  +ha,  -pr);
+	glVertex3f( +la,  +ha,  -pr);
+	glNormal3f(-1.0f, 0.0f, 0.0f);//X-
+	glVertex3f( -la,  +ha,  +pr);
+	glVertex3f( -la,  +ha,  -pr);
+	glVertex3f( -la,  -ha,  -pr);
+	glVertex3f( -la,  -ha,  +pr);
+	glNormal3f(0.0f, -1.0f, 0.0f);//Y-
+	glVertex3f( +la,  -ha,  +pr);
+	glVertex3f( -la,  -ha,  +pr);
+	glVertex3f( -la,  -ha,  -pr);
+	glVertex3f( +la,  -ha,  -pr);
+	glNormal3f(0.0f, 0.0f, 1.0f);//Z+
+	glVertex3f( +la,  -ha,  +pr);
+	glVertex3f( +la,  +ha,  +pr);
+	glVertex3f( -la,  +ha,  +pr);
+	glVertex3f( -la,  -ha,  +pr);
+	glNormal3f(0.0f, 0.0f, -1.0f);//Z-
+	glVertex3f( +la,  +ha,  -pr);
+	glVertex3f( +la,  -ha,  -pr);
+	glVertex3f( -la,  -ha,  -pr);
+	glVertex3f( -la,  +ha,  -pr);
+	glEnd();
+	glPopMatrix();
+	glPopMatrix();
 }

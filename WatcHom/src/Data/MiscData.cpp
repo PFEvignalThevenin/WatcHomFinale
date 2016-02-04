@@ -15,6 +15,9 @@ Axe int2Axe(int i) {
 		throw DataError("DataError: int2Axe(int) can't convert " + std::to_string(i));
 	}
 }
+Axe nextAxe(Axe a) {
+	return int2Axe((a + 1) % 3);
+}
 
 //surcharge d'opérateurs pour coord
 int& obj::coord::operator[](unsigned int i)

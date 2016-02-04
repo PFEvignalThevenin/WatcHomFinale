@@ -34,8 +34,11 @@ public:
 	//****************************Fonctions de Dessin Complexes********************************
 	void drawCube0(obj::Vertex center);
 	void drawCube1(int pos, std::vector<dir> Axes);
+	void drawCube1(DGVF::cellList cluster);
 	void drawCube2(DGVF::cellList cluster);
 	void drawCube3(DGVF::cellList cluster);
+	//****************************Fonctions de Dessin générales********************************
+	void drawPave(obj::Vertex center, GLfloat largeur, GLfloat hauteur, GLfloat profondeur, Axe sensLargeur = Axe::x, Axe sensProfondeur = Axe::z);
 private:
 	//un pointeur vers son inséparable controleur2
 	std::shared_ptr<Controlleur2> ctrl;

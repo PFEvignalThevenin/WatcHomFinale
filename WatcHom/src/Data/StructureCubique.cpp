@@ -42,7 +42,7 @@ bool StructureCubique<D>::isOccupied(int x, int y, int z) const {
 }
 template<typename D>
 void StructureCubique<D>::set(int x, int y, int z, D val) {
-	if (without(x, y, z)) throw DataError("impossible d'assigner une valeur en dehors des limites : " + to_string(x) + "," + to_string(y) + "," + to_string(z)+"\n");
+	if (without(x, y, z)) throw DataError("impossible d'assigner une valeur en dehors des limites : " + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z)+"\n");
 	data[coord2pos(x, y, z)] = val;
 }
 template<typename D>
@@ -62,7 +62,7 @@ bool StructureCubique<D>::isOccupied(int pos) const {
 }
 template<typename D>
 void StructureCubique<D>::set(int pos, D val) {
-	if (without(pos)) throw DataError("impossible d'assigner une valeur en dehors des limites [0;"+to_string(nbrCubes())+"[ : "+to_string(pos) + "\n");
+	if (without(pos)) throw DataError("impossible d'assigner une valeur en dehors des limites [0;"+ std::to_string(nbrCubes())+"[ : "+ std::to_string(pos) + "\n");
 	data[pos]=val;
 }
 template<typename D>
