@@ -378,31 +378,195 @@ void Modeleur::drawCube1(int pos, std::vector<dir> Axes) {
 
 }
 void Modeleur::drawCube2(DGVF::cellList cluster) {
+	bool voisins[3][3];
+	bool voisin_sup[2][2];
+	bool voisin_inf[2][2];
+	coord co_voisin; // pour ranger les coords d'un voisin
+	Vertex pos_voisin; // pour ranger les coords dans l'espace d'un voisin
 	for (int cell : cluster) {
 		coord co = ccTraite->pos2coord(cell);
 		Vertex center = coord2Vert(co);
 		vector <Vertex> positions;
 		positions.resize(4);
 
-		dir axe;//trouver la normale de la face
+		dir normal;//trouver la normale de la face
 		if (co[Axe::z] % 2 == 0){
-			axe.first = Axe::z;
+			normal.first = Axe::z;
 		}
 		else {
 			if (co[Axe::x] % 2 == 0) {
-				axe.first = Axe::x;
+				normal.first = Axe::x;
 			}
 			else {
-				axe.first = Axe::y;
+				normal.first = Axe::y;
 			}
 
 		}
-		axe.second = true;//sens direct
-		positions = computeCarre(center, axe, rayon/2, longueur);
+		normal.second = true;//sens direct
+		positions = computeCarre(center, normal, rayon/2, longueur);
 		drawCarre(positions);
-		axe.second = false;//sens indirect
-		positions = computeCarre(center, axe, rayon /2, longueur);
+		normal.second = false;//sens indirect
+		positions = computeCarre(center, normal, rayon /2, longueur);
 		drawCarre(positions);
+		normal.second = true
+
+		//récuperer les 2 autres axes
+		dir direct1, direct2;
+		direct1.first = (normal.first + 1) % 3;
+		direct2.first = (normal.first + 2) % 3;
+
+		direct1.second = direct2.second = true;
+
+		//definir les faces selon chaque axe
+		//X
+		vector <Vertex> positions1 = computeRectangle(center, direct1, longueur / 2, longueur, rayon);
+		//Y
+		vector <Vertex> positions2 = computeRectangle(center, direct2, longueur / 2, longueur, rayon);
+		
+		int nX = 0;
+		int nY = 0;
+		int nZ = 0;
+
+		int nx = 0;
+		int ny = 0;
+		int nz = 0;
+		
+		switch (normal.first) {
+		case Axe::x :
+			nX = 2;
+			nx = 1;
+			break;
+		case Axe::y :
+			nY = 2;
+			ny = 1;
+			break;
+		case Axe::z :
+			nZ = 2;
+			nz = 1;
+		}
+			
+			voisins[0][0] = InCluster(cluster, co[Axe::x] - nZ - nY, co[Axe::y] - nZ - nX, co[Axe::z] - nY - nX);
+			voisins[0][1] = InCluster(cluster, co[Axe::x] - nZ, co[Axe::y] - nX, co[Axe::z] - nY);
+			voisins[0][2] = InCluster(cluster, co[Axe::x] - nZ + nY, co[Axe::y] + nZ - nX, co[Axe::z] - nY + nX);
+
+			voisins[1][0] = InCluster(cluster, co[Axe::x] - nY, co[Axe::y]- nZ, co[Axe::z] - nX);
+			voisins[1][2] = InCluster(cluster, co[Axe::x] + nY, co[Axe::y]+ nZ, co[Axe::z] + nX);
+
+			voisins[2][0] = InCluster(cluster, co[Axe::x]+nZ - nY, co[Axe::y] - nZ + nX, co[Axe::z] + nY - nX);
+			voisins[2][1] = InCluster(cluster, co[Axe::x]+nZ, co[Axe::y] + nX, co[Axe::z] + nY);
+			voisins[2][2] = InCluster(cluster, co[Axe::x]+nZ + nY, co[Axe::y] + nZ + nX, co[Axe::z] + nY + nX);
+
+
+			voisins_sup[0][0] = InCluster(cluster, co[Axe::x] + nx - nz, co[Axe::y] + ny - nx, co[Axe::z] + nz - ny);
+			voisins_sup[0][1] = InCluster(cluster, co[Axe::x] + nx - ny, co[Axe::y] + ny - nz, co[Axe::z] + nz - nx);
+			voisins_sup[1][0] = InCluster(cluster, co[Axe::x] + nx + nz, co[Axe::y] + ny + nx, co[Axe::z] + nz + ny);
+			voisins_sup[1][1] = InCluster(cluster, co[Axe::x] + nx + ny, co[Axe::y] + ny + nz, co[Axe::z] + nz + nx);
+
+			voisins_inf[0][0] = InCluster(cluster, co[Axe::x] - nx - nz, co[Axe::y] - ny - nx, co[Axe::z] - nz - ny);
+			voisins_inf[0][1] = InCluster(cluster, co[Axe::x] - nx - ny, co[Axe::y] - ny - nz, co[Axe::z] - nz - nx);
+			voisins_inf[1][0] = InCluster(cluster, co[Axe::x] - nx + nz, co[Axe::y] - ny + nx, co[Axe::z] - nz + ny);
+			voisins_inf[1][1] = InCluster(cluster, co[Axe::x] - nx + ny, co[Axe::y] - ny + nz, co[Axe::z] - nz + nx);
+
+		///++++++
+		if (voisins[2][1]) {
+			DrawRalonge(positions1, direct1, 1, 2);
+			DrawRalonge(positions1, direct1, 3, 0);
+		}
+		else {
+			if (voisins_sup[2][1]) {
+				//dessiner coude
+				co_voisin.setCoord(co + nz; co + nx, co + ny); //arete qui devant la face considerée
+				direct1.second = false;
+				drawCoude(co_voisin, direct1, normal, false, false); //bools a changer 
+				direct1.second = true;
+			}
+			else if (!voisins_inf[2][1]){
+				drawCarre(positions1);
+			}
+		}
+
+		if (voisins[1][2]) {
+			DrawRalonge(positions2, direct2, 2, 3);
+			DrawRalonge(positions2, direct2, 0, 1);
+			if (voisins[2][1] && voisins[2][2]) {
+				//dessiner carré entre
+				co_voisin.setCoord(co + nz + ny; co + nx + nz, co + ny + nx);// point(dim0) devant a droite de la face
+				pos_voisin == ccTraite.coord2Vert(co);
+				positions = computeCarre(pos_voisin, normal, rayon / 2, 2*separation + 2*rayon);
+				drawCarre(positions); //face de dessus
+				normal.second = false;//sens indirect
+				positions = computeCarre(pos_voisin, normal, rayon / 2, 2 * separation + 2 * rayon);
+				drawCarre(positions); //face de dessous
+				normal.second = true
+			}
+		}
+		else {
+			if (voisins_sup[1][1]) {
+				//dessiner coude
+				co_voisin(co + ny; co + nz, co + nz); //arete a droite de la face considerée
+				direct2.second = false;
+				drawCoude(co_voisin, direct2, normal, false, false); //bools a changer
+				direct2.second = true;
+			}
+			else if (!voisins_inf[1][2]) {
+				//fermer
+				drawCarre(positions2);
+			}
+		}
+
+		//------
+		direct1.second = direct2.second = false;
+
+		//definir les faces selon chaque axe
+		//-X
+		vector <Vertex> positions1 = computeRectangle(center, direct1, longueur / 2, longueur, rayon);
+		//-Y
+		vector <Vertex> positions2 = computeRectangle(center, direct2, longueur / 2, longueur, rayon);
+		
+		if (!voisins[0][1]) {
+			if (voisins_inf[0][0]) {
+				//dessiner coude
+				coord co_voisin(co - nz; co - nx, co - ny); //arete qui derriere la face considerée
+				direct1.second = true;
+				normal.second = false;
+				drawCoude(co_voisin, direct1, normal, false, false); //bools a changer
+				direct1 = false;
+				normal.second = true;
+			}
+			else if (!voisins_sup[0][0]) {
+				//fermer
+				drawCarre(positions1);
+			}
+
+		}
+		if (!voisins[1][0]) {
+			if (voisins_inf[0][1]) {
+				//dessiner coude 
+				coord co_voisin(co + nz; co + nx, co + ny); //arete qui devant la face considerée
+				direct2.second = true;
+				normal.second = false;
+				drawCoude(co_voisin, direct1, normal, false, false); //bools a changer
+				direct2.second = false;
+				normal.second = true;
+			}
+			else if (!voisins_sup[0][1]) {
+				//fermer
+				drawCarre(positions2);
+			}
+		}
+		else if (voisins[2][1] && voisins[2][0]){
+			//dessiner carré entre
+			co_voisin.setCoord(co + nz - ny; co + nx - nz, co + ny - nx);// point(dim0) devant a guauche de la face
+			pos_voisin == ccTraite.coord2Vert(co);
+			positions = computeCarre(pos_voisin, normal, rayon / 2, 2 * separation + 2 * rayon);
+			drawCarre(positions); //face de dessus
+			normal.second = false;//sens indirect
+			positions = computeCarre(pos_voisin, normal, rayon / 2, 2 * separation + 2 * rayon);
+			drawCarre(positions); //face de dessous
+			normal.second = true
+		}
+
+		
 	}
 }
 
@@ -602,6 +766,25 @@ vector <Vertex> Modeleur::computeCarre(Vertex center, dir axe, float profondeur,
 	positions.at(3)[j2] = center[j2] - largeur / 2;
 	return positions;
 }
+vector <Vertex> Modeleur::computeRectangle(Vertex center, dir axe, float profondeur, float largeur, float hauteur) {
+	vector <Vertex> positions;
+	positions.resize(4);
+	float sens = (axe.second) ? -1.0f : 1.0f;
+	for (unsigned int i = 0; i < 4; i++) {//les 4 points sur le mêm plan de normale 'axe'
+		positions.at(i)[axe.first] = center[axe.first] - sens * profondeur;
+	}
+	unsigned int j1 = (axe.first + 1) % 3;
+	unsigned int j2 = (axe.first + 2) % 3;
+	positions.at(0)[j1] = center[j1] - sens * largeur / 2;
+	positions.at(0)[j2] = center[j2] + sens * hauteur / 2;
+	positions.at(1)[j1] = center[j1] + largeur / 2;
+	positions.at(1)[j2] = center[j2] + hauteur / 2;
+	positions.at(2)[j1] = center[j1] + sens * largeur / 2;
+	positions.at(2)[j2] = center[j2] - sens * hauteur / 2;
+	positions.at(3)[j1] = center[j1] - largeur / 2;
+	positions.at(3)[j2] = center[j2] - hauteur / 2;
+	return positions;
+}
 void Modeleur::drawCarre(vector<Vertex> pos) {
 	Vertex norm = computeNormales(pos[0], pos[1], pos[2]);
 	glNormal3f(norm.x, norm.y, norm.z);
@@ -610,6 +793,66 @@ void Modeleur::drawCarre(vector<Vertex> pos) {
 		glVertex3f(v[0], v[1], v[2]);
 	}
 	glEnd();
+}
+void Modeleur::drawCoude(coord co, dir direct1, dir direct2, bool droite, bool gauche) {
+	Vertex center = coord2Vert(co);
+	dir direct3;
+	direct3.first = (direct1.first + direct2.first) % 3;
+	direct3.second = direct1.second && direct2.second;
+
+	dir invDir1(direct1.first, !direct1.second);
+	dir invDir2(direct2.first, !direct2.second);
+	dir invDir3(direct3.first, !direct3.second);
+
+	Vertex pos = center;
+	vector<Vertex> positions(6);
+	vector<Vertex> positions2(6);
+	
+	pos.translation(direct3, longeur/2);
+	pos.translation(direct3, longeur / 2);
+	pos.translation(direct1, rayon);
+	pos.translation(direct2, rayon);
+	positions.at(0) = pos;
+	pos.translation(direct1, separation);
+	positions.at(1) = pos;
+	pos.translation(invDir2, 2*rayon);
+	positions.at(2) = pos;
+	pos.translation(invDir1, 2*rayon + separation);
+	positions.at(3) = pos;
+	pos.translation(direct2, 2 * rayon + separation);
+	positions.at(4) = pos;
+	pos.translation(direct1, 2 * rayon);
+	positions.at(5) = pos;
+	
+	positions2 = positions;
+
+	for (Vertex elt : positions2)
+		elt.translation(invDir3, longueur);
+	
+	Vector<Vertex> quad(4);
+	quad.at(0) = (direct3.second) ? positions2(0) : positions(0);
+	quad.at(1) = (direct3.second) ? positions(0) : positions2(0);
+	quad.at(2) = (direct3.second) ? positions(1) : positions2(1);
+	quad.at(2) = (direct3.second) ? positions2(1) : positions(1);
+	drawCarre(quad);
+	quad.at(0) = (direct3.second) ? positions2(2) : positions(2);
+	quad.at(1) = (direct3.second) ? positions(2) : positions2(2);
+	quad.at(2) = (direct3.second) ? positions(3) : positions2(3);
+	quad.at(2) = (direct3.second) ? positions2(3) : positions(3);
+	drawCarre(quad);
+	quad.at(0) = (direct3.second) ? positions2(3) : positions(3);
+	quad.at(1) = (direct3.second) ? positions(3) : positions2(3);
+	quad.at(2) = (direct3.second) ? positions(4) : positions2(4);
+	quad.at(2) = (direct3.second) ? positions2(4) : positions(4);
+	drawCarre(quad);
+	quad.at(0) = (direct3.second) ? positions2(5) : positions(5);
+	quad.at(1) = (direct3.second) ? positions(5) : positions2(5);
+	quad.at(2) = (direct3.second) ? positions(0) : positions2(0);
+	quad.at(2) = (direct3.second) ? positions2(0) : positions(0);
+	drawCarre(quad);
+}
+void Modeleur::drawCoin(coord co, dir direct1, dir direct2) {
+
 }
 void Modeleur::drawFace(const obj::face &fa) {
 	Vertex v;
