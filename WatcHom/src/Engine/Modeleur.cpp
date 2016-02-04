@@ -376,77 +376,131 @@ void Modeleur::drawCube3(DGVF::cellList cluster) {
 		directZ.second = true;
 
 
-		voisins[2][1][1] = InCluster(cluster, center[Axe::x] + 2, center[Axe::y], center[Axe::z]);
-		voisins[1][2][1] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2, center[Axe::z]);
+		voisins[2][1][1] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y], center[Axe::z]);
+		voisins[1][2][1] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z]);
 		voisins[1][1][2] = InCluster(cluster, center[Axe::x], center[Axe::y], center[Axe::z] + 2);
 
-		voisins[0][1][1] = InCluster(cluster, center[Axe::x] - 2, center[Axe::y], center[Axe::z]);
-		voisins[1][0][1] = InCluster(cluster, center[Axe::x], center[Axe::y] - 2, center[Axe::z]);
-		voisins[1][1][0] = InCluster(cluster, center[Axe::x], center[Axe::y], center[Axe::z] - 2);
+		voisins[0][1][1] = InCluster(cluster, center[Axe::x] - 2.0f, center[Axe::y], center[Axe::z]);
+		voisins[1][0][1] = InCluster(cluster, center[Axe::x], center[Axe::y] - 2.0f, center[Axe::z]);
+		voisins[1][1][0] = InCluster(cluster, center[Axe::x], center[Axe::y], center[Axe::z] - 2.0f);
 
 		if (!voisins[2][1][1]) 
 			drawCarre(positionsX);
-		/*else {
-			voisins[2][1][2] = InCluster(cluster, center[Axe::x] + 2, center[Axe::y], center[Axe::z] + 2);
+		else {
+			voisins[2][1][2] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y], center[Axe::z] + 2.0f);
 			if (!(voisins[1][1][2] && voisins[2][1][2])) {
 				//dessiner cxz+
 				DrawRalonge(positionsX, directX, 1, 0);
 			}
-			voisins[2][2][1] = InCluster(cluster, center[Axe::x] + 2, center[Axe::y] + 2, center[Axe::z]);
+			voisins[2][1][0] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y], center[Axe::z] - 2.0f);
+			if (!(voisins[1][1][0] && voisins[2][1][0])) {
+				// si dessine cxz-
+				//DrawRalonge(positionsX, directX, 2, 3);
+			}
+			voisins[2][2][1] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] + 2.0f, center[Axe::z]);
 			if (!(voisins[1][2][1] && voisins[2][2][1])) {
 				// si dessine cxy+
 				DrawRalonge(positionsX, directX, 1, 2);
 			}
-		}*/
+			voisins[2][0][1] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] - 2.0f, center[Axe::z]);
+			if (!(voisins[1][0][1] && voisins[2][0][1])) {
+				// si dessine cxy-
+				DrawRalonge(positionsX, directX, 3, 0);
+			}
+			if (voisins[1][2][1] && voisins[2][2][1]) {
+				voisins[1][2][2] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z] + 2.0f);
+				voisins[2][2][2] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] + 2.0f, center[Axe::z] + 2.0f);
+				voisins[1][2][0] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z] - 2.0f);
+				voisins[2][2][0] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] - 2.0f, center[Axe::z] + 2.0f);
+				if (!(voisins[1][1][2] && voisins[1][2][2] && voisins[2][1][2] && voisins[2][2][2])) {
+					//dessiner bz+
+					drawRaccord(positionsY, directY, directX, 1);
+				}
+				if (!(voisins[1][1][0] && voisins[1][2][0] && voisins[2][1][0] && voisins[2][2][0])) {
+					//dessiner bz-
+					drawRaccord(positionsY, directX, directY, 0);
+				}
+			}
+			
+		}
 
 		if (!voisins[1][2][1])
 			drawCarre(positionsY);
-		/*else {
-			voisins[2][2][1] = InCluster(cluster, center[Axe::x] + 2, center[Axe::y] + 2, center[Axe::z]);
+		else {
+			voisins[2][2][1] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] + 2.0f, center[Axe::z]);
 			if (!(voisins[2][1][1] && voisins[2][2][1])) {
-				// si dessine cyx+
+				// dessiner cyx+
 				DrawRalonge(positionsY, directY, 0, 1);
 			}
-			voisins[1][2][2] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2, center[Axe::z]+2);
+			voisins[0][2][1] = InCluster(cluster, center[Axe::x] - 2.0f, center[Axe::y] + 2.0f, center[Axe::z]);
+			if (!(voisins[0][1][1] && voisins[0][2][1])) {
+				// dessiner cyx-
+				DrawRalonge(positionsY, directY, 2, 3);
+			}
+			voisins[1][2][2] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z]+2.0f);
 			if (!(voisins[1][1][2] && voisins[1][2][2])) {
-				// si dessine cyz+
+				// dessiner cyz+
 				DrawRalonge(positionsY, directY, 1, 2);
 			}
-		}*/
+			voisins[1][2][0] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z] - 2.0f);
+			if (!(voisins[1][1][0] && voisins[1][2][0])) {
+				// dessiner cyz-
+				DrawRalonge(positionsY, directY, 3, 0);
+			}
+			if (voisins[1][1][2] && voisins[1][2][2]) {
+				voisins[2][1][2] = InCluster(cluster, center[Axe::x]+2.0f, center[Axe::y], center[Axe::z] + 2.0f);
+				voisins[2][2][2] = InCluster(cluster, center[Axe::x]+2.0f, center[Axe::y] + 2.0f, center[Axe::z] + 2.0f);
+				voisins[0][1][2] = InCluster(cluster, center[Axe::x]-2.0f, center[Axe::y], center[Axe::z] + 2).0f;
+				voisins[0][2][2] = InCluster(cluster, center[Axe::x]-2.0f, center[Axe::y] + 2.0f, center[Axe::z] + 2.0f);
+				if (!(voisins[2][1][1] && voisins[2][2][1] && voisins[2][1][2] && voisins[2][2][2])) {
+					//dessiner bx+
+					drawRaccord(positionsZ, directY, directZ, 1);
+				}
+				if (!(voisins[0][1][1] && voisins[0][2][1] && voisins[0][1][2] && voisins[0][2][2])) {
+					//dessiner bx-
+					drawRaccord(positionsZ, directZ, directY, 0);
+				}
+			}
+		}
 
 		if (!voisins[1][1][2])
 			drawCarre(positionsZ);
-		/*else {
-			voisins[2][1][2] = InCluster(cluster, center[Axe::x] + 2, center[Axe::y], center[Axe::z] + 2);
+		else {
+			voisins[2][1][2] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y], center[Axe::z] + 2.0f);
 			if (!(voisins[2][1][1] && voisins[2][1][2])) {
 				// si dessine czx+
 				DrawRalonge(positionsZ, directZ, 1, 2);
 			}
-			voisins[1][2][2] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2, center[Axe::z]+2);
+			voisins[0][1][2] = InCluster(cluster, center[Axe::x] - 2.0f, center[Axe::y], center[Axe::z] + 2.0f);
+			if (!(voisins[0][1][1] && voisins[0][1][2])) {
+				// si dessine czx-
+				DrawRalonge(positionsZ, directZ, 3, 0);
+			}
+			voisins[1][2][2] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z]+2.0f);
 			if (!(voisins[1][2][1] && voisins[1][2][2])) {
 				// si dessine czy+
 				DrawRalonge(positionsZ, directZ, 1, 0);
 			}
-		}*/
-
-			// si dessine cxy-
-			//DrawRalonge(positionsX, directX, 3, 0);
-			// si dessine cxz-
-			//DrawRalonge(positionsX, directX, 2, 3);
-		
-			// si dessine cyx-
-			//DrawRalonge(positionsY, directY, 2, 3);
-			// si dessine cyz-
-			//DrawRalonge(positionsY, directY, 3, 0);
-		
-			// si dessine czx-
-			//DrawRalonge(positionsZ, directZ, 3, 0);
-			// si dessine czy-
-			//DrawRalonge(positionsZ, directZ, 2, 2);
-
-		
-		
-		
+			voisins[1][0][2] = InCluster(cluster, center[Axe::x], center[Axe::y]-2.0f, center[Axe::z] + 2.0f);
+			if (!(voisins[1][0][1] && voisins[1][0][2])) {
+				// si dessine czy-
+				DrawRalonge(positionsZ, directZ, 2, 2);
+			}
+			if (voisins[2][1][1] && voisins[2][1][2]) {
+				voisins[2][2][1] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z] + 2.0f);
+				voisins[2][2][2] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] + 2.0f, center[Axe::z] + 2.0f);
+				voisins[2][0][1] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] - 2.0f, center[Axe::z]);
+				voisins[2][0][2] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] - 2.0f, center[Axe::z] + 2.0f);
+				if (!(voisins[1][2][1] && voisins[2][2][1] && voisins[1][2][2] && voisins[2][2][2])) {
+					//dessiner by+
+					drawRaccord(positionsZ, directX, directZ, 1);
+				}
+				if (!(voisins[1][0][1] && voisins[2][0][1] && voisins[1][0][2] && voisins[2][0][2])) {
+					//dessiner by-
+					drawRaccord(positionsZ, directZ, directX, 2);
+				}
+			}
+		}
 		if (!voisins[0][1][1]){
 			//-X
 			positionsX = computeCarre(center, directX, longueur/2, longueur);
