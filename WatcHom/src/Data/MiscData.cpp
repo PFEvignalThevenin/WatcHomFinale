@@ -15,6 +15,12 @@ Axe int2Axe(int i) {
 		throw DataError("DataError: int2Axe(int) can't convert " + std::to_string(i));
 	}
 }
+void obj::coord::setCoord(int x, int y, int z)
+{
+	this->x = x;
+	this->y = y;
+	this->z = z;
+}
 Axe nextAxe(Axe a) {
 	return int2Axe((a + 1) % 3);
 }
