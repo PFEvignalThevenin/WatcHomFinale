@@ -34,14 +34,14 @@ void Controlleur2::initiateOpenGL() {
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
 	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
-	glEnable(GL_LIGHTING);
-	glEnable(GL_LIGHT0);
+	//glEnable(GL_LIGHTING);
+	//glEnable(GL_LIGHT0);
 	//glDepthFunc(GL_LESS);
 	glEnable(GL_DEPTH_TEST);
 	//glShadeModel(GL_FLAT);
 	glEnable(GL_COLOR_MATERIAL);
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-	glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
+	//glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
+	//glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
 }
 Controlleur2::Ptr Controlleur2::get() {
 	static  Controlleur2::Ptr inst = Controlleur2::Ptr(new Controlleur2);

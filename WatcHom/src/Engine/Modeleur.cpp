@@ -125,9 +125,9 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 	}
 	//finalisations
 	ctrl->computeCenter(
-		0, ccTraite->getSize(Axe::x)*dist,
-		0, ccTraite->getSize(Axe::y)*dist,
-		0, ccTraite->getSize(Axe::z)*dist);
+		0, ccTraite->getSize(Axe::x)*dist / 2,
+		0, ccTraite->getSize(Axe::y)*dist / 2,
+		0, ccTraite->getSize(Axe::z)*dist / 2);
 }
 
 void Modeleur::drawCube0(obj::Vertex center) {
@@ -321,28 +321,29 @@ void Modeleur::drawCube1(int pos, std::vector<dir> Axes) {
 }
 void Modeleur::drawCube2(DGVF::cellList cluster) {
 	for (int cell : cluster) {
-		Vertex center = coord2Vert(ccTraite->pos2coord(cell));
+		coord co = ccTraite->pos2coord(cell);
+		Vertex center = coord2Vert(co);
 		vector <Vertex> positions;
 		positions.resize(4);
 
-		dir axe;
-		if (center[Axe::z] % 2 == 0){
+		dir axe;//trouver la normale de la face
+		if (co[Axe::z] % 2 == 0){
 			axe.first = Axe::z;
 		}
 		else {
-			if (center[Axe::x] % 2 == 0) {
+			if (co[Axe::x] % 2 == 0) {
 				axe.first = Axe::x;
 			}
 			else {
-				axe.first = Axe::x;
+				axe.first = Axe::y;
 			}
 
 		}
-		axe.second = true;
+		axe.second = true;//sens direct
 		positions = computeCarre(center, axe, rayon/2, longueur);
 		drawCarre(positions);
-		axe.second = false;
-		positions = computeCarre(center, axe, rayon / 2, longueur);
+		axe.second = false;//sens indirect
+		positions = computeCarre(center, axe, rayon /2, longueur);
 		drawCarre(positions);
 	}
 }
@@ -364,23 +365,15 @@ void Modeleur::drawCube3(DGVF::cellList cluster) {
 
 		//definir les faces selon chaque axe
 		//X
-		vector <obj::Vertex> positionsX = computeCarre(center, directX, longeur, longueur/2);
+		vector <obj::Vertex> positionsX = computeCarre(center, directX, longueur/2, longueur);
 		//Y
-		vector <obj::Vertex> positionsY = computeCarre(center, directY, longeur, longueur/2);
+		vector <obj::Vertex> positionsY = computeCarre(center, directY, longueur/2, longueur);
 		//Z
-		vector <Vertex> positionsZ = computeCarre(center, directZ, longeur, longueur/2);
+		vector <Vertex> positionsZ = computeCarre(center, directZ, longueur/2, longueur);
 
 		directX.second = true;
 		directY.second = true;
 		directZ.second = true;
-
-		//-X
-		vector <obj::Vertex> positionsX = computeCarre(center, directX, longeur, longueur / 2);
-		//-Y
-		vector <obj::Vertex> positionsY = computeCarre(center, directY, longeur, longueur / 2);
-		//-Z
-		vector <Vertex> positionsZ = computeCarre(center, directZ, longeur, longueur / 2);
-
 
 
 		voisins[2][1][1] = InCluster(cluster, center[Axe::x] + 2, center[Axe::y], center[Axe::z]);
@@ -422,7 +415,7 @@ void Modeleur::drawCube3(DGVF::cellList cluster) {
 		}*/
 
 		if (!voisins[1][1][2])
-			drawCarre(positionsY);
+			drawCarre(positionsZ);
 		/*else {
 			voisins[2][1][2] = InCluster(cluster, center[Axe::x] + 2, center[Axe::y], center[Axe::z] + 2);
 			if (!(voisins[2][1][1] && voisins[2][1][2])) {
@@ -456,18 +449,18 @@ void Modeleur::drawCube3(DGVF::cellList cluster) {
 		
 		if (!voisins[0][1][1]){
 			//-X
-			vector <obj::Vertex> positionsX = computeCarre(center, directX, longeur, longueur / 2);
-			drawCarre(positionsY);
+			positionsX = computeCarre(center, directX, longueur/2, longueur);
+			drawCarre(positionsX);
 		}
 		if (!voisins[1][1][0]){
 			//-Y
-			vector <obj::Vertex> positionsY = computeCarre(center, directY, longeur, longueur / 2);
+			positionsY = computeCarre(center, directY, longueur/2, longueur);
 			drawCarre(positionsY);
 		}
 		if (!voisins[1][1][0]){
 			//-Z
-			vector <Vertex> positionsZ = computeCarre(center, directZ, longeur, longueur / 2);
-			drawCarre(positionsY);
+			positionsZ = computeCarre(center, directZ, longueur/2, longueur);
+			drawCarre(positionsZ);
 		}
 	}
 }
@@ -488,22 +481,19 @@ vector <Vertex> Modeleur::computeCarre(Vertex center, dir axe, float profondeur,
 	vector <Vertex> positions;
 	positions.resize(4);
 	float sens = (axe.second) ? -1.0f : 1.0f;
-	for (unsigned int j = 0; j < 3; j++) {
-			for (unsigned int i = 0; i < 4; i++) {
-
-				positions.at(i)[axe.first] = center[axe.first] - sens * profondeur;
-			}
-			unsigned int j1 = (j + 1) % 3;
-			unsigned int j2 = (j + 2) % 3;
-			positions.at(0)[j1] = center[j1] - sens * largeur / 2;
-			positions.at(0)[j2] = center[j2] + sens * largeur / 2;
-			positions.at(1)[j1] = center[j1] + largeur / 2;
-			positions.at(1)[j2] = center[j2] + largeur / 2;
-			positions.at(2)[j1] = center[j1] + sens * largeur / 2;
-			positions.at(2)[j2] = center[j2] - sens * largeur / 2;
-			positions.at(3)[j1] = center[j1] - largeur / 2;
-			positions.at(3)[j2] = center[j2] - largeur / 2;
+	for (unsigned int i = 0; i < 4; i++) {//les 4 points sur le mêm plan de normale 'axe'
+		positions.at(i)[axe.first] = center[axe.first] - sens * profondeur;
 	}
+	unsigned int j1 = (axe.first + 1) % 3;
+	unsigned int j2 = (axe.first + 2) % 3;
+	positions.at(0)[j1] = center[j1] - sens * largeur / 2;
+	positions.at(0)[j2] = center[j2] + sens * largeur / 2;
+	positions.at(1)[j1] = center[j1] + largeur / 2;
+	positions.at(1)[j2] = center[j2] + largeur / 2;
+	positions.at(2)[j1] = center[j1] + sens * largeur / 2;
+	positions.at(2)[j2] = center[j2] - sens * largeur / 2;
+	positions.at(3)[j1] = center[j1] - largeur / 2;
+	positions.at(3)[j2] = center[j2] - largeur / 2;
 	return positions;
 }
 void Modeleur::drawCarre(vector<Vertex> pos) {
@@ -522,19 +512,19 @@ void Modeleur::drawFace(const obj::face &fa) {
 	}
 	glEnd();
 }
-void DrawRalonge(list<Vertex> positions, dir direct, unsigned int a, unsigned int b) {
-	list<Vertex> pos;
+void Modeleur::DrawRalonge(vector<Vertex> positions, dir direct, unsigned int a, unsigned int b) {
+	vector<Vertex> pos;
 	pos.resize(4);
 	pos.at(0) = positions.at(a);
 	pos.at(1) = positions.at(b);
 	pos.at(2) = positions.at(b);
 	pos.at(2).translation(direct, 2 * separation + rayon);
 	pos.at(3) = positions.at(a);
-	pos.at(3).translation(directX, 2 * separation + rayon);
+	pos.at(3).translation(direct, 2 * separation + rayon);
 	drawCarre(pos);
 }
-void drawRaccord(vector<Vertex> positions, dir direct1, dir durect2, unsigned int i) {
-	list<Vertex> pos;
+void Modeleur::drawRaccord(vector<Vertex> positions, dir direct1, dir direct2, unsigned int i) {
+	vector<Vertex> pos;
 	pos.resize(4);
 
 	pos.at(0) = pos.at(1) = pos.at(3) = positions.at(i);
@@ -623,9 +613,9 @@ void Modeleur::setDistances(float rayon, float longueur, float separation) {
 }
 Vertex Modeleur::coord2Vert(coord co) {
 	Vertex v;
-	v.x = co.x*dist;
-	v.y = co.y*dist;
-	v.z = co.z * dist;
+	v.x = co.x*dist / 2;
+	v.y = co.y*dist / 2;
+	v.z = co.z * dist / 2;
 	return v;
 }
 bool Modeleur::InCluster(DGVF::cellList cluster, float x, float y, float z)

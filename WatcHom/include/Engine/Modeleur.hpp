@@ -57,7 +57,7 @@ protected:
 	std::vector <obj::Vertex> Modeleur::computeCarre(obj::Vertex center, dir, float, float);
 	void Modeleur::drawCarre(std::vector<obj::Vertex> pos);
 	void drawFace(const obj::face &fa);
-	void DrawRalonge(std::list<obj::Vertex> positions, dir direct, unsigned int a, unsigned int b);
+	void DrawRalonge(std::vector<obj::Vertex> positions, dir direct, unsigned int a, unsigned int b);
 	void drawRaccord(std::vector<obj::Vertex> positions, dir direct1, dir durect2, unsigned int i);
 	void drawPgm(PGM3D &pgm);
 	dir Modeleur::computeAxe(int first, int next);
