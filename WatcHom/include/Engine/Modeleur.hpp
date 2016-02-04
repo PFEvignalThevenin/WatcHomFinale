@@ -59,6 +59,8 @@ protected:
 	void drawContour(std::vector<obj::Vertex> positions_2, std::vector<obj::Vertex> positions_tmp);
 	std::vector <obj::Vertex> Modeleur::computeCarre(obj::Vertex center, dir, float, float);
 	void Modeleur::drawCarre(std::vector<obj::Vertex> pos);
+	void drawCoude(obj::coord center, dir direct1, dir direct2, bool droite, bool gauche);
+	void drawCoin(obj::coord center, dir direct1, dir direct2);
 	void drawFace(const obj::face &fa);
 	void DrawRalonge(std::vector<obj::Vertex> positions, dir direct, unsigned int a, unsigned int b);
 	void drawRaccord(std::vector<obj::Vertex> positions, dir direct1, dir durect2, unsigned int i);
