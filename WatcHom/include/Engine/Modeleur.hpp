@@ -63,7 +63,7 @@ protected:
 	dir Modeleur::computeAxe(int first, int next);
 	//****************************Fonctions de Gestion diverse**********************************
 	bool InCluster(DGVF::cellList cluster, int pos);
-	bool InCluster(DGVF::cellList cluster, float x, float y, float z);
+	bool InCluster(DGVF::cellList cluster, int x, int y, int z);
 	std::list<int> cluster_neighbors(std::list<int> cluster, int position);
 	//return within 'center' the coordinates of the center of the object
 	void computeCenter();

@@ -58,15 +58,15 @@ std::list<int> ComplexeCubique::coboundary(int x, int y, int z) {
 	list<int> ret;
 	if (x % 2 == 0) {
 		if (isOccupied(x + 1, y, z)) ret.push_back(coord2pos(x + 1, y, z));
-		if (isOccupied(x - 1, y, z))ret.push_back(coord2pos(x - 1, y, z));
+		if (isOccupied(x - 1, y, z)) ret.push_back(coord2pos(x - 1, y, z));
 	}
 	if (y % 2 == 0) {
-		if (isOccupied(x, y + 1, z))ret.push_back(coord2pos(x, y + 1, z));
+		if (isOccupied(x, y + 1, z)) ret.push_back(coord2pos(x, y + 1, z));
 		if (isOccupied(x, y - 1, z))ret.push_back(coord2pos(x, y - 1, z));
 	}
 	if (z % 2 == 0) {
-		if (isOccupied(x, y, z + 1))ret.push_back(coord2pos(x, y, z + 1));
-		if (isOccupied(x, y, z - 1))ret.push_back(coord2pos(x, y, z - 1));
+		if (isOccupied(x, y, z + 1)) ret.push_back(coord2pos(x, y, z + 1));
+		if (isOccupied(x, y, z - 1)) ret.push_back(coord2pos(x, y, z - 1));
 	}
 	return ret;
 }

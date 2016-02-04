@@ -30,8 +30,8 @@ void Modeleur::drawPgm(PGM3D &pgm) {
 void Modeleur::initiatePgm() {
 	ctrl->resetLists();
 	std::vector<GLuint> *listObj = ctrl->getFormes(Dim::d0);
-	float s_sep = separation, s_long = longueur;//sauvegarder les distances d'affichage
-	setDistances(rayon, 0, 0);
+	float s_sep = separation, s_long = longueur, s_rayon = rayon; // sauvegarder les distances d'affichage
+	setDistances(dist/4, 0, 0);
 	cout << "affichage PGM..." << endl;
 	glNewList(1, GL_COMPILE);	//créer nouvelle liste
 	listObj->push_back(1);		//conserver identificateur
@@ -39,11 +39,11 @@ void Modeleur::initiatePgm() {
 	glEndList();
 	cout << "affichage PGM Done" << endl;
 	ctrl->computeCenter(
-		0, pgmTraite->getSize(Axe::x)*dist,
-		0, pgmTraite->getSize(Axe::y)*dist,
-		0, pgmTraite->getSize(Axe::z)*dist);
+		0, pgmTraite->getSize(Axe::x)*dist/2,
+		0, pgmTraite->getSize(Axe::y)*dist/2,
+		0, pgmTraite->getSize(Axe::z)*dist/2);
 	//remettre les disances originales
-	setDistances(rayon, s_long, s_sep);
+	setDistances(s_rayon, s_long, s_sep);
 }
 //*******************************Dessin de Complexe Cubique par dimension*********************************
 void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g) {
@@ -361,19 +361,14 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 }
 
 void Modeleur::drawCube3(DGVF::cellList cluster) {
-	bool voisins[3][3][3];
+	bool voisins[3][3][3];//x,y,z : présence de voisines autour de la cellule.
 	for (int cell : cluster) {
-		Vertex center = coord2Vert(ccTraite->pos2coord(cell));
+		coord co = ccTraite->pos2coord(cell);
+		Vertex center = coord2Vert(co);
 
-		dir directX;
-		directX.first = Axe::x;
-		directX.second = false;
-		dir directY;
-		directY.first = Axe::y;
-		directY.second = false;
-		dir directZ;
-		directZ.first = Axe::z;
-		directZ.second = false;
+		dir directX(Axe::x, true);
+		dir directY(Axe::y, true);
+		dir directZ(Axe::z, true);
 
 		//definir les faces selon chaque axe
 		//X
@@ -381,96 +376,90 @@ void Modeleur::drawCube3(DGVF::cellList cluster) {
 		//Y
 		vector <obj::Vertex> positionsY = computeCarre(center, directY, longueur/2, longueur);
 		//Z
-		vector <Vertex> positionsZ = computeCarre(center, directZ, longueur/2, longueur);
+		vector <obj::Vertex> positionsZ = computeCarre(center, directZ, longueur/2, longueur);
 
-		directX.second = true;
-		directY.second = true;
-		directZ.second = true;
+		voisins[2][1][1] = InCluster(cluster, co[Axe::x] + 2, co[Axe::y], co[Axe::z]);
+		voisins[1][2][1] = InCluster(cluster, co[Axe::x], co[Axe::y] + 2, co[Axe::z]);
+		voisins[1][1][2] = InCluster(cluster, co[Axe::x], co[Axe::y], co[Axe::z] + 2);
 
-
-		voisins[2][1][1] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y], center[Axe::z]);
-		voisins[1][2][1] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z]);
-		voisins[1][1][2] = InCluster(cluster, center[Axe::x], center[Axe::y], center[Axe::z] + 2);
-
-		voisins[0][1][1] = InCluster(cluster, center[Axe::x] - 2.0f, center[Axe::y], center[Axe::z]);
-		voisins[1][0][1] = InCluster(cluster, center[Axe::x], center[Axe::y] - 2.0f, center[Axe::z]);
-		voisins[1][1][0] = InCluster(cluster, center[Axe::x], center[Axe::y], center[Axe::z] - 2.0f);
-
-		if (!voisins[2][1][1]) 
+		voisins[0][1][1] = InCluster(cluster, co[Axe::x] - 2, co[Axe::y], co[Axe::z]);
+		voisins[1][0][1] = InCluster(cluster, co[Axe::x], co[Axe::y] - 2, co[Axe::z]);
+		voisins[1][1][0] = InCluster(cluster, co[Axe::x], co[Axe::y], co[Axe::z] - 2);
+		
+		if (!voisins[2][1][1])
 			drawCarre(positionsX);
 		else {
-			voisins[2][1][2] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y], center[Axe::z] + 2.0f);
+			voisins[2][1][2] = InCluster(cluster, co[Axe::x] + 2, co[Axe::y], co[Axe::z] + 2);
 			if (!(voisins[1][1][2] && voisins[2][1][2])) {
 				//dessiner cxz+
-				DrawRalonge(positionsX, directX, 1, 0);
+				DrawRalonge(positionsX, directX, 1,2);
 			}
-			voisins[2][1][0] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y], center[Axe::z] - 2.0f);
+			voisins[2][1][0] = InCluster(cluster, co[Axe::x] + 2, co[Axe::y], co[Axe::z] - 2);
 			if (!(voisins[1][1][0] && voisins[2][1][0])) {
 				// si dessine cxz-
-				//DrawRalonge(positionsX, directX, 2, 3);
+				DrawRalonge(positionsX, directX, 3,0);
 			}
-			voisins[2][2][1] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] + 2.0f, center[Axe::z]);
+			voisins[2][2][1] = InCluster(cluster, co[Axe::x] + 2, co[Axe::y] + 2, co[Axe::z]);
 			if (!(voisins[1][2][1] && voisins[2][2][1])) {
 				// si dessine cxy+
-				DrawRalonge(positionsX, directX, 1, 2);
+				DrawRalonge(positionsX, directX, 0,1);
 			}
-			voisins[2][0][1] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] - 2.0f, center[Axe::z]);
+			voisins[2][0][1] = InCluster(cluster, co[Axe::x] + 2, co[Axe::y] - 2, co[Axe::z]);
 			if (!(voisins[1][0][1] && voisins[2][0][1])) {
 				// si dessine cxy-
-				DrawRalonge(positionsX, directX, 3, 0);
+				DrawRalonge(positionsX, directX, 2,3);
 			}
 			if (voisins[1][2][1] && voisins[2][2][1]) {
-				voisins[1][2][2] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z] + 2.0f);
-				voisins[2][2][2] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] + 2.0f, center[Axe::z] + 2.0f);
-				voisins[1][2][0] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z] - 2.0f);
-				voisins[2][2][0] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] - 2.0f, center[Axe::z] + 2.0f);
+				voisins[1][2][2] = InCluster(cluster, co[Axe::x], co[Axe::y] + 2, co[Axe::z] + 2);
+				voisins[2][2][2] = InCluster(cluster, co[Axe::x] + 2, co[Axe::y] + 2, co[Axe::z] + 2);
+				voisins[1][2][0] = InCluster(cluster, co[Axe::x], co[Axe::y] + 2, co[Axe::z] - 2);
+				voisins[2][2][0] = InCluster(cluster, co[Axe::x] + 2, co[Axe::y] + 2, co[Axe::z] - 2);
 				if (!(voisins[1][1][2] && voisins[1][2][2] && voisins[2][1][2] && voisins[2][2][2])) {
 					//dessiner bz+
-					drawRaccord(positionsY, directY, directX, 1);
+					drawRaccord(positionsY, directX, directY, 1);
 				}
 				if (!(voisins[1][1][0] && voisins[1][2][0] && voisins[2][1][0] && voisins[2][2][0])) {
 					//dessiner bz-
-					drawRaccord(positionsY, directX, directY, 0);
+					drawRaccord(positionsY, directY, directX, 2);
 				}
 			}
-			
 		}
 
 		if (!voisins[1][2][1])
 			drawCarre(positionsY);
 		else {
-			voisins[2][2][1] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] + 2.0f, center[Axe::z]);
+			voisins[2][2][1] = InCluster(cluster, co[Axe::x] + 2, co[Axe::y] + 2, co[Axe::z]);
 			if (!(voisins[2][1][1] && voisins[2][2][1])) {
 				// dessiner cyx+
-				DrawRalonge(positionsY, directY, 0, 1);
+				DrawRalonge(positionsY, directY, 1,2);
 			}
-			voisins[0][2][1] = InCluster(cluster, center[Axe::x] - 2.0f, center[Axe::y] + 2.0f, center[Axe::z]);
+			voisins[0][2][1] = InCluster(cluster, co[Axe::x] - 2, co[Axe::y] + 2, co[Axe::z]);
 			if (!(voisins[0][1][1] && voisins[0][2][1])) {
 				// dessiner cyx-
-				DrawRalonge(positionsY, directY, 2, 3);
+				DrawRalonge(positionsY, directY, 3,0);
 			}
-			voisins[1][2][2] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z]+2.0f);
+			voisins[1][2][2] = InCluster(cluster, co[Axe::x], co[Axe::y] + 2, co[Axe::z]+2);
 			if (!(voisins[1][1][2] && voisins[1][2][2])) {
 				// dessiner cyz+
-				DrawRalonge(positionsY, directY, 1, 2);
+				DrawRalonge(positionsY, directY, 0,1);
 			}
-			voisins[1][2][0] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z] - 2.0f);
+			voisins[1][2][0] = InCluster(cluster, co[Axe::x], co[Axe::y] + 2, co[Axe::z] - 2);
 			if (!(voisins[1][1][0] && voisins[1][2][0])) {
 				// dessiner cyz-
-				DrawRalonge(positionsY, directY, 3, 0);
+				DrawRalonge(positionsY, directY, 2,3);
 			}
 			if (voisins[1][1][2] && voisins[1][2][2]) {
-				voisins[2][1][2] = InCluster(cluster, center[Axe::x]+2.0f, center[Axe::y], center[Axe::z] + 2.0f);
-				voisins[2][2][2] = InCluster(cluster, center[Axe::x]+2.0f, center[Axe::y] + 2.0f, center[Axe::z] + 2.0f);
-				voisins[0][1][2] = InCluster(cluster, center[Axe::x]-2.0f, center[Axe::y], center[Axe::z] + 2).0f;
-				voisins[0][2][2] = InCluster(cluster, center[Axe::x]-2.0f, center[Axe::y] + 2.0f, center[Axe::z] + 2.0f);
+				voisins[2][1][2] = InCluster(cluster, co[Axe::x]+2, co[Axe::y], co[Axe::z] + 2);
+				voisins[2][2][2] = InCluster(cluster, co[Axe::x]+2, co[Axe::y] + 2, co[Axe::z] + 2);
+				voisins[0][1][2] = InCluster(cluster, co[Axe::x]-2, co[Axe::y], co[Axe::z] + 2);
+				voisins[0][2][2] = InCluster(cluster, co[Axe::x]-2, co[Axe::y] + 2, co[Axe::z] + 2);
 				if (!(voisins[2][1][1] && voisins[2][2][1] && voisins[2][1][2] && voisins[2][2][2])) {
 					//dessiner bx+
-					drawRaccord(positionsZ, directY, directZ, 1);
+					drawRaccord(positionsZ, directZ, directY, 2);
 				}
 				if (!(voisins[0][1][1] && voisins[0][2][1] && voisins[0][1][2] && voisins[0][2][2])) {
 					//dessiner bx-
-					drawRaccord(positionsZ, directZ, directY, 0);
+					drawRaccord(positionsZ, directY, directZ, 1);
 				}
 			}
 		}
@@ -478,47 +467,52 @@ void Modeleur::drawCube3(DGVF::cellList cluster) {
 		if (!voisins[1][1][2])
 			drawCarre(positionsZ);
 		else {
-			voisins[2][1][2] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y], center[Axe::z] + 2.0f);
+			voisins[2][1][2] = InCluster(cluster, co[Axe::x] + 2, co[Axe::y], co[Axe::z] + 2);
 			if (!(voisins[2][1][1] && voisins[2][1][2])) {
 				// si dessine czx+
-				DrawRalonge(positionsZ, directZ, 1, 2);
+				DrawRalonge(positionsZ, directZ,0,1);
 			}
-			voisins[0][1][2] = InCluster(cluster, center[Axe::x] - 2.0f, center[Axe::y], center[Axe::z] + 2.0f);
+			voisins[0][1][2] = InCluster(cluster, co[Axe::x] - 2, co[Axe::y], co[Axe::z] + 2);
 			if (!(voisins[0][1][1] && voisins[0][1][2])) {
 				// si dessine czx-
-				DrawRalonge(positionsZ, directZ, 3, 0);
+				DrawRalonge(positionsZ, directZ, 2,3);
 			}
-			voisins[1][2][2] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z]+2.0f);
+			voisins[1][2][2] = InCluster(cluster, co[Axe::x], co[Axe::y] + 2, co[Axe::z]+2);
 			if (!(voisins[1][2][1] && voisins[1][2][2])) {
 				// si dessine czy+
-				DrawRalonge(positionsZ, directZ, 1, 0);
+				DrawRalonge(positionsZ, directZ,1,2);
 			}
-			voisins[1][0][2] = InCluster(cluster, center[Axe::x], center[Axe::y]-2.0f, center[Axe::z] + 2.0f);
+			voisins[1][0][2] = InCluster(cluster, co[Axe::x], co[Axe::y]-2, co[Axe::z] + 2);
 			if (!(voisins[1][0][1] && voisins[1][0][2])) {
 				// si dessine czy-
-				DrawRalonge(positionsZ, directZ, 2, 2);
+				DrawRalonge(positionsZ, directZ, 3,0);
 			}
 			if (voisins[2][1][1] && voisins[2][1][2]) {
-				voisins[2][2][1] = InCluster(cluster, center[Axe::x], center[Axe::y] + 2.0f, center[Axe::z] + 2.0f);
-				voisins[2][2][2] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] + 2.0f, center[Axe::z] + 2.0f);
-				voisins[2][0][1] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] - 2.0f, center[Axe::z]);
-				voisins[2][0][2] = InCluster(cluster, center[Axe::x] + 2.0f, center[Axe::y] - 2.0f, center[Axe::z] + 2.0f);
+				voisins[2][2][1] = InCluster(cluster, co[Axe::x] + 2, co[Axe::y] + 2, co[Axe::z] );
+				voisins[2][2][2] = InCluster(cluster, co[Axe::x] + 2, co[Axe::y] + 2, co[Axe::z] + 2);
+				voisins[2][0][1] = InCluster(cluster, co[Axe::x] + 2, co[Axe::y] - 2, co[Axe::z]);
+				voisins[2][0][2] = InCluster(cluster, co[Axe::x] + 2, co[Axe::y] - 2, co[Axe::z] + 2);
 				if (!(voisins[1][2][1] && voisins[2][2][1] && voisins[1][2][2] && voisins[2][2][2])) {
 					//dessiner by+
-					drawRaccord(positionsZ, directX, directZ, 1);
+					drawRaccord(positionsZ, directX, directZ, 0);
 				}
 				if (!(voisins[1][0][1] && voisins[2][0][1] && voisins[1][0][2] && voisins[2][0][2])) {
 					//dessiner by-
-					drawRaccord(positionsZ, directZ, directX, 2);
+					drawRaccord(positionsZ, directZ, directX, 1);
 				}
 			}
 		}
+
+		directX.second = false;
+		directY.second = false;
+		directZ.second = false;
+
 		if (!voisins[0][1][1]){
 			//-X
 			positionsX = computeCarre(center, directX, longueur/2, longueur);
 			drawCarre(positionsX);
 		}
-		if (!voisins[1][1][0]){
+		if (!voisins[1][0][1]){
 			//-Y
 			positionsY = computeCarre(center, directY, longueur/2, longueur);
 			drawCarre(positionsY);
@@ -547,7 +541,7 @@ vector <Vertex> Modeleur::computeCarre(Vertex center, dir axe, float profondeur,
 	vector <Vertex> positions;
 	positions.resize(4);
 	float sens = (axe.second) ? -1.0f : 1.0f;
-	for (unsigned int i = 0; i < 4; i++) {//les 4 points sur le mêm plan de normale 'axe'
+	for (unsigned int i = 0; i < 4; i++) {//les 4 points sur le même plan de normale 'axe'
 		positions.at(i)[axe.first] = center[axe.first] - sens * profondeur;
 	}
 	unsigned int j1 = (axe.first + 1) % 3;
@@ -583,25 +577,22 @@ void Modeleur::drawFace(const obj::face &fa) {
 	glEnd();
 }
 void Modeleur::DrawRalonge(vector<Vertex> positions, dir direct, unsigned int a, unsigned int b) {
-	vector<Vertex> pos;
-	pos.resize(4);
+	vector<Vertex> pos(4);
 	pos.at(0) = positions.at(a);
 	pos.at(1) = positions.at(b);
 	pos.at(2) = positions.at(b);
-	pos.at(2).translation(direct, 2 * separation + rayon);
+	pos.at(2).translation(direct, 2 * separation + 2*rayon);
 	pos.at(3) = positions.at(a);
-	pos.at(3).translation(direct, 2 * separation + rayon);
+	pos.at(3).translation(direct, 2 * separation + 2*rayon);
 	drawCarre(pos);
 }
 void Modeleur::drawRaccord(vector<Vertex> positions, dir direct1, dir direct2, unsigned int i) {
-	vector<Vertex> pos;
-	pos.resize(4);
-
+	vector<Vertex> pos(4);
 	pos.at(0) = pos.at(1) = pos.at(3) = positions.at(i);
-	pos.at(1).translation(direct1, 2 * separation + rayon);
+	pos.at(1).translation(direct1, 2 * separation + 2*rayon);
 	pos.at(2) = pos.at(1);
-	pos.at(2).translation(direct2, 2 * separation + rayon);
-	pos.at(3).translation(direct2, 2 * separation + rayon);
+	pos.at(2).translation(direct2, 2 * separation + 2*rayon);
+	pos.at(3).translation(direct2, 2 * separation + 2*rayon);
 	drawCarre(pos);
 }
 //****************************************Gestion Obj2 ************************************************
@@ -688,14 +679,14 @@ Vertex Modeleur::coord2Vert(coord co) {
 	v.z = co.z * dist / 2;
 	return v;
 }
-bool Modeleur::InCluster(DGVF::cellList cluster, float x, float y, float z)
+bool Modeleur::InCluster(DGVF::cellList cluster, int x, int y, int z)
 {
-	bool presence = false;
+	if (ccTraite->without(x, y, z)) return false;
 	for (int cell : cluster) {
-		Vertex pos = coord2Vert(ccTraite->pos2coord(cell));
-		if (pos[Axe::x] == x && pos[Axe::y] == y && pos[Axe::z] == z) presence = true;
+		coord co = ccTraite->pos2coord(cell);
+		if (co[Axe::x] == x && co[Axe::y] == y && co[Axe::z] == z) return true;
 	}
-	return presence;
+	return false;
 }
 bool Modeleur::InCluster(DGVF::cellList cluster, int pos)
 {

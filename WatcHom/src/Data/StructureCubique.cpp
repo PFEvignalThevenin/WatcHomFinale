@@ -32,6 +32,7 @@ StructureCubique<D>::~StructureCubique()
 //************************************
 template<typename D>
 bool StructureCubique<D>::isEmpty(int x, int y, int z) const {
+	if (without(x, y, z)) return true;
 	return (data[coord2pos(x, y, z)]) ? false : true;
 }
 template<typename D>
@@ -41,7 +42,7 @@ bool StructureCubique<D>::isOccupied(int x, int y, int z) const {
 }
 template<typename D>
 void StructureCubique<D>::set(int x, int y, int z, D val) {
-	if (without(x, y, z)) return;
+	if (without(x, y, z)) throw DataError("impossible d'assigner une valeur en dehors des limites : " + to_string(x) + "," + to_string(y) + "," + to_string(z)+"\n");
 	data[coord2pos(x, y, z)] = val;
 }
 template<typename D>
@@ -51,6 +52,7 @@ D StructureCubique<D>::get(int x, int y, int z) const {
 //avec pos
 template<typename D>
 bool StructureCubique<D>::isEmpty(int pos) const {
+	if (without(pos)) return true;
 	return (data[pos]) ? false : true;
 }
 template<typename D>
@@ -60,6 +62,7 @@ bool StructureCubique<D>::isOccupied(int pos) const {
 }
 template<typename D>
 void StructureCubique<D>::set(int pos, D val) {
+	if (without(pos)) throw DataError("impossible d'assigner une valeur en dehors des limites [0;"+to_string(nbrCubes())+"[ : "+to_string(pos) + "\n");
 	data[pos]=val;
 }
 template<typename D>
@@ -82,7 +85,10 @@ int StructureCubique<D>::nbrCubes() const {
 //check position
 template<typename D>
 bool StructureCubique<D>::without(int x, int y, int z)  const {
-	return without(coord2pos(x, y, z));
+	if (x<0 || x>size[Axe::x]) return true;
+	if (y<0 || y>size[Axe::y]) return true;
+	if (z<0 || z>size[Axe::z]) return true;
+	return false;
 }
 template<typename D>
 bool StructureCubique<D>::without(int pos)  const {
