@@ -9,7 +9,7 @@ using namespace std;
 using namespace sfg;
 using namespace sf;
 
-WindowOpenGL::WindowOpenGL() : app(sf::VideoMode(800, 600, 32), "WatcHom")
+WindowOpenGL::WindowOpenGL() : app(sf::VideoMode(800, 600, 32), "WatcHom",sf::Style::Default, ContextSettings(8))
 {
 	win_menu = initMenuWindow();
 	win_optAff = initOptionAffichageWindow();
@@ -120,7 +120,9 @@ void WindowOpenGL::run() {
 //******************************
 
 void WindowOpenGL::drawOpenGL(sf::Window &window) {
+	glEnable(GL_DEPTH_TEST);	//SFGUI déconne lorsque le depth buffer est utilisé
 	Controlleur2::get()->drawGL();
+	glDisable(GL_DEPTH_TEST);
 }
 
 //******************************

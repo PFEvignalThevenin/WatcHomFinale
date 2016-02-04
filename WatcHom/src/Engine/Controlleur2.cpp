@@ -16,32 +16,19 @@ Controlleur2::Controlleur2() {
 	tb.tbReshape(800, 600);
 }
 void Controlleur2::initiateOpenGL() {
-	//light
-	/*glEnable(GL_LIGHTING);
+	glutInitDisplayMode(GLUT_RGBA);
+	glEnable(GL_LIGHTING);
 	glEnable(GL_LIGHT0);
 	glEnable(GL_COLOR_MATERIAL);
-	glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-	//glEnable(GL_DIFFUSE);
-	//glEnable(GL_COLOR_MATERIAL);
-	//glEnable(GL_SPECULAR);
-	//glutInitDisplayMode(GLUT_RGBA);*/
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LESS);
 	GLfloat light_ambient[] = { 0.5f,0.5f,0.5f, 1.0f };
 	GLfloat light_diffuse[] = {0.9f,0.9f,0.9f, 1.0f };
-	/*	light_position is NOT default value	*/
-	GLfloat light_position[] = { 1.0, 1.0, 1.0, 0 };
-
+	GLfloat light_position[] = { 1.0, 1.0, 1.0, 1.0 };
+	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 	glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
 	glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
-	glLightfv(GL_LIGHT0, GL_POSITION, light_position);
 
-	//glEnable(GL_LIGHTING);
-	//glEnable(GL_LIGHT0);
-	//glDepthFunc(GL_LESS);
-	glEnable(GL_DEPTH_TEST);
-	//glShadeModel(GL_FLAT);
-	glEnable(GL_COLOR_MATERIAL);
-	//glColorMaterial(GL_FRONT_AND_BACK, GL_AMBIENT_AND_DIFFUSE);
-	//glMateriali(GL_FRONT_AND_BACK, GL_SHININESS, 100);
 }
 Controlleur2::Ptr Controlleur2::get() {
 	static  Controlleur2::Ptr inst = Controlleur2::Ptr(new Controlleur2);

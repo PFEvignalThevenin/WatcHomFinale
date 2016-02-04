@@ -68,6 +68,8 @@ protected:
 	//return within 'center' the coordinates of the center of the object
 	void computeCenter();
 	obj::Vertex coord2Vert(obj::coord co);
+	obj::Vertex computeNormales(obj::Vertex p1, obj::Vertex p2, obj::Vertex p3);
+	obj::Vertex computeNormales(obj::Vertex points[3]);
 	
 };
 

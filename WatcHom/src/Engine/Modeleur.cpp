@@ -131,23 +131,35 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 }
 
 void Modeleur::drawCube0(obj::Vertex center) {
-	glBegin(GL_QUAD_STRIP);
-	glVertex3f(center.x + rayon, center.y - rayon, center.z + rayon);//les côtés
-	glVertex3f(center.x + rayon, center.y - rayon, center.z - rayon);
-	glVertex3f(center.x + rayon, center.y + rayon, center.z + rayon);
-	glVertex3f(center.x + rayon, center.y + rayon, center.z - rayon);
-	glVertex3f(center.x - rayon, center.y + rayon, center.z + rayon);
-	glVertex3f(center.x - rayon, center.y + rayon, center.z - rayon);
-	glVertex3f(center.x - rayon, center.y - rayon, center.z + rayon);
-	glVertex3f(center.x - rayon, center.y - rayon, center.z - rayon);
+	glBegin(GL_QUADS);//les côtés
+	glNormal3f(1.0f, 0.0f, 0.0f);
 	glVertex3f(center.x + rayon, center.y - rayon, center.z + rayon);
 	glVertex3f(center.x + rayon, center.y - rayon, center.z - rayon);
+	glVertex3f(center.x + rayon, center.y + rayon, center.z - rayon);
+	glVertex3f(center.x + rayon, center.y + rayon, center.z + rayon);
+	glNormal3f(0.0f, 1.0f, 0.0f);
+	glVertex3f(center.x + rayon, center.y + rayon, center.z + rayon);
+	glVertex3f(center.x + rayon, center.y + rayon, center.z - rayon);
+	glVertex3f(center.x - rayon, center.y + rayon, center.z - rayon);
+	glVertex3f(center.x - rayon, center.y + rayon, center.z + rayon);
+	glNormal3f(-1.0f, 0.0f, 0.0f);
+	glVertex3f(center.x - rayon, center.y + rayon, center.z + rayon);
+	glVertex3f(center.x - rayon, center.y + rayon, center.z - rayon);
+	glVertex3f(center.x - rayon, center.y - rayon, center.z - rayon);
+	glVertex3f(center.x - rayon, center.y - rayon, center.z + rayon);
+	glNormal3f(0.0f, -1.0f, 0.0f);
+	glVertex3f(center.x - rayon, center.y - rayon, center.z + rayon);
+	glVertex3f(center.x - rayon, center.y - rayon, center.z - rayon);
+	glVertex3f(center.x + rayon, center.y - rayon, center.z - rayon);
+	glVertex3f(center.x + rayon, center.y - rayon, center.z + rayon);
 	glEnd();
 	glBegin(GL_QUADS);
+	glNormal3f(0.0f, 0.0f, 1.0f);
 	glVertex3f(center.x + rayon, center.y - rayon, center.z + rayon);//le dessus
 	glVertex3f(center.x + rayon, center.y + rayon, center.z + rayon);
 	glVertex3f(center.x - rayon, center.y + rayon, center.z + rayon);
 	glVertex3f(center.x - rayon, center.y - rayon, center.z + rayon);
+	glNormal3f(0.0f, 0.0f, -1.0f);
 	glVertex3f(center.x - rayon, center.y - rayon, center.z - rayon);//le dessous
 	glVertex3f(center.x - rayon, center.y + rayon, center.z - rayon);
 	glVertex3f(center.x + rayon, center.y + rayon, center.z - rayon);
@@ -497,6 +509,8 @@ vector <Vertex> Modeleur::computeCarre(Vertex center, dir axe, float profondeur,
 	return positions;
 }
 void Modeleur::drawCarre(vector<Vertex> pos) {
+	Vertex norm = computeNormales(pos[0], pos[1], pos[2]);
+	glNormal3f(norm.x, norm.y, norm.z);
 	glBegin(GL_QUADS);
 	for (Vertex v : pos) {
 		glVertex3f(v[0], v[1], v[2]);
@@ -505,6 +519,8 @@ void Modeleur::drawCarre(vector<Vertex> pos) {
 }
 void Modeleur::drawFace(const obj::face &fa) {
 	Vertex v;
+	Vertex norm = computeNormales(objAffiche->getVertex(fa[0]), objAffiche->getVertex(fa[1]), objAffiche->getVertex(fa[2]));
+	glNormal3f(norm.x,norm.y,norm.z);
 	glBegin(GL_POLYGON);
 	for (int i : fa) {
 		v = objAffiche->getVertex(i);
@@ -645,4 +661,23 @@ list<int>  Modeleur::cluster_neighbors(list<int> cluster, int position)
 			}
 	}
 	return incluster;
+}
+obj::Vertex Modeleur::computeNormales(obj::Vertex p1, obj::Vertex p2, obj::Vertex p3 ) {
+	Vertex pts[3] = { p1,p2,p3 };
+	return computeNormales(pts);
+}
+obj::Vertex Modeleur::computeNormales(obj::Vertex points[3]) {
+	Vertex vector[2];
+	//récupérer 2 vecteurs à partir des points
+	for (int i = 0; i < 2; i++) {//pour le tableau
+		for (int a = 0; a < 3; a++) {//pour les axes
+		vector[i][a] = points[i + 1][a] - points[i][a];
+		}
+	}
+	//calculer produit vectoriel
+	Vertex res;
+	for (int a = 0; a < 3; a++) {
+		res[a] = vector[0][(a + 1) % 3] * vector[1][(a + 2) % 3] - vector[1][(a + 1) % 3] * vector[0][(a + 2) % 3];
+	}
+	return res;
 }
