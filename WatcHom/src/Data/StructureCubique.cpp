@@ -47,6 +47,7 @@ void StructureCubique<D>::set(int x, int y, int z, D val) {
 }
 template<typename D>
 D StructureCubique<D>::get(int x, int y, int z) const {
+	if (without(x, y, z)) throw DataError("impossible de récupérer une valeur en dehors des limites : " + std::to_string(x) + "," + std::to_string(y) + "," + std::to_string(z) + "\n");
 	return data[coord2pos(x,y,z)];
 }
 //avec pos
@@ -67,6 +68,7 @@ void StructureCubique<D>::set(int pos, D val) {
 }
 template<typename D>
 D StructureCubique<D>::get(int pos) const {
+	if (without(pos)) throw DataError("impossible de réupérer une valeur en dehors des limites [0;" + std::to_string(nbrCubes()) + "[ : " + std::to_string(pos) + "\n");
 	return data[pos];
 }
 //metadatas
@@ -85,9 +87,9 @@ int StructureCubique<D>::nbrCubes() const {
 //check position
 template<typename D>
 bool StructureCubique<D>::without(int x, int y, int z)  const {
-	if (x<0 || x>size[Axe::x]) return true;
-	if (y<0 || y>size[Axe::y]) return true;
-	if (z<0 || z>size[Axe::z]) return true;
+	if (x<0 || x>=size[Axe::x]) return true;
+	if (y<0 || y>=size[Axe::y]) return true;
+	if (z<0 || z>=size[Axe::z]) return true;
 	return false;
 }
 template<typename D>

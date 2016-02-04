@@ -20,7 +20,7 @@ DGVF::DGVF(ComplexeCubique::Ptr p_K)
 
 void DGVF::homology(string name, double r, double s)
 {
-	bool b1, b2;//permet de savoir si modifications peuvet encore se faire
+	bool b1, b2;//permettent de savoir si des modifications peuvent encore se faire
 	//initialisation
 	CellClustering();
 	//save
@@ -91,18 +91,14 @@ void DGVF::CellClusteringByDim(int dim) {
 
 void DGVF::CellClustering()
 {
-	cout << "cell clustering" << endl;
+	cout << "cell clustering..." << endl;
 	vector<thread> th;
 	for (int q = 3; q >= 1; q--)// from dimension 3 to 1
 	{
 		time_t time = clock();
 		CellClusteringByDim(q);
-		cout << "cluster dim " << q << " in " << (clock() - time) / 1000 << " secondes" << endl;
-		//th.push_back(thread(&DGVF::CellClusteringByDim, this, q));
+		cout << "cluster dim " << q << " in " << (clock() - time) / CLOCKS_PER_SEC << " secondes" << endl;
 	}
-	/*for (int i = 0; i < th.size(); i++) {
-		th[i].join();
-	}*/
 	updateComplex();
 }
 
@@ -427,7 +423,7 @@ bool DGVF::clusterisable() {
 	{
 		for (int pos : Cr[q])
 		{
-			auto l = coboundary_cr(pos);
+			auto l = coboundary_cr(pos);//si on trouve une cellule critique avec 2 voisins, alors clusterisable
 			if (l->size() == 2)
 			{
 				return true;
@@ -452,7 +448,7 @@ set<int> DGVF::subset(set<int> v, int n)
 int DGVF::choix(std::string message, int max) {
 	int ans;
 	max = (max < 0) ? 0 : max;
-	std::cout <<endl<< message<<endl;//demander si clusteriser
+	std::cout <<endl<< message<<endl;//faire la demande
 	do {
 		cin >> ans;
 	} while (ans<0 || ans>max);
@@ -487,13 +483,12 @@ std::shared_ptr<std::vector<map<int, int>>> DGVF::getGinv() {
 }
 shared_ptr<vector<map<int, list<int>>>> DGVF::getG() {
 	vector<map<int, std::list<int>>> ret(DIM);
-	vector<map<int, int>> g_inv(DIM);//cellules secondaire vers cellule critique, donc définit le cluster
 	for (int q = 0; q < DIM; q++)   // for each dimension
 	{
 		for (int it : Cr[q])//pour chaque cellule critique de dim q
 		{
-			map<int, list<int> >::iterator it_m = g.find(it);//itérateur vers g
-			if (it_m != g.end())//si non vide : cad si la Cr est ds g : cad définit un cluster->liste
+			auto it_m = g.find(it);//chercher dans g
+			if (it_m != g.end())//si non vide : cad si la Cr est ds g, alors définit un cluster->liste
 			{
 				ret[q].insert(*it_m);
 			}

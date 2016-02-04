@@ -41,16 +41,16 @@ std::list<int> ComplexeCubique::coboundary(int pos) {
 std::list<int> ComplexeCubique::boundary(int x, int y, int z) {
 	list<int> ret;
 	if (x % 2 == 1) {
-		ret.push_back(coord2pos(x+1, y, z));
-		ret.push_back(coord2pos(x-1, y, z));
+		if (isOccupied(x + 1, y, z))ret.push_back(coord2pos(x+1, y, z));
+		if (isOccupied(x - 1, y, z))ret.push_back(coord2pos(x-1, y, z));
 	}
 	if (y % 2 == 1) {
-		ret.push_back(coord2pos(x, y+1, z));
-		ret.push_back(coord2pos(x, y-1, z));
+		if (isOccupied(x, y + 1, z))ret.push_back(coord2pos(x, y+1, z));
+		if (isOccupied(x, y - 1, z))ret.push_back(coord2pos(x, y-1, z));
 	}
 	if (z % 2 == 1) {
-		ret.push_back(coord2pos(x, y, z+1));
-		ret.push_back(coord2pos(x, y, z-1));
+		if (isOccupied(x, y, z + 1))ret.push_back(coord2pos(x, y, z+1));
+		if (isOccupied(x, y, z - 1))ret.push_back(coord2pos(x, y, z-1));
 	}
 	return ret;
 }
@@ -89,7 +89,6 @@ std::list<int> ComplexeCubique::neighbors(int x, int y , int z)
 		voisins.push_back(coord2pos(x, y, z + 2));
 	if (z >= 2 && get(x, y, z - 2))
 		voisins.push_back(coord2pos(x, y, z - 2));
-
 	return voisins;
 }
 std::list<int> ComplexeCubique::neighbors(int pos)
