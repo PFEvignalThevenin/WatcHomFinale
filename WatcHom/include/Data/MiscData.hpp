@@ -42,7 +42,8 @@ namespace obj {
 		coord() = default;
 		~coord() = default;
 		int x = 0, y = 0, z = 0;
-
+		
+		void setCoord(int x,int y, int z);
 		int& operator[](unsigned int);
 		bool operator==(coord const&);
 		coord& operator*(const int &);
