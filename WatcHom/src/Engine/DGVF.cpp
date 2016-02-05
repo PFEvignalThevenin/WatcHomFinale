@@ -166,7 +166,7 @@ void DGVF::updateComplex()
 
 
 std::shared_ptr<std::vector<DGVF::cellBound>> DGVF::computeCollapses() {
-	shared_ptr<vector<cellBound>> free(new vector<cellBound>());
+	vector<cellBound> free;
 	for (int q = 0; q < 3; q++)//toutes dimensions sauf 3
 	{
 		for (int it : Cr[q])//parcourir cellules critiques
@@ -174,14 +174,14 @@ std::shared_ptr<std::vector<DGVF::cellBound>> DGVF::computeCollapses() {
 			auto l = coboundary_cr(it);
 			if (l->size() == 1)//si une unique coface : ??
 			{
-				free->push_back(cellBound(it, l->front()));//ajouter à la liste
+				free.push_back(cellBound(it, l->front()));//ajouter à la liste
 			}
 		}
 	}
-	return free;
+	return make_shared<vector<cellBound>>(free);
 }
 
-void  DGVF::afficherChoixCollapse(std::shared_ptr<std::vector<DGVF::cellBound>> choix) {
+void  DGVF::afficherChoixCollapse(std::shared_ptr<std::vector<DGVF::cellBound>>& choix) {
 	int i = 1, q;
 	//afficher menu
 	cout << "\n--liste des clusters--" << endl;
@@ -208,14 +208,14 @@ bool DGVF::perfect()
 
 shared_ptr<DGVF::cellList> DGVF::boundary_cr(int c)
 {
-	std::shared_ptr<cellList> b(new DGVF::cellList());
+	cellList b;
 	if (cubical)
 	{
 		list<int> l = K->boundary(c);
 		for (list<int>::iterator it = l.begin(); it != l.end(); ++it)
 		{
 			if (getV(*it) < 0)
-				b->push_back(*it);
+				b.push_back(*it);
 		}
 	}
 	else    // the Morse complex
@@ -227,24 +227,24 @@ shared_ptr<DGVF::cellList> DGVF::boundary_cr(int c)
 			for (set<int>::iterator it_s = s.begin(); it_s != s.end(); ++it_s)
 			{
 				if (getV(*it_s) < 0)
-					b->push_back(*it_s);
+					b.push_back(*it_s);
 			}
 		}
 	}
-	return b;
+	return make_shared<cellList>(b);
 }
 
 
 shared_ptr<DGVF::cellList> DGVF::coboundary_cr(int c)
 {
-	shared_ptr<cellList> cob(new DGVF::cellList());
+	cellList cob;
 	if (cubical)
 	{
 		list<int> l = K->coboundary(c);
 		for (int it : l)
 		{
 			if (getV(it) < 0)//si Cellule critique
-				cob->push_back(it);
+				cob.push_back(it);
 		}
 	}
 	else    // the Morse complex
@@ -256,11 +256,11 @@ shared_ptr<DGVF::cellList> DGVF::coboundary_cr(int c)
 			for (set<int>::iterator it_s = s.begin(); it_s != s.end(); ++it_s)
 			{
 				if (getV(*it_s) < 0)
-					cob->push_back(*it_s);
+					cob.push_back(*it_s);
 			}
 		}
 	}
-	return cob;
+	return make_shared<cellList>(cob);
 }
 
 

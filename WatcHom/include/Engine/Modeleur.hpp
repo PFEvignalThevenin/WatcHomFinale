@@ -18,14 +18,14 @@ class Modeleur
 {
 public:
 	typedef std::shared_ptr<Modeleur> Ptr;
-	Modeleur( std::shared_ptr<Controlleur2> ctrl );
+	Modeleur( std::shared_ptr<Controlleur2> &ctrl );
 	~Modeleur() = default;
 	void setDistances(float rayon, float longueur, float separation);
 	//****************************Fonctions de Dessin par type********************************
 	//initialise les listes de Controlleur2 selon l'objet à afficher
 	void initiateObjs();
 	void initiatePgm();
-	void initiateComplexeCubique(std::shared_ptr<std::vector<std::map<int, std::list<int>>>> g);
+	void initiateComplexeCubique(std::shared_ptr<std::vector<std::map<int, std::list<int>>>> &g);
 	//***********************Fonctions de définition des objets à afficher********************************
 	//set l'objet a afficher, mais ne change pas l'affichage effectif
 	void setObj(obj::Obj2::Ptr obj);

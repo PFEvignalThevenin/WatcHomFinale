@@ -3,18 +3,15 @@
 
 using namespace std;
 shared_ptr<ComplexeCubique> Conversion::PGM3D2ComplexeCubique(PGM3D &pgm, bool primal) {
-	shared_ptr<ComplexeCubique> ret = shared_ptr<ComplexeCubique>(new ComplexeCubique(
-		2 * pgm.getSize(Axe::x) + 1,
-		2 * pgm.getSize(Axe::y) + 1,
-		2 * pgm.getSize(Axe::z) + 1));
+	ComplexeCubique ret(2 * pgm.getSize(Axe::x) + 1,2 * pgm.getSize(Axe::y) + 1,2 * pgm.getSize(Axe::z) + 1);
 	//gestion primalité : conversion en char et initialisation
-	ret->initVal(!primal);
-	ret->setPrimal(primal);
+	ret.initVal(!primal);
+	ret.setPrimal(primal);
 	char valPrimale = 0;
 	if (primal) {
 		valPrimale = 1;
 	}else {
-		ret->initVal( primal );
+		ret.initVal( primal );
 	}
 	//parcours d'initialisation :
 	obj::coord w;
@@ -26,7 +23,7 @@ shared_ptr<ComplexeCubique> Conversion::PGM3D2ComplexeCubique(PGM3D &pgm, bool p
 					for (int i = -1; i <= 1; i++) {//alors pour tous les espaces adjacents
 						for (int j = -1; j <= 1; j++) {
 							for (int k = -1; k <= 1; k++) {
-								ret->set(w.x + k, w.y + j, w.z + i, primal);//initialisation selon primalité
+								ret.set(w.x + k, w.y + j, w.z + i, primal);//initialisation selon primalité
 							}
 						}
 					}
@@ -34,7 +31,7 @@ shared_ptr<ComplexeCubique> Conversion::PGM3D2ComplexeCubique(PGM3D &pgm, bool p
 			}
 		}
 	}
-	return ret;
+	return make_shared<ComplexeCubique>(ret);
 }
 //potentiellement pas a faire
 shared_ptr<obj::Obj> Conversion::PGM3D2Obj(PGM3D &pgm) {

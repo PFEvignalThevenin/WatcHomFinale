@@ -5,7 +5,7 @@
 using namespace std;
 using namespace obj;
 
-Modeleur::Modeleur(std::shared_ptr<Controlleur2> ctrl)
+Modeleur::Modeleur(std::shared_ptr<Controlleur2> &ctrl)
 {
 	this->ctrl = ctrl;
 	setDistances(1, 2, 1);
@@ -46,7 +46,7 @@ void Modeleur::initiatePgm() {
 	setDistances(s_rayon, s_long, s_sep);
 }
 //*******************************Dessin de Complexe Cubique par dimension*********************************
-void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g) {
+void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> &g) {
 	ctrl->resetLists();
 	cout << "affichage Complexe..." << endl;
 	//traiter les clusters par dimension

@@ -46,7 +46,7 @@ public:
 	 */
 	std::shared_ptr<std::vector<cellBound>> computeCollapses();
 	//affiche la liste calculée par 'computeCollapses'
-	void  DGVF::afficherChoixCollapse(std::shared_ptr<std::vector<DGVF::cellBound>> choix);
+	void  DGVF::afficherChoixCollapse(std::shared_ptr<std::vector<DGVF::cellBound>> &choix);
 	//ajouter une flèche ds V, met à jour dM, codmM,...
 	void add2V(int sigma, int tau);
 	//une map qui a chaque cellule, associe la cellule critique qui définit le cluster, triés dans un tableau par dimension
