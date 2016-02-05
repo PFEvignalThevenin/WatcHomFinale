@@ -133,6 +133,9 @@ sfg::Window::Ptr WindowOpenGL::initMenuWindow() {
 	auto window = sfg::Window::Create(0);
 	gbl_menu = Menu::Create();
 	window->Add(gbl_menu);
+	window->GetSignal(Widget::OnMouseEnter).Connect(bind([window]() {
+		window->SetHierarchyLevel(0);
+	}));
 	//linker bouton quitter
 	gbl_menu->getButton("Quitter")->GetSignal(sfg::Window::OnMouseLeftPress).Connect(
 		std::bind([=]() {

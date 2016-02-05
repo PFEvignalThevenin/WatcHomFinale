@@ -478,7 +478,7 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				direct1.second = true;
 			}
 			else if (voisins_inf[1][0]){
-				co_voisin.setCoord(co.x + nz, co.y + nx, co.z + ny); //arete qui devant la face considerée
+				co_voisin.setCoord(co.x + nz, co.y + nx, co.z + ny); //arrete qui devant la face considerée
 				normal.second = false;
 				direct1.second = false;
 				drawCoude(co_voisin, direct1, normal, longueur); //bools a changer 
@@ -499,7 +499,7 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				}
 			}
 			else {//fermer
-				drawCarre(positions1);
+				drawCarre(computeRectangle(center, direct1, longueur / 2, longueur, rayon));
 			}
 		}
 
@@ -557,8 +557,9 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				}
 				
 			}
-			else //fermer
-				drawCarre(positions2);
+			else { //fermer
+				drawCarre(computeRectangle(center, direct2, longueur / 2, rayon, longueur));
+			}
 		}
 
 		//------
@@ -636,7 +637,8 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				}
 			}
 			else {//fermer
-				drawCarre(positions2);
+				//drawCarre(positions2);
+				drawCarre(computeRectangle(center, dir(direct2.first,false), longueur / 2, rayon, longueur));
 			}
 		}
 	}
