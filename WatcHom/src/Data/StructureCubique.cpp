@@ -140,7 +140,7 @@ inline int StructureCubique<D>::coord2pos(int x, int y, int z)const {
 	return (x + size[Axe::y] * y + squareSize*z);
 }
 template<typename D>
-obj::coord StructureCubique<D>::pos2coord(int pos)const {
+inline obj::coord StructureCubique<D>::pos2coord(int pos)const {
 	obj::coord c;
 	c.x = pos					% size[Axe::x];
 	c.y = (pos / size[Axe::x]) % size[Axe::y];

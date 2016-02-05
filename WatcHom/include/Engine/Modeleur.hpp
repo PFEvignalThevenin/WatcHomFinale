@@ -61,7 +61,7 @@ protected:
 	std::vector <obj::Vertex> Modeleur::computeRectangle(obj::Vertex center, dir axe, float profondeur, float largeur, float hauteur);
 	void Modeleur::drawCarre(std::vector<obj::Vertex> pos);
 	void drawCoude(obj::coord center, dir direct1, dir direct2, float lg);
-	void drawCoin(obj::coord center, dir direct1, dir direct2, dir direct3);2);
+	void drawCoin(obj::coord center, dir direct1, dir direct2, dir direct3);
 	void drawFace(const obj::face &fa);
 	void DrawRalonge(std::vector<obj::Vertex> positions, dir direct, unsigned int a, unsigned int b);
 	void drawRaccord(std::vector<obj::Vertex> positions, dir direct1, dir durect2, unsigned int i);

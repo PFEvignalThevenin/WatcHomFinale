@@ -58,6 +58,7 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> &
 	for (DGVF::cluster bind : g->at(0)) {//pour tout les clusters de dim 0
 		glNewList(cptr, GL_COMPILE);	//créer nouvelle liste
 		listObj->push_back(cptr);		//conserver identificateur
+		ctrl->setNameList(cptr, "0_" + to_string(bind.first));
 		drawCube0(coord2Vert(ccTraite->pos2coord(bind.first)));//dessin
 		glEndList();//fin definition liste
 		cptr++;
@@ -92,6 +93,7 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> &
 			//affichage
 			glNewList(cptr, GL_COMPILE);	//créer nouvelle liste
 			listObj->push_back(cptr);		//conserver identificateur
+			ctrl->setNameList(cptr, "1_" + to_string(clust.first));
 			drawCube1(clust.second);
 			glEndList();//fin definition liste
 			cptr++;
@@ -108,6 +110,7 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> &
 	for (DGVF::cluster clust : g->at(2)) {//tous clusters dim2
 		glNewList(cptr, GL_COMPILE);	//créer nouvelle liste
 		listObj->push_back(cptr);		//conserver identificateur
+		ctrl->setNameList(cptr, "2_" + to_string(clust.first));
 		drawCube2(clust.second);//calculer la liste
 		glEndList();//fin definition liste
 		cptr++;
@@ -118,6 +121,7 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> &
 	for (DGVF::cluster clust : g->at(3)) {//tous clusters dim3
 		glNewList(cptr, GL_COMPILE);	//créer nouvelle liste
 		listObj->push_back(cptr);		//conserver identificateur
+			ctrl->setNameList(cptr, "3_" + to_string(clust.first));
 		drawCube3(clust.second);//calculer la liste
 		glEndList();//fin definition liste
 		cptr++;
@@ -926,7 +930,7 @@ void Modeleur::drawCoude(coord co, dir direct1, dir direct2, float lg) {
 	quad.at(3) = (direct3.second) ? positions2.at(0) : positions.at(0);
 	drawCarre(quad);
 }
-void Modeleur::drawCoin(coord co, dir direct1, dir direct2, dirdirect3) {
+void Modeleur::drawCoin(coord co, dir direct1, dir direct2, dir direct3) {
 	Vertex center = coord2Vert(co);
 	dir invDir1(direct1.first, !direct1.second);
 	dir invDir2(direct2.first, !direct2.second);

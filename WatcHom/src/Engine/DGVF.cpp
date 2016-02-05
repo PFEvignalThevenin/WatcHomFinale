@@ -167,6 +167,9 @@ void DGVF::updateComplex()
 
 std::shared_ptr<std::vector<DGVF::cellBound>> DGVF::computeCollapses() {
 	vector<cellBound> free;
+	if (cubical) {//juste une opti car plus utilisé la première fois
+		free.resize(K->nbrCubes() / 100);
+	}
 	for (int q = 0; q < 3; q++)//toutes dimensions sauf 3
 	{
 		for (int it : Cr[q])//parcourir cellules critiques
