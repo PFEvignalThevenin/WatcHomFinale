@@ -112,13 +112,12 @@ void StructureCubique<D>::setDataSize(int p_size[3]) {
 	//initialiser les valeurs simples : vecteur de taille
 	for (int i = 0; i < 3; i++) {
 		size[i] = p_size[i];
-		std::cout << size[i] << endl;
 	}
 	squareSize = size[0] * size[1];	//taille d'un carré de même z
 									//allocation des espaces pour le tableau de données
 	//data = new D[nbrCubes()];
 	data.resize(nbrCubes());
-	std::cout << nbrCubes() << endl;
+
 }
 template<typename D>
 void StructureCubique<D>::copy(StructureCubique &cp) {

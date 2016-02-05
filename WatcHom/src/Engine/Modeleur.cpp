@@ -48,10 +48,8 @@ void Modeleur::initiatePgm() {
 //*******************************Dessin de Complexe Cubique par dimension*********************************
 void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g) {
 	ctrl->resetLists();
+	cout << "affichage Complexe..." << endl;
 	//traiter les clusters par dimension
-	cout << "TODO : \tfaire l'affichage des clusters dans Modeleur::initiateComplexeCubique" << endl;
-	cout << "\tfait :  Dim0" << endl;
-	cout << "\ta faire :  Dim 1,2,3" << endl;
 	int cptr = 1;//compte toutes les listes. Il ne doit pas y avoir de doublons
 	std::vector<GLuint> *listObj;//variable des indices de liste d'une dimension
 	
@@ -65,7 +63,6 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 		cptr++;
 	}
 	//dim1
-	cout << "DIM1" << endl;
 	vector<dir> Axes;
 	listObj = ctrl->getFormes(Dim::d1);//liste de dim0
 	try {
@@ -107,7 +104,6 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 	}cout << endl;
 
 	//dim2
-	cout << "DIM2" << endl;
 	listObj = ctrl->getFormes(Dim::d2);//liste de dim0
 	for (DGVF::cluster clust : g->at(2)) {//tous clusters dim2
 		glNewList(cptr, GL_COMPILE);	//créer nouvelle liste
@@ -118,7 +114,6 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 	}
 
 	//dim3
-	cout << "DIM3" << endl;
 	listObj = ctrl->getFormes(Dim::d3);//liste de dim0
 	for (DGVF::cluster clust : g->at(3)) {//tous clusters dim3
 		glNewList(cptr, GL_COMPILE);	//créer nouvelle liste
@@ -127,6 +122,7 @@ void Modeleur::initiateComplexeCubique(shared_ptr<vector<map<int, list<int>>>> g
 		glEndList();//fin definition liste
 		cptr++;
 	}
+	cout << "affichage Complexe done" << endl;
 	//finalisations
 	ctrl->computeCenter(
 		0, ccTraite->getSize(Axe::x)*dist / 2,

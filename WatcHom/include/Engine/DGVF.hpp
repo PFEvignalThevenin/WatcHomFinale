@@ -9,7 +9,13 @@
 #include <vector>
 #include <memory>
 #include <iostream>
-
+struct dgvfSave {//structure contenant les informations de sauvegarde d'une étape de dgvf
+	std::map<int, int> V;       // the matching.
+	std::set<int> Cr[DIM];      // critical cells par dimension
+	std::map<int, std::list<int>> g;    // g (Cr -> ensemble de cellules)
+	std::map<int, std::set<int> > dM;   // boundary in the Morse complex. A une cellule, ses faces
+	std::map<int, std::set<int> > codM; // coboundary in the Morse complex. A une cellule, ses cofaces
+};
 class DGVF
 {
 public:
@@ -54,6 +60,9 @@ public:
 	void setNbrThread(unsigned int nbr);
 
 	/**********************************Sauvegarde********************************************/
+	void saveEtapeDGVF();
+	void retourArriereEtapeDGVF();
+	int nbrEtapesDGVF();
 	bool saveMorse(std::string path);
 	bool saveObj(std::string path, float r = 0.1, float s = 0.05 );//par pitié, enlevez-moi ça! mettre un équivalent dans le modeleur.
 	void DGVF::addFace(std::vector<int> p, int dir, int axis,
@@ -97,6 +106,7 @@ private:
 	std::map<int, std::set<int> > dM;     // boundary in the Morse complex. A une cellule, ses faces
 	std::map<int, std::set<int> > codM;   // coboundary in the Morse complex. A une cellule, ses cofaces
 
+	std::vector<dgvfSave> sauvergardes;
 };
 
 //AU TERME DU BINDING

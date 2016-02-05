@@ -97,7 +97,7 @@ void DGVF::CellClustering()
 	{
 		time_t time = clock();
 		CellClusteringByDim(q);
-		cout << "cluster dim " << q << " in " << (clock() - time) / CLOCKS_PER_SEC << " secondes" << endl;
+		cout << "cluster dim " << q << " in " << double(clock() - time) / CLOCKS_PER_SEC << " secondes" << endl;
 	}
 	updateComplex();
 }
@@ -505,6 +505,32 @@ ComplexeCubique::Ptr DGVF::getComplexe() {
 	return K;
 }
 /**********************************Sauvegarde********************************************/
+void DGVF::saveEtapeDGVF() {
+	dgvfSave dgs;
+	dgs.V = V;
+	dgs.codM = codM;
+	for (int i = 0; i < DIM; i++) {
+		dgs.Cr[i] = Cr[i];
+	}
+	dgs.dM = dM;
+	dgs.g = g;
+	sauvergardes.push_back(dgs);
+
+}
+void DGVF::retourArriereEtapeDGVF() {
+	dgvfSave dgs = sauvergardes.back();
+	V = dgs.V;
+	codM = dgs.codM;
+	for (int i = 0; i < DIM; i++) {
+		Cr[i] = dgs.Cr[i];
+	}
+	dM = dgs.dM;
+	g = dgs.g;
+	sauvergardes.pop_back();
+}
+int DGVF::nbrEtapesDGVF() {
+	return sauvergardes.size();
+}
 bool DGVF::saveMorse(std::string path) {
 	//création du fichier
 	ofstream file(path.c_str(), ios::out | ios::trunc);

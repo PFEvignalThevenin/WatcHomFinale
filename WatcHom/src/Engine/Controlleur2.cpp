@@ -144,6 +144,11 @@ bool Controlleur2::loadPgm(std::string path) {
 //***********************************************fonctions DGVF***********************************************
 void Controlleur2::cellClustering() {
 	clock_t begin = clock();
+	cout << "Sauvegarde..." << endl;
+	dgvf->saveEtapeDGVF();
+	std::cout << "Sauvegarde in " << double(clock() - begin) / CLOCKS_PER_SEC << " secs." << endl;
+	cout << "Collapse..." << endl;
+	begin = clock();
 	dgvf->CellClustering();
 	std::cout << "Cell Clustering in " << double(clock() - begin) / CLOCKS_PER_SEC << " secs." << endl;
 	etapesSave.push_back(dgvf->getG());
@@ -160,6 +165,11 @@ std::shared_ptr<std::vector<DGVF::cellBound>> Controlleur2::getCollapses() {
 }
 void Controlleur2::collapse(int c1, int c2) {
 	clock_t begin = clock();
+	cout << "Sauvegarde..." << endl;
+	dgvf->saveEtapeDGVF();
+	std::cout << "Sauvegarde in " << double(clock() - begin) / CLOCKS_PER_SEC << " secs." << endl;
+	cout << "Collapse..." << endl;
+	begin = clock();
 	dgvf->add2V(c1, c2);
 	std::cout << "Collapse in " << double(clock() - begin) / CLOCKS_PER_SEC << " secs." << endl;
 	etapesSave.push_back(dgvf->getG());
@@ -172,13 +182,13 @@ int Controlleur2::getNbrIterations() {
 	return etapesSave.size();
 }
 void Controlleur2::retourIterPrecedente() {
-	cout << "Retour itération précedente, ok pour affichage, mais pas pour l'algorithme, donc en suspend" << endl;
-	bool DGVFPeuxRetourArrière = false;
-	if (DGVFPeuxRetourArrière) {
-		if (etapesSave.size() < 2) return;
-		etapesSave.pop_back();
-		modeleur->initiateComplexeCubique(etapesSave.back());
-	}
+	cout << "Chargement..." << endl;
+	clock_t begin = clock();
+	if (etapesSave.size() < 2) return;
+	dgvf->retourArriereEtapeDGVF();
+	etapesSave.pop_back();
+	modeleur->initiateComplexeCubique(etapesSave.back());
+	std::cout << "Chargement in " << double(clock() - begin) / CLOCKS_PER_SEC << " secs." << endl;
 }
 
 //**********************************************Gestion listes ************************************************

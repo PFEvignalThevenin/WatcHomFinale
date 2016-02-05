@@ -81,7 +81,7 @@ void PGM3D::load(std::string const& path) {
 				else {
 					throw FileError(3,"Error in  PGM3D load : \n\tcouldn't read the " + to_string(cptr) + "-th voxel."+to_string(p_v) +"\n");
 				}
-				set(k,j,i, p_v);
+				set(k,j,i, (char)p_v);
 			}
 		}
 	}
