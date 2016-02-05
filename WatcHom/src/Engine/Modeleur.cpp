@@ -474,7 +474,7 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 			if (voisins_sup[1][0]) {//coudes
 				co_voisin.setCoord(co.x + nz, co.y + nx, co.z + ny); //arete qui devant la face considerée
 				direct1.second = false;
-				drawCoude(co_voisin, direct1, normal, longueur); //bools a changer 
+				drawCoude(co_voisin, direct1, normal, longueur); //bools a changer
 				direct1.second = true;
 			}
 			else if (voisins_inf[1][0]){
@@ -482,6 +482,9 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				normal.second = false;
 				direct1.second = false;
 				drawCoude(co_voisin, direct1, normal, longueur); //bools a changer 
+				if (voisins_inf[0][1]) { //dessiner coin 
+					drawCoin(co_voisin, direct1, normal, direct2);
+				}
 				direct1.second = true;
 				normal.second = true;
 
@@ -532,6 +535,9 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				direct2.second = false;
 				normal.second = true;
 				drawCoude(co_voisin, direct2, normal,longueur); //bools a changer
+				if (voisins_sup[1][0]) { //dessiner coin 
+					drawCoin(co_voisin, direct2, normal, direct1);
+				}
 				direct2.second = true;
 				normal.second = false;
 
@@ -920,8 +926,81 @@ void Modeleur::drawCoude(coord co, dir direct1, dir direct2, float lg) {
 	quad.at(3) = (direct3.second) ? positions2.at(0) : positions.at(0);
 	drawCarre(quad);
 }
-void Modeleur::drawCoin(coord co, dir direct1, dir direct2) {
+void Modeleur::drawCoin(coord co, dir direct1, dir direct2, dirdirect3) {
+	Vertex center = coord2Vert(co);
+	dir invDir1(direct1.first, !direct1.second);
+	dir invDir2(direct2.first, !direct2.second);
+	dir invDir3(direct3.first, !direct3.second);
 
+	Vertex pos = center;
+	vector<Vertex> positions(6);
+	vector<Vertex> positions2(6);
+	vector<Vertex> positions3(6);
+	//dessiner un 'L'
+	pos.translation(direct3, rayon / 2);
+	pos.translation(direct1, rayon / 2);
+	pos.translation(direct2, rayon / 2);
+	positions.at(0) = pos;
+	pos.translation(direct1, 2 * separation);
+	pos.translation(direct3, 2 * separation);
+	positions.at(1) = pos;
+	pos.translation(invDir2, rayon);
+	positions.at(2) = pos;
+	pos.translation(invDir1, rayon + 2 * separation); 
+	pos.translation(invDir3, rayon + 2 * separation);
+	positions.at(3) = pos;
+	pos.translation(direct2, rayon + 2 * separation);
+	positions.at(4) = pos;
+	pos.translation(direct1, rayon);
+	pos.translation(direct3, rayon);
+	positions.at(5) = pos;
+
+	for (int i = 0; i < 6; i++) {
+		positions2[i] = positions[i];
+		positions3[i] = positions[i];
+	}
+
+	positions2[0].translation(direct3, 2*separation);
+	positions2[3].translation(direct3, 2 * separation + rayon);
+	positions2[4].translation(direct3, 2 * separation + rayon);
+	positions2[5].translation(direct3, 2 * separation);
+
+	positions3[0].translation(direct1, 2 * separation);
+	positions3[3].translation(direct1, 2 * separation + rayon);
+	positions3[4].translation(direct1, 2 * separation + rayon);
+	positions3[5].translation(direct1, 2 * separation);
+
+	vector<Vertex> quad(4);
+	quad.at(0) = positions.at(5);
+	quad.at(1) = positions2.at(5);
+	quad.at(2) = positions2.at(0);
+	quad.at(3) = positions.at(0);
+	drawCarre(quad);
+	quad.at(0) = positions3.at(5);
+	quad.at(1) = positions.at(5);
+	quad.at(2) = positions.at(0);
+	quad.at(3) = positions3.at(0);
+	drawCarre(quad);
+	quad.at(0) = positions2.at(4);
+	quad.at(1) = positions.at(4);
+	quad.at(2) = positions.at(3);
+	quad.at(3) = positions2.at(3);
+	drawCarre(quad);
+	quad.at(0) = positions.at(4);
+	quad.at(1) = positions2.at(4);
+	quad.at(2) = positions2.at(3);
+	quad.at(3) = positions.at(3);
+	drawCarre(quad);
+	quad.at(0) = positions.at(0);
+	quad.at(1) = positions2.at(0);
+	quad.at(2) = positions2.at(1);
+	quad.at(3) = positions3.at(0);
+	drawCarre(quad);
+	quad.at(0) = positions.at(3);
+	quad.at(1) = positions2.at(3);
+	quad.at(2) = positions2.at(2);
+	quad.at(3) = positions3.at(2);
+	drawCarre(quad);
 }
 void Modeleur::drawFace(const obj::face &fa) {
 	Vertex v;
