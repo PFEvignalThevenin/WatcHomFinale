@@ -378,6 +378,7 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 	bool voisins_sup[2][2];
 	bool voisins_inf[2][2];
 	coord co_voisin; // pour ranger les coords d'un voisin
+	voisin_droite; //pour vérifiier la presence d'un voisin a coté en cas de coude
 	Vertex pos_voisin; // pour ranger les coords dans l'espace d'un voisin
 	for (int cell : cluster) {
 		coord co = ccTraite->pos2coord(cell);
@@ -473,8 +474,18 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 			if (voisins_sup[1][0]) {//coudes
 				co_voisin.setCoord(co.x + nz, co.y + nx, co.z + ny); //arete qui devant la face considerée
 				direct1.second = false;
-				drawCoude(co_voisin, direct1, normal, false, false); //bools a changer 
+				drawCoude(co_voisin, direct1, normal, longueur); //bools a changer 
 				direct1.second = true;
+
+				voisin_droite = InCluster(cluster, co_voisin[Axe::x] + nY, co_voisin[Axe::y] + nZ, co_voisin[Axe::z] + nX);
+				if (voisin_droite) {
+					co_voisin[Axe::x] += ny;
+					co_voisin[Axe::y] += nz;
+					co_voisin[Axe::z] += nx;
+					direct1.second = false;
+					drawCoude(co_voisin, direct1, normal, 2*separation + 2 * rayon); //bools a changer 
+					direct1.second = true;
+				}
 			}
 			else if (!voisins_inf[1][0]){//fermer
 				drawCarre(positions1);
@@ -509,9 +520,21 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				co_voisin.setCoord(co.x + ny, co.y + nz, co.z + nx); //arete a droite de la face considerée
 				direct2.second = false;
 				normal.second = true;
-				drawCoude(co_voisin, direct2, normal, false, false); //bools a changer
+				drawCoude(co_voisin, direct2, normal,longueur); //bools a changer
 				direct2.second = true;
 				normal.second = false;
+
+				voisin_droite = InCluster(cluster, co_voisin[Axe::x] - nZ, co_voisin[Axe::y] - nX, co_voisin[Axe::z] - nY);
+				if (voisin_droite) {
+					co_voisin[Axe::x] -= nz;
+					co_voisin[Axe::y] -= nx;
+					co_voisin[Axe::z] -= ny;
+					direct2.second = false;
+					normal.second = true;
+					drawCoude(co_voisin, direct2, normal, 2 * separation + 2 * rayon);
+					direct2.second = true;
+					normal.second = false;
+				}
 			}
 			else if (!voisins_inf[1][1]) {
 				//fermer
@@ -535,9 +558,21 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				co_voisin.setCoord(co.x - nz, co.y - nx, co.z - ny); //arrête qui derriere la face considerée
 				direct1.second = true;
 				normal.second = false;
-				drawCoude(co_voisin, direct1, normal, false, false); //bools a changer
+				drawCoude(co_voisin, direct1, normal, longueur); //bools a changer
 				direct1.second = false;
 				normal.second = true;
+
+				voisin_droite = InCluster(cluster, co_voisin[Axe::x] - nY, co_voisin[Axe::y] - nZ, co_voisin[Axe::z] - nX);
+				if (voisin_droite) {
+					co_voisin[Axe::x] -= ny;
+					co_voisin[Axe::y] -= nz;
+					co_voisin[Axe::z] -= nx;
+					direct1.second = true;
+					normal.second = false;
+					drawCoude(co_voisin, direct1, normal, 2 * separation + 2 * rayon); //bools a changer
+					direct1.second = false;
+					normal.second = true;
+				}
 			}
 			else if (!voisins_sup[0][0]) {
 				//fermer
@@ -550,27 +585,26 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				co_voisin.setCoord(co.x - ny, co.y - nz, co.z - nx); //arrete qui devant la face considerée
 				direct2.second = true;
 				normal.second = false;
-				drawCoude(co_voisin, direct2, normal, false, false); //bools a changer
+				drawCoude(co_voisin, direct2, normal, longueur); //bools a changer
 				direct2.second = false;
 				normal.second = true;
+
+				voisin_droite = InCluster(cluster, co_voisin[Axe::x] + nZ, co_voisin[Axe::y] + nX, co_voisin[Axe::z] + nY);
+				if (voisin_droite) {
+					co_voisin[Axe::x] += nz;
+					co_voisin[Axe::y] += nx;
+					co_voisin[Axe::z] += ny;
+					direct2.second = true;
+					normal.second = false;
+					drawCoude(co_voisin, direct2, normal, 2 * separation + 2 * rayon); //bools a changer
+					direct2.second = false;
+					normal.second = true;
+				}
 			}
 			else if (!voisins_sup[0][1]) {//fermer
 				drawCarre(positions2);
 			}
 		}
-		/*else if (voisins[2][1] && voisins[2][0]){
-			//dessiner carré entre
-			co_voisin.setCoord(co.x + nz - ny, co.y + nx - nz, co.z + ny - nx);// point(dim0) devant a guauche de la face
-			pos_voisin == coord2Vert(co);
-			positions = computeCarre(pos_voisin, normal, rayon / 2, 2 * separation + 2 * rayon);
-			drawCarre(positions); //face de dessus
-			normal.second = false;//sens indirect
-			positions = computeCarre(pos_voisin, normal, rayon / 2, 2 * separation + 2 * rayon);
-			drawCarre(positions); //face de dessous
-			normal.second = true;
-		}*/
-
-		
 	}
 }
 
@@ -798,7 +832,7 @@ void Modeleur::drawCarre(vector<Vertex> pos) {
 	}
 	glEnd();
 }
-void Modeleur::drawCoude(coord co, dir direct1, dir direct2, bool droite, bool gauche) {
+void Modeleur::drawCoude(coord co, dir direct1, dir direct2, float lg) {
 	Vertex center = coord2Vert(co);
 	dir direct3 = normale(direct1, direct2);
 	dir invDir1(direct1.first, !direct1.second);
@@ -809,7 +843,7 @@ void Modeleur::drawCoude(coord co, dir direct1, dir direct2, bool droite, bool g
 	vector<Vertex> positions(6);
 	vector<Vertex> positions2(6);
 	//dessiner un 'L'
-	pos.translation(direct3, longueur/2);
+	pos.translation(direct3, lg /2);
 	pos.translation(direct1, rayon/2);
 	pos.translation(direct2, rayon/2);
 	positions.at(0) = pos;
@@ -826,7 +860,7 @@ void Modeleur::drawCoude(coord co, dir direct1, dir direct2, bool droite, bool g
 	
 	for (int i = 0; i < 6; i++) {
 		positions2[i] = positions[i];
-		positions2[i].translation(invDir3, longueur);
+		positions2[i].translation(invDir3, lg);
 	}
 	
 	vector<Vertex> quad(4);

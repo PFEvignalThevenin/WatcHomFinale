@@ -60,7 +60,7 @@ protected:
 	std::vector <obj::Vertex> Modeleur::computeCarre(obj::Vertex center, dir, float, float);
 	std::vector <obj::Vertex> Modeleur::computeRectangle(obj::Vertex center, dir axe, float profondeur, float largeur, float hauteur);
 	void Modeleur::drawCarre(std::vector<obj::Vertex> pos);
-	void drawCoude(obj::coord center, dir direct1, dir direct2, bool droite, bool gauche);
+	void drawCoude(obj::coord center, dir direct1, dir direct2, float lg);
 	void drawCoin(obj::coord center, dir direct1, dir direct2);
 	void drawFace(const obj::face &fa);
 	void DrawRalonge(std::vector<obj::Vertex> positions, dir direct, unsigned int a, unsigned int b);
