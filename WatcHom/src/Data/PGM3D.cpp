@@ -71,19 +71,15 @@ void PGM3D::load(std::string const& path) {
 	//récupération des données
 	int p_v;
 	int cptr = 0;
-	for (int i = 0; i < size[Axe::z]; i++) {
-		for (int j = 0; j < size[Axe::y]; j++) {
-			for (int k = 0; k < size[Axe::x]; k++) {
-				cptr++;
-				if (!file.eof()) {
-					file >> p_v;
-				}
-				else {
-					throw FileError(3,"Error in  PGM3D load : \n\tcouldn't read the " + to_string(cptr) + "-th voxel."+to_string(p_v) +"\n");
-				}
-				set(k,j,i, (char)p_v);
-			}
+	for (int i = 0; i < nbrCubes(); i++) {
+		cptr++;
+		if (!file.eof()) {
+			file >> p_v;
 		}
+		else {
+			throw FileError(3, "Error in  PGM3D load : \n\tcouldn't read the " + to_string(cptr) + "-th voxel." + to_string(p_v) + "\n");
+		}
+		set(i, (char)p_v);
 	}
 	//fin du traitement
 	file.close();
