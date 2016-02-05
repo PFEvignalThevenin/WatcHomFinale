@@ -544,10 +544,19 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 					normal.second = false;
 				}
 			}
-			else if (!voisins_inf[1][1]) {
-				//fermer
-				drawCarre(positions2);
+			else if (voisins_inf[1][1]) {
+				//dessiner coude
+				co_voisin.setCoord(co.x + ny, co.y + nz, co.z + nx); //arete a droite de la face considerée
+				direct2.second = false;
+				normal.second = false;
+				drawCoude(co_voisin, direct2, normal, longueur); //bools a changer
+				direct2.second = true;
+				normal.second = true;
+
+				
 			}
+			else //fermer
+				drawCarre(positions2);
 		}
 
 		//------
@@ -619,7 +628,15 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 					normal.second = true;
 				}
 			}
-			else if (!voisins_sup[0][1]) {//fermer
+			else if (voisins_sup[0][1]) {//dessiner coude 
+				co_voisin.setCoord(co.x - ny, co.y - nz, co.z - nx); //arrete qui devant la face considerée
+				direct2.second = true;
+				normal.second = true;
+				drawCoude(co_voisin, direct2, normal, longueur); //bools a changer
+				direct2.second = false;
+				
+			}
+			else {//fermer
 				drawCarre(positions2);
 			}
 		}
