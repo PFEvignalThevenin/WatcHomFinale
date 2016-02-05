@@ -108,7 +108,7 @@ void writeComplex(ComplexeCubique &cbc, string fileName, double r, double s)
 
 int main()
 {
-	int choix = 0;
+	int choix = 1;
 	if (choix == 0) {
 		char x;
 		PGM3D pgm;

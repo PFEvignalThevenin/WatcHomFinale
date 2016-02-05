@@ -476,20 +476,29 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				direct1.second = false;
 				drawCoude(co_voisin, direct1, normal, longueur); //bools a changer 
 				direct1.second = true;
+			}
+			else if (voisins_inf[1][0]){
+				co_voisin.setCoord(co.x + nz, co.y + nx, co.z + ny); //arete qui devant la face considerée
+				normal.second = false;
+				direct1.second = false;
+				drawCoude(co_voisin, direct1, normal, longueur); //bools a changer 
+				direct1.second = true;
+				normal.second = true;
 
-				voisin_droite = InCluster(cluster, co_voisin[Axe::x] - nZ, co_voisin[Axe::y] - nX, co_voisin[Axe::z] - nY);
-				
+				voisin_droite = InCluster(cluster, co_voisin[Axe::x] + nY, co_voisin[Axe::y] + nZ, co_voisin[Axe::z] + nX);
 				if (voisin_droite) {
 					cout << "dsfsd" << endl;
 					co_voisin[Axe::x] -= nz;
 					co_voisin[Axe::y] -= nx;
 					co_voisin[Axe::z] -= ny;
 					direct1.second = false;
-					drawCoude(co_voisin, direct1, normal, 2*separation + 2 * rayon); //bools a changer 
+					normal.second = false;
+					drawCoude(co_voisin, direct1, normal, 2 * separation + 2 * rayon); //bools a changer 
 					direct1.second = true;
+					normal.second = true;
 				}
 			}
-			else if (!voisins_inf[1][0]){//fermer
+			else {//fermer
 				drawCarre(positions1);
 			}
 		}
@@ -526,17 +535,6 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				direct2.second = true;
 				normal.second = false;
 
-				voisin_droite = InCluster(cluster, co_voisin[Axe::x] - nZ, co_voisin[Axe::y] - nX, co_voisin[Axe::z] - nY);
-				if (voisin_droite) {
-					co_voisin[Axe::x] -= nz;
-					co_voisin[Axe::y] -= nx;
-					co_voisin[Axe::z] -= ny;
-					direct2.second = false;
-					normal.second = true;
-					drawCoude(co_voisin, direct2, normal, 2 * separation + 2 * rayon);
-					direct2.second = true;
-					normal.second = false;
-				}
 			}
 			else if (voisins_inf[1][1]) {
 				//dessiner coude
@@ -546,7 +544,17 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				drawCoude(co_voisin, direct2, normal, longueur); //bools a changer
 				direct2.second = true;
 				normal.second = true;
-
+				voisin_droite = InCluster(cluster, co_voisin[Axe::x] - nZ, co_voisin[Axe::y] - nX, co_voisin[Axe::z] - nY);
+				if (voisin_droite) {
+					co_voisin[Axe::x] -= nz;
+					co_voisin[Axe::y] -= nx;
+					co_voisin[Axe::z] -= ny;
+					direct2.second = false;
+					normal.second = false;
+					drawCoude(co_voisin, direct2, normal, 2 * separation + 2 * rayon);
+					direct2.second = true;
+					normal.second = true;
+				}
 				
 			}
 			else //fermer
@@ -572,21 +580,29 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				drawCoude(co_voisin, direct1, normal, longueur); //bools a changer
 				direct1.second = false;
 				normal.second = true;
-
+			}
+			else if (voisins_sup[0][0]) {
+				//dessiner coude
+				co_voisin.setCoord(co.x - nz, co.y - nx, co.z - ny); //arrête qui derriere la face considerée
+				direct1.second = true;
+				normal.second = true;
+				drawCoude(co_voisin, direct1, normal, longueur); //bools a changer
+				direct1.second = false;
+				normal.second = false;
+				
 				voisin_droite = InCluster(cluster, co_voisin[Axe::x] - nY, co_voisin[Axe::y] - nZ, co_voisin[Axe::z] - nX);
 				if (voisin_droite) {
-					cout << "hfdhfhg <<" << endl;
 					co_voisin[Axe::x] -= ny;
 					co_voisin[Axe::y] -= nz;
 					co_voisin[Axe::z] -= nx;
 					direct1.second = true;
-					normal.second = false;
+					normal.second = true;
 					drawCoude(co_voisin, direct1, normal, 2 * separation + 2 * rayon); //bools a changer
 					direct1.second = false;
-					normal.second = true;
+					normal.second = false;
 				}
 			}
-			else if (!voisins_sup[0][0]) {
+			else {
 				//fermer
 				drawCarre(positions1);
 			}
@@ -601,17 +617,7 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				direct2.second = false;
 				normal.second = true;
 
-				voisin_droite = InCluster(cluster, co_voisin[Axe::x] + nZ, co_voisin[Axe::y] + nX, co_voisin[Axe::z] + nY);
-				if (voisin_droite) {
-					co_voisin[Axe::x] += nz;
-					co_voisin[Axe::y] += nx;
-					co_voisin[Axe::z] += ny;
-					direct2.second = true;
-					normal.second = false;
-					drawCoude(co_voisin, direct2, normal, 2 * separation + 2 * rayon); //bools a changer
-					direct2.second = false;
-					normal.second = true;
-				}
+				
 			}
 			else if (voisins_sup[0][1]) {//dessiner coude 
 				co_voisin.setCoord(co.x - ny, co.y - nz, co.z - nx); //arrete qui devant la face considerée
@@ -619,7 +625,15 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				normal.second = true;
 				drawCoude(co_voisin, direct2, normal, longueur); //bools a changer
 				direct2.second = false;
-				
+				voisin_droite = InCluster(cluster, co_voisin[Axe::x] + nZ, co_voisin[Axe::y] + nX, co_voisin[Axe::z] + nY);
+				if (voisin_droite) {
+					co_voisin[Axe::x] += nz;
+					co_voisin[Axe::y] += nx;
+					co_voisin[Axe::z] += ny;
+					direct2.second = true;
+					drawCoude(co_voisin, direct2, normal, 2 * separation + 2 * rayon); //bools a changer
+					direct2.second = false;
+				}
 			}
 			else {//fermer
 				drawCarre(positions2);
@@ -627,7 +641,6 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 		}
 	}
 }
-
 void Modeleur::drawCube3(DGVF::cellList cluster) {
 	bool voisins[3][3][3];//x,y,z : présence de voisines autour de la cellule.
 	for (int cell : cluster) {
