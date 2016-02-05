@@ -378,7 +378,7 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 	bool voisins_sup[2][2];
 	bool voisins_inf[2][2];
 	coord co_voisin; // pour ranger les coords d'un voisin
-	voisin_droite; //pour vérifiier la presence d'un voisin a coté en cas de coude
+	bool voisin_droite; //pour vérifiier la presence d'un voisin a coté en cas de coude
 	Vertex pos_voisin; // pour ranger les coords dans l'espace d'un voisin
 	for (int cell : cluster) {
 		coord co = ccTraite->pos2coord(cell);
@@ -477,11 +477,13 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 				drawCoude(co_voisin, direct1, normal, longueur); //bools a changer 
 				direct1.second = true;
 
-				voisin_droite = InCluster(cluster, co_voisin[Axe::x] + nY, co_voisin[Axe::y] + nZ, co_voisin[Axe::z] + nX);
+				voisin_droite = InCluster(cluster, co_voisin[Axe::x] - nZ, co_voisin[Axe::y] - nX, co_voisin[Axe::z] - nY);
+				
 				if (voisin_droite) {
-					co_voisin[Axe::x] += ny;
-					co_voisin[Axe::y] += nz;
-					co_voisin[Axe::z] += nx;
+					cout << "dsfsd" << endl;
+					co_voisin[Axe::x] -= nz;
+					co_voisin[Axe::y] -= nx;
+					co_voisin[Axe::z] -= ny;
 					direct1.second = false;
 					drawCoude(co_voisin, direct1, normal, 2*separation + 2 * rayon); //bools a changer 
 					direct1.second = true;
@@ -1044,9 +1046,14 @@ obj::Vertex Modeleur::computeNormales(obj::Vertex points[3]) {
 	}
 	//calculer produit vectoriel
 	Vertex res;
+	float norme = 0;
 	for (int a = 0; a < 3; a++) {
 		res[a] = vector[0][(a + 1) % 3] * vector[1][(a + 2) % 3] - vector[1][(a + 1) % 3] * vector[0][(a + 2) % 3];
+		norme += (res[a] * res[a]);
 	}
+	for (int a = 0; a < 3; a++)
+	res[a] /= norme;
+
 	return res;
 }
 //****************************Fonctions de Dessin générales********************************
