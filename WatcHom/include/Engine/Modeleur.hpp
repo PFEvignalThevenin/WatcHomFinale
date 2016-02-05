@@ -58,6 +58,7 @@ protected:
 	//****************************Fonctions de Dessin spécifiques*******************************
 	void drawContour(std::vector<obj::Vertex> positions_2, std::vector<obj::Vertex> positions_tmp);
 	std::vector <obj::Vertex> Modeleur::computeCarre(obj::Vertex center, dir, float, float);
+	std::vector <obj::Vertex> Modeleur::computeRectangle(obj::Vertex center, dir axe, float profondeur, float largeur, float hauteur);
 	void Modeleur::drawCarre(std::vector<obj::Vertex> pos);
 	void drawCoude(obj::coord center, dir direct1, dir direct2, bool droite, bool gauche);
 	void drawCoin(obj::coord center, dir direct1, dir direct2);

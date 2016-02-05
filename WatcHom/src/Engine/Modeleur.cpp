@@ -379,8 +379,8 @@ void Modeleur::drawCube1(int pos, std::vector<dir> Axes) {
 }
 void Modeleur::drawCube2(DGVF::cellList cluster) {
 	bool voisins[3][3];
-	bool voisin_sup[2][2];
-	bool voisin_inf[2][2];
+	bool voisins_sup[2][2];
+	bool voisins_inf[2][2];
 	coord co_voisin; // pour ranger les coords d'un voisin
 	Vertex pos_voisin; // pour ranger les coords dans l'espace d'un voisin
 	for (int cell : cluster) {
@@ -408,14 +408,15 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 		normal.second = false;//sens indirect
 		positions = computeCarre(center, normal, rayon /2, longueur);
 		drawCarre(positions);
-		normal.second = true
+		normal.second = true;
 
 		//récuperer les 2 autres axes
 		dir direct1, direct2;
-		direct1.first = (normal.first + 1) % 3;
-		direct2.first = (normal.first + 2) % 3;
+		direct1.first = nextAxe(normal.first);
+		direct2.first = nextAxe(direct1.first);
 
-		direct1.second = direct2.second = true;
+		direct1.second = true;
+		direct2.second = true;
 
 		//definir les faces selon chaque axe
 		//X
@@ -469,68 +470,77 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 
 		///++++++
 		if (voisins[2][1]) {
-			DrawRalonge(positions1, direct1, 1, 2);
-			DrawRalonge(positions1, direct1, 3, 0);
+			DrawRalonge(positions1, direct1, 1,2);
+			DrawRalonge(positions1, direct1, 0,3);
 		}
 		else {
-			if (voisins_sup[2][1]) {
-				//dessiner coude
-				co_voisin.setCoord(co + nz; co + nx, co + ny); //arete qui devant la face considerée
+			if (voisins_sup[1][0]) {//coudes
+				co_voisin.setCoord(co.x + nz, co.y + nx, co.z + ny); //arete qui devant la face considerée
 				direct1.second = false;
 				drawCoude(co_voisin, direct1, normal, false, false); //bools a changer 
 				direct1.second = true;
 			}
-			else if (!voisins_inf[2][1]){
+			else if (!voisins_inf[1][0]){//fermer
 				drawCarre(positions1);
 			}
 		}
 
 		if (voisins[1][2]) {
-			DrawRalonge(positions2, direct2, 2, 3);
-			DrawRalonge(positions2, direct2, 0, 1);
-			if (voisins[2][1] && voisins[2][2]) {
+			co_voisin.setCoord(co.x + ny, co.y + nz, co.z + nx);
+			pos_voisin = coord2Vert(co_voisin);
+			normal.second = true;
+			drawCarre(computeRectangle(pos_voisin, normal, rayon/2, longueur, 2 * separation + 2 * rayon));
+			normal.second = false;
+			drawCarre(computeRectangle(pos_voisin, normal, rayon/2, longueur, 2 * separation + 2 * rayon));
+			normal.second = true;
+			//DrawRalonge(positions2, direct2, 3,0);
+			//DrawRalonge(positions2, direct2, 0, 1);
+			if (voisins[2][1] && voisins[2][2]) {//angles
 				//dessiner carré entre
-				co_voisin.setCoord(co + nz + ny; co + nx + nz, co + ny + nx);// point(dim0) devant a droite de la face
-				pos_voisin == ccTraite.coord2Vert(co);
-				positions = computeCarre(pos_voisin, normal, rayon / 2, 2*separation + 2*rayon);
+				co_voisin.setCoord(co.x + nz + ny, co.y + nx + nz, co.z + ny + nx);// point(dim0) devant a droite de la face
+				pos_voisin = coord2Vert(co_voisin);
+				positions = computeRectangle(pos_voisin, normal, rayon / 2, 2*separation + 2*rayon, 2 * separation + 2 * rayon);
 				drawCarre(positions); //face de dessus
 				normal.second = false;//sens indirect
-				positions = computeCarre(pos_voisin, normal, rayon / 2, 2 * separation + 2 * rayon);
+				positions = computeRectangle(pos_voisin, normal, rayon / 2, 2 * separation + 2 * rayon, 2 * separation + 2 * rayon);
 				drawCarre(positions); //face de dessous
-				normal.second = true
+				normal.second = true;
 			}
 		}
 		else {
 			if (voisins_sup[1][1]) {
 				//dessiner coude
-				co_voisin(co + ny; co + nz, co + nz); //arete a droite de la face considerée
+				co_voisin.setCoord(co.x + ny, co.y + nz, co.z + nx); //arete a droite de la face considerée
 				direct2.second = false;
+				normal.second = true;
 				drawCoude(co_voisin, direct2, normal, false, false); //bools a changer
 				direct2.second = true;
+				normal.second = false;
 			}
-			else if (!voisins_inf[1][2]) {
+			else if (!voisins_inf[1][1]) {
 				//fermer
 				drawCarre(positions2);
 			}
 		}
 
 		//------
-		direct1.second = direct2.second = false;
+		direct1.second = false;
+		direct2.second = false;
 
 		//definir les faces selon chaque axe
 		//-X
-		vector <Vertex> positions1 = computeRectangle(center, direct1, longueur / 2, longueur, rayon);
+		positions1 = computeRectangle(center, direct1, longueur / 2, longueur, rayon);
 		//-Y
-		vector <Vertex> positions2 = computeRectangle(center, direct2, longueur / 2, longueur, rayon);
+		positions2 = computeRectangle(center, direct2, longueur / 2, longueur, rayon);
 		
 		if (!voisins[0][1]) {
 			if (voisins_inf[0][0]) {
 				//dessiner coude
-				coord co_voisin(co - nz; co - nx, co - ny); //arete qui derriere la face considerée
+				co_voisin.setCoord(co.x - nz, co.y - nx, co.z - ny); //arrête qui derriere la face considerée
 				direct1.second = true;
 				normal.second = false;
 				drawCoude(co_voisin, direct1, normal, false, false); //bools a changer
-				direct1 = false;
+				direct1.second = false;
 				normal.second = true;
 			}
 			else if (!voisins_sup[0][0]) {
@@ -540,31 +550,29 @@ void Modeleur::drawCube2(DGVF::cellList cluster) {
 
 		}
 		if (!voisins[1][0]) {
-			if (voisins_inf[0][1]) {
-				//dessiner coude 
-				coord co_voisin(co + nz; co + nx, co + ny); //arete qui devant la face considerée
+			if (voisins_inf[0][1]) {//dessiner coude 
+				co_voisin.setCoord(co.x - ny, co.y - nz, co.z - nx); //arrete qui devant la face considerée
 				direct2.second = true;
 				normal.second = false;
-				drawCoude(co_voisin, direct1, normal, false, false); //bools a changer
+				drawCoude(co_voisin, direct2, normal, false, false); //bools a changer
 				direct2.second = false;
 				normal.second = true;
 			}
-			else if (!voisins_sup[0][1]) {
-				//fermer
+			else if (!voisins_sup[0][1]) {//fermer
 				drawCarre(positions2);
 			}
 		}
-		else if (voisins[2][1] && voisins[2][0]){
+		/*else if (voisins[2][1] && voisins[2][0]){
 			//dessiner carré entre
-			co_voisin.setCoord(co + nz - ny; co + nx - nz, co + ny - nx);// point(dim0) devant a guauche de la face
-			pos_voisin == ccTraite.coord2Vert(co);
+			co_voisin.setCoord(co.x + nz - ny, co.y + nx - nz, co.z + ny - nx);// point(dim0) devant a guauche de la face
+			pos_voisin == coord2Vert(co);
 			positions = computeCarre(pos_voisin, normal, rayon / 2, 2 * separation + 2 * rayon);
 			drawCarre(positions); //face de dessus
 			normal.second = false;//sens indirect
 			positions = computeCarre(pos_voisin, normal, rayon / 2, 2 * separation + 2 * rayon);
 			drawCarre(positions); //face de dessous
-			normal.second = true
-		}
+			normal.second = true;
+		}*/
 
 		
 	}
@@ -770,7 +778,7 @@ vector <Vertex> Modeleur::computeRectangle(Vertex center, dir axe, float profond
 	vector <Vertex> positions;
 	positions.resize(4);
 	float sens = (axe.second) ? -1.0f : 1.0f;
-	for (unsigned int i = 0; i < 4; i++) {//les 4 points sur le mêm plan de normale 'axe'
+	for (unsigned int i = 0; i < 4; i++) {//les 4 points sur le même plan de normale 'axe'
 		positions.at(i)[axe.first] = center[axe.first] - sens * profondeur;
 	}
 	unsigned int j1 = (axe.first + 1) % 3;
@@ -796,10 +804,7 @@ void Modeleur::drawCarre(vector<Vertex> pos) {
 }
 void Modeleur::drawCoude(coord co, dir direct1, dir direct2, bool droite, bool gauche) {
 	Vertex center = coord2Vert(co);
-	dir direct3;
-	direct3.first = (direct1.first + direct2.first) % 3;
-	direct3.second = direct1.second && direct2.second;
-
+	dir direct3 = normale(direct1, direct2);
 	dir invDir1(direct1.first, !direct1.second);
 	dir invDir2(direct2.first, !direct2.second);
 	dir invDir3(direct3.first, !direct3.second);
@@ -807,48 +812,47 @@ void Modeleur::drawCoude(coord co, dir direct1, dir direct2, bool droite, bool g
 	Vertex pos = center;
 	vector<Vertex> positions(6);
 	vector<Vertex> positions2(6);
-	
-	pos.translation(direct3, longeur/2);
-	pos.translation(direct3, longeur / 2);
-	pos.translation(direct1, rayon);
-	pos.translation(direct2, rayon);
+	//dessiner un 'L'
+	pos.translation(direct3, longueur/2);
+	pos.translation(direct1, rayon/2);
+	pos.translation(direct2, rayon/2);
 	positions.at(0) = pos;
-	pos.translation(direct1, separation);
+	pos.translation(direct1, 2*separation);
 	positions.at(1) = pos;
-	pos.translation(invDir2, 2*rayon);
+	pos.translation(invDir2, rayon);
 	positions.at(2) = pos;
-	pos.translation(invDir1, 2*rayon + separation);
+	pos.translation(invDir1, rayon + 2*separation);
 	positions.at(3) = pos;
-	pos.translation(direct2, 2 * rayon + separation);
+	pos.translation(direct2, rayon + 2*separation);
 	positions.at(4) = pos;
-	pos.translation(direct1, 2 * rayon);
+	pos.translation(direct1, rayon);
 	positions.at(5) = pos;
 	
-	positions2 = positions;
-
-	for (Vertex elt : positions2)
-		elt.translation(invDir3, longueur);
+	for (int i = 0; i < 6; i++) {
+		positions2[i] = positions[i];
+		positions2[i].translation(invDir3, longueur);
+	}
 	
-	Vector<Vertex> quad(4);
-	quad.at(0) = (direct3.second) ? positions2(0) : positions(0);
-	quad.at(1) = (direct3.second) ? positions(0) : positions2(0);
-	quad.at(2) = (direct3.second) ? positions(1) : positions2(1);
-	quad.at(2) = (direct3.second) ? positions2(1) : positions(1);
+	vector<Vertex> quad(4);
+	quad.at(0) = (direct3.second) ? positions2.at(0) : positions.at(0);
+	quad.at(1) = (direct3.second) ? positions.at(0) : positions2.at(0);
+	quad.at(2) = (direct3.second) ? positions.at(1) : positions2.at(1);
+	quad.at(3) = (direct3.second) ? positions2.at(1) : positions.at(1);
 	drawCarre(quad);
-	quad.at(0) = (direct3.second) ? positions2(2) : positions(2);
-	quad.at(1) = (direct3.second) ? positions(2) : positions2(2);
-	quad.at(2) = (direct3.second) ? positions(3) : positions2(3);
-	quad.at(2) = (direct3.second) ? positions2(3) : positions(3);
+	quad.at(0) = (direct3.second) ? positions2.at(2) : positions.at(2);
+	quad.at(1) = (direct3.second) ? positions.at(2) : positions2.at(2);
+	quad.at(2) = (direct3.second) ? positions.at(3) : positions2.at(3);
+	quad.at(3) = (direct3.second) ? positions2.at(3) : positions.at(3);
 	drawCarre(quad);
-	quad.at(0) = (direct3.second) ? positions2(3) : positions(3);
-	quad.at(1) = (direct3.second) ? positions(3) : positions2(3);
-	quad.at(2) = (direct3.second) ? positions(4) : positions2(4);
-	quad.at(2) = (direct3.second) ? positions2(4) : positions(4);
+	quad.at(0) = (direct3.second) ? positions2.at(3) : positions.at(3);
+	quad.at(1) = (direct3.second) ? positions.at(3) : positions2.at(3);
+	quad.at(2) = (direct3.second) ? positions.at(4) : positions2.at(4);
+	quad.at(3) = (direct3.second) ? positions2.at(4) : positions.at(4);
 	drawCarre(quad);
-	quad.at(0) = (direct3.second) ? positions2(5) : positions(5);
-	quad.at(1) = (direct3.second) ? positions(5) : positions2(5);
-	quad.at(2) = (direct3.second) ? positions(0) : positions2(0);
-	quad.at(2) = (direct3.second) ? positions2(0) : positions(0);
+	quad.at(0) = (direct3.second) ? positions2.at(5) : positions.at(5);
+	quad.at(1) = (direct3.second) ? positions.at(5) : positions2.at(5);
+	quad.at(2) = (direct3.second) ? positions.at(0) : positions2.at(0);
+	quad.at(3) = (direct3.second) ? positions2.at(0) : positions.at(0);
 	drawCarre(quad);
 }
 void Modeleur::drawCoin(coord co, dir direct1, dir direct2) {

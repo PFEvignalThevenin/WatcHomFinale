@@ -58,3 +58,10 @@ obj::coord& obj::coord::operator*(const int &b)
 	this->z *= b;
 	return *this;
 }
+dir normale(dir v1, dir v2) {
+	Axe a = nextAxe(v1.first);
+	if (a == v2.first) {
+		a = nextAxe(a);
+	}
+	return dir(a, (v1.second && v2.second) || (!v1.second && !v2.second));
+}
