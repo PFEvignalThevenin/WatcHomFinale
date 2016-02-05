@@ -108,7 +108,7 @@ void writeComplex(ComplexeCubique &cbc, string fileName, double r, double s)
 
 int main()
 {
-	int choix = 1;
+	int choix = 0;
 	if (choix == 0) {
 		char x;
 		PGM3D pgm;
@@ -118,10 +118,6 @@ int main()
 			//lecture pgm
 			pgm.load("fertility100.pgm");
 			cout << "lecture pgm en " << double(clock() - begin) / CLOCKS_PER_SEC << endl;
-			//sauvegarde du pgm
-			begin = clock();
-			pgm.save("fertility100b.pgm");
-			cout << "sauvegarde pgm en " << double(clock() - begin) / CLOCKS_PER_SEC << endl;
 			//conversion pgm vers complexe
 			begin = clock();
 			ComplexeCubique::Ptr cc = Conversion::PGM3D2ComplexeCubique(pgm);
